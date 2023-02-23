@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
 		type: String,
 		min: 7,
 		max: 15,
-		index: true,
+		index: { unique: true },
 		required: true,
 	},
 	dateCreated: {

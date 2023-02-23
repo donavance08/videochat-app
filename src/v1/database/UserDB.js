@@ -1,13 +1,17 @@
 const User = require('../models/User');
 
 const findExistingUser = (username) => {
-	return User.findOne({ username }, { username: 1 })
-		.then((result) => {
+	return User.findOne({ username }, { username: 1 }).then((result) => {
+		return result;
+	});
+};
+
+const findExistingPhoneNumber = (phoneNumber) => {
+	return User.findOne({ phoneNumber }).then((result) => {
+		if (result) {
 			return result;
-		})
-		.catch((err) => {
-			throw err;
-		});
+		}
+	});
 };
 
 module.exports.loginUser = async (username, password) => {
@@ -44,6 +48,15 @@ module.exports.registerNewUser = async (newUserData) => {
 		throw {
 			status: 403,
 			message: 'Username already exists',
+		};
+	}
+
+	const existingPhoneNumber = await findExistingPhoneNumber(newUserData.phoneNumber);
+
+	if (existingPhoneNumber) {
+		throw {
+			status: 403,
+			message: 'phoneNumber already registered',
 		};
 	}
 

@@ -1,7 +1,6 @@
 const userServices = require('../services/userServices');
-const { body } = require('express-validator');
+const { validationResult } = require('express-validator');
 
-const validations = [body('')];
 module.exports.loginUser = (req, res) => {
 	const { username, password } = req.body;
 
@@ -25,6 +24,11 @@ module.exports.loginUser = (req, res) => {
 
 module.exports.registerNewUser = (req, res) => {
 	const { body } = req;
+	const errors = validationResult(req);
+
+	if(!errors.isEmpty()){
+		return res.status(400).send({errors: errors.array()})
+	}
 
 	const data = {
 		nickname: body.nickname,
