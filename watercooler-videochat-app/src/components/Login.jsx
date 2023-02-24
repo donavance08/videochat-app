@@ -31,31 +31,57 @@ export default function Login() {
 				console.log('error', err.message);
 			});
 	};
+
+	const handleChange = (event) => {
+		if (event.target.value) {
+			event.target.setAttribute('notEmpty', '');
+		} else {
+			event.target.removeAttribute('notEmpty');
+		}
+	};
+
 	return (
 		<div className='login-form-container'>
 			<form
 				className='login-form'
 				onSubmit={(e) => handleSubmit(e)}
 			>
-				<div>
-					<label>Username: </label>
+				<h1 className='form-header'>Login</h1>
+				<div className='input-container'>
 					<input
+						className='form-input'
+						name='username'
 						type='email'
 						placeholder='Johndoe@email.com'
+						onChange={(e) => handleChange(e)}
 						ref={usernameRef}
 					/>
+					<label
+						htmlFor='username'
+						className='label'
+					>
+						Username
+					</label>
 				</div>
 
-				<div>
-					<label>Password: </label>
+				<div className='input-container'>
 					<input
+						className='form-input'
+						name='password'
 						type='password'
 						placeholder='Enter password'
+						onChange={(e) => handleChange(e)}
 						ref={passwordRef}
 					/>
+					<label
+						htmlFor='password'
+						className='label'
+					>
+						Password
+					</label>
 				</div>
-				<div className='login-button-container'>
-					<button type='submit'>Login</button>
+				<div className='button-container'>
+					<button type='submit'>Submit</button>
 				</div>
 			</form>
 		</div>
