@@ -5,8 +5,8 @@ import Registration from '../components/Registration';
 export default function LandingPage() {
 	return (
 		<div className='landing-page-container'>
-			{/* <Registration /> */}
-			<Login />
+			<Registration />
+			{/* <Login /> */}
 		</div>
 	);
 }

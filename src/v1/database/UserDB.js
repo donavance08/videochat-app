@@ -19,19 +19,12 @@ module.exports.loginUser = async (username, password) => {
 		.then((result) => {
 			if (!result) {
 				throw {
-					status: 401,
+					status: 403,
 					message: 'Invalid username or password',
 				};
 			}
 
-			if (result.password === password) {
-				return result.username;
-			}
-
-			throw {
-				status: 401,
-				message: 'Invalid username or password',
-			};
+			return result;
 		})
 		.catch((err) => {
 			throw {

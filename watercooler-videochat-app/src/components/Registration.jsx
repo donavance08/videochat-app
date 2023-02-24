@@ -1,9 +1,29 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
 export default function Registration() {
+	const nicknameRef = useRef();
+	const usernameRef = useRef();
+	const passwordRef = useRef();
+	const phoneNumberRef = useRef();
+
 	const handleSubmit = (e) => {
+		fetch('http://localhost:5000/api/users/', {
+			method: 'POST',
+			headers: {
+				'content-type': 'application/json',
+			},
+			body: JSON.stringify({
+				nickname: nicknameRef.current.value,
+				username: usernameRef.current.value,
+				password: passwordRef.current.value,
+				phoneNumber: phoneNumberRef.current.value,
+			}),
+		})
+			.then((response) => response.json())
+			.then((result) => console.log(result))
+			.catch((err) => console.error(err));
+
 		e.preventDefault();
-		console.log(e.target.value);
 	};
 
 	const handleChange = (event) => {
@@ -27,7 +47,11 @@ export default function Registration() {
 						type='text'
 						name='nickname'
 						placeholder='Nickname'
-						onChange={(e) => handleChange(e)}
+						ref={nicknameRef}
+						onChange={(e) => {
+							handleChange(e);
+						}}
+						required
 					/>
 					<label
 						htmlFor='nickname'
@@ -36,28 +60,37 @@ export default function Registration() {
 						Nickname
 					</label>
 				</div>
-				<div className='input-container'>
+				<div className='input-container '>
 					<input
-						className='form-input'
+						className='form-input '
 						type='email'
 						name='username'
 						placeholder='Username'
-						onChange={(e) => handleChange(e)}
+						ref={usernameRef}
+						onChange={(e) => {
+							handleChange(e);
+						}}
+						required
 					/>
 					<label
 						htmlFor='username'
 						className='label'
 					>
-						Username
+						Email
 					</label>
 				</div>
+
 				<div className='input-container'>
 					<input
 						className='form-input'
 						type='password'
 						name='password'
 						placeholder='Password'
-						onChange={(e) => handleChange(e)}
+						ref={passwordRef}
+						onChange={(e) => {
+							handleChange(e);
+						}}
+						required
 					/>
 					<label
 						htmlFor='password'
@@ -72,7 +105,11 @@ export default function Registration() {
 						type='phone'
 						name='phoneNumber'
 						placeholder='Phone Number'
-						onChange={(e) => handleChange(e)}
+						ref={phoneNumberRef}
+						onChange={(e) => {
+							handleChange(e);
+						}}
+						required
 					/>
 					<label
 						htmlFor='phoneNumber'
@@ -82,7 +119,7 @@ export default function Registration() {
 					</label>
 				</div>
 				<div className='button-container'>
-					<button>Submit</button>
+					<button type='submit'>Submit</button>
 				</div>
 			</form>
 		</div>
