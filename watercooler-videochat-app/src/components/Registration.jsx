@@ -1,12 +1,43 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setToken } from '../redux/token';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 export default function Registration() {
 	const nicknameRef = useRef();
 	const usernameRef = useRef();
 	const passwordRef = useRef();
+	const confirmPasswordRef = useRef();
 	const phoneNumberRef = useRef();
+	const dispatch = useDispatch();
+	const navigate = useNavigate(Navigate);
+	const { token } = useSelector((state) => state.token);
+
+	useEffect(() => {
+		console.count('useEffect');
+		if (token) {
+			console.log('token', token);
+			navigate('/');
+		}
+	}, [token]);
+
+	const matchPassword = () => {
+		if (passwordRef.current.value === confirmPasswordRef.current.value) {
+			return true;
+		}
+
+		return false;
+	};
 
 	const handleSubmit = (e) => {
+		e.preventDefault();
+
+		if (!matchPassword()) {
+			//put badge error
+			console.log('passwords do not match');
+			return;
+		}
+
 		fetch('http://localhost:5000/api/users/', {
 			method: 'POST',
 			headers: {
@@ -20,12 +51,18 @@ export default function Registration() {
 			}),
 		})
 			.then((response) => response.json())
-			.then((result) => console.log(result))
-			.catch((err) => console.error(err));
+			.then((result) => {
+				if (result.status === 'OK') {
+					dispatch(setToken(result));
 
-		e.preventDefault();
+					return;
+				}
+				console.log(result.message);
+			})
+			.catch((err) => console.error(err));
 	};
 
+	// helper function for adding an attribute that will be used by CSS to animate input fields
 	const handleChange = (event) => {
 		if (event.target.value) {
 			event.target.setAttribute('notEmpty', '');
@@ -102,6 +139,25 @@ export default function Registration() {
 				<div className='input-container'>
 					<input
 						className='form-input'
+						type='password'
+						name='confirm-password'
+						placeholder='Confirm Password'
+						ref={confirmPasswordRef}
+						onChange={(e) => {
+							handleChange(e);
+						}}
+						required
+					/>
+					<label
+						htmlFor='confirm-password'
+						className='label'
+					>
+						Confirm Password
+					</label>
+				</div>
+				<div className='input-container'>
+					<input
+						className='form-input'
 						type='phone'
 						name='phoneNumber'
 						placeholder='Phone Number'
@@ -118,6 +174,15 @@ export default function Registration() {
 						Phone Number
 					</label>
 				</div>
+				<p>
+					Already have an account?{' '}
+					<a
+						href='/users/login'
+						className='navigation-link-small'
+					>
+						Log in
+					</a>
+				</p>
 				<div className='button-container'>
 					<button type='submit'>Submit</button>
 				</div>

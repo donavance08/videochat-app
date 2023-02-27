@@ -15,7 +15,7 @@ const findExistingPhoneNumber = (phoneNumber) => {
 };
 
 module.exports.loginUser = async (username, password) => {
-	return await User.findOne({ username })
+	return await User.findOne({ username }, {})
 		.then((result) => {
 			if (!result) {
 				throw {
@@ -44,7 +44,9 @@ module.exports.registerNewUser = async (newUserData) => {
 		};
 	}
 
-	const existingPhoneNumber = await findExistingPhoneNumber(newUserData.phoneNumber);
+	const existingPhoneNumber = await findExistingPhoneNumber(
+		newUserData.phoneNumber
+	);
 
 	if (existingPhoneNumber) {
 		throw {

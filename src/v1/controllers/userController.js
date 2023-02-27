@@ -13,12 +13,15 @@ module.exports.loginUser = (req, res) => {
 	userServices
 		.loginUser(username, password)
 		.then((result) => {
-			res.status(200).send({ status: 'OK', message: 'Login successful' });
+			res
+				.status(200)
+				.send({ status: 'OK', message: 'Login successful', token: result });
 		})
 		.catch((err) => {
-			res
-				.status(err?.status || 500)
-				.send({ status: 'FAILED', message: err?.message || 'Internal Server Error' });
+			res.status(err?.status || 500).send({
+				status: 'FAILED',
+				message: err?.message || 'Internal Server Error',
+			});
 		});
 };
 
@@ -26,8 +29,8 @@ module.exports.registerNewUser = (req, res) => {
 	const { body } = req;
 	const errors = validationResult(req);
 
-	if(!errors.isEmpty()){
-		return res.status(400).send({errors: errors.array()})
+	if (!errors.isEmpty()) {
+		return res.status(400).send({ errors: errors.array() });
 	}
 
 	const data = {
@@ -41,12 +44,17 @@ module.exports.registerNewUser = (req, res) => {
 		.registerNewUser(data)
 		.then((result) => {
 			if (result) {
-				res.status(201).send({ status: 'OK', message: 'Registration successful', data: result });
+				res.status(201).send({
+					status: 'OK',
+					message: 'Registration successful',
+					token: result,
+				});
 			}
 		})
 		.catch((err) => {
-			res
-				.status(err?.status || 500)
-				.send({ status: 'FAILED', message: err?.message || 'Internal Server Error' });
+			res.status(err?.status || 500).send({
+				status: 'FAILED',
+				message: err?.message || 'Internal Server Error',
+			});
 		});
 };

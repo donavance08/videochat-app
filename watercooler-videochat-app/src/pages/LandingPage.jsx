@@ -2,11 +2,10 @@ import React, { useRef } from 'react';
 import Login from '../components/Login';
 import Registration from '../components/Registration';
 
-export default function LandingPage() {
+export default function LandingPage({ component }) {
 	return (
 		<div className='landing-page-container'>
-			<Registration />
-			{/* <Login /> */}
+			{component === 'register' ? <Registration /> : <Login />}
 		</div>
 	);
 }
