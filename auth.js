@@ -4,7 +4,7 @@ const secretPhrase = 'waterCoolerchatapp';
 // Create access token for successful user login
 module.exports.createAccessToken = (user) => {
 	const data = {
-		id: user._id,
+		id: user.id,
 		username: user.username,
 		nickname: user.nickname,
 		phoneNumber: user.phoneNumber,
@@ -41,7 +41,8 @@ module.exports.verify = (request, response, next) => {
 
 // Decoding a token to retrieve user information
 module.exports.decode = (token) => {
-	// Token recieved and is not undefined
+	// MODIFY
+
 	if (typeof token !== 'undefined') {
 		// Retrieves only the token and removes the "Bearer " prefix
 		token = token.slice(7, token.length);

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setToken } from '../redux/token';
+import { setToken, setNickname } from '../redux/user';
 import { Navigate, useNavigate } from 'react-router-dom';
 
 export default function Registration() {
@@ -11,7 +11,7 @@ export default function Registration() {
 	const phoneNumberRef = useRef();
 	const dispatch = useDispatch();
 	const navigate = useNavigate(Navigate);
-	const { token } = useSelector((state) => state.token);
+	const { token } = useSelector((state) => state.user);
 
 	useEffect(() => {
 		console.count('useEffect');
@@ -38,7 +38,7 @@ export default function Registration() {
 			return;
 		}
 
-		fetch('http://localhost:5000/api/users/', {
+		fetch(`${process.env.REACT_APP_API_URL}/api/users/`, {
 			method: 'POST',
 			headers: {
 				'content-type': 'application/json',
@@ -53,8 +53,8 @@ export default function Registration() {
 			.then((response) => response.json())
 			.then((result) => {
 				if (result.status === 'OK') {
-					dispatch(setToken(result));
-
+					dispatch(setToken(result.data.token));
+					dispatch(setNickname(result.data.nickname));
 					return;
 				}
 				console.log(result.message);

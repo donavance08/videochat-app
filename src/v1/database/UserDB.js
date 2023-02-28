@@ -1,9 +1,20 @@
 const User = require('../models/User');
+const customError = require('../utils/customError');
 
-const findExistingUser = (username) => {
+const findExistingUserByName = (username) => {
 	return User.findOne({ username }, { username: 1 }).then((result) => {
 		return result;
 	});
+};
+
+//projection is for values to be excluded
+const findExistingUserById = async (id, projection = {}) => {
+	projection = {
+		...projection,
+		password: 0,
+	};
+
+	return User.findOne({ _id: id }, projection).then((result) => result);
 };
 
 const findExistingPhoneNumber = (phoneNumber) => {
@@ -18,24 +29,17 @@ module.exports.loginUser = async (username, password) => {
 	return await User.findOne({ username }, {})
 		.then((result) => {
 			if (!result) {
-				throw {
-					status: 403,
-					message: 'Invalid username or password',
-				};
+				customError.throwCustomError(403, 'Invalid username or password');
 			}
-
 			return result;
 		})
 		.catch((err) => {
-			throw {
-				status: 500,
-				message: err.message,
-			};
+			customError.throwCustomError(500, err.message);
 		});
 };
 
 module.exports.registerNewUser = async (newUserData) => {
-	const existingUser = await findExistingUser(newUserData.username);
+	const existingUser = await findExistingUserByName(newUserData.username);
 
 	if (existingUser) {
 		throw {
@@ -70,4 +74,19 @@ module.exports.registerNewUser = async (newUserData) => {
 		.catch((err) => {
 			throw err;
 		});
+};
+
+module.exports.getUserContacts = async (id) => {
+	const user = await findExistingUserById(id, {})
+		.then((result) => {
+			if (result) {
+				return result;
+			}
+			customError.throwCustomError(204, `cannot find user with Id: ${id}`);
+		})
+		.catch((err) => {
+			customError.throwCustomError(500, err.message);
+		});
+
+	return user;
 };

@@ -11,9 +11,10 @@ module.exports.loginUser = (username, password) => {
 					nickname: result.nickname,
 					username: result.username,
 					phoneNumber: result.phoneNumber,
+					id: result._id,
 				});
 
-				return token;
+				return { nickname: result.nickname, token };
 			}
 
 			throw {
@@ -41,7 +42,23 @@ module.exports.registerNewUser = async (data) => {
 		nickname: newUserData.nickname,
 		username: newUserData.username,
 		phoneNumber: newUserData.phoneNumber,
+		id: newUserData._id,
 	});
 
-	return token;
+	return {
+		nickname: newUserData.nickname,
+		token,
+	};
+};
+
+module.exports.getUserContacts = (id) => {
+	return UserDB.getUserContacts(id)
+		.then((result) => {
+			if (result) {
+				return result.contactsList;
+			}
+		})
+		.catch((err) => {
+			throw err;
+		});
 };

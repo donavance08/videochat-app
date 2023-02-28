@@ -1,10 +1,10 @@
 import React, { useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setToken } from '../redux/token';
+import { setNickname, setToken } from '../redux/user';
 import { Navigate, useNavigate } from 'react-router-dom';
 
 export default function Login() {
-	const { token } = useSelector((state) => state.token);
+	const { token } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
 	const navigate = useNavigate(Navigate);
 
@@ -14,7 +14,7 @@ export default function Login() {
 	const handleSubmit = (event) => {
 		event.preventDefault();
 
-		fetch('http://localhost:5000/api/users/login', {
+		fetch(`${process.env.REACT_APP_API_URL}/api/users/login`, {
 			method: 'POST',
 			headers: {
 				'Content-type': 'application/json',
@@ -27,7 +27,9 @@ export default function Login() {
 			.then((response) => response.json())
 			.then((result) => {
 				if (result.status === 'OK') {
-					dispatch(setToken(result));
+					console.log('result', result);
+					dispatch(setToken(result.data.token));
+					dispatch(setNickname(result.data.nickname));
 					return;
 				}
 				console.log(result.message);
@@ -93,7 +95,7 @@ export default function Login() {
 					</label>
 				</div>
 				<p>
-					Don't have an account?{' '}
+					Don't have an account yet?{' '}
 					<a
 						href='/users/'
 						className='navigation-link-small'

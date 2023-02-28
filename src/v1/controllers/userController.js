@@ -1,5 +1,6 @@
 const userServices = require('../services/userServices');
 const { validationResult } = require('express-validator');
+const auth = require('../../../auth');
 
 module.exports.loginUser = (req, res) => {
 	const { username, password } = req.body;
@@ -11,11 +12,11 @@ module.exports.loginUser = (req, res) => {
 		});
 	}
 	userServices
-		.loginUser(username, password)
+		.loginUser(username.toLowerCase(), password)
 		.then((result) => {
 			res
 				.status(200)
-				.send({ status: 'OK', message: 'Login successful', token: result });
+				.send({ status: 'OK', message: 'Login successful', data: result });
 		})
 		.catch((err) => {
 			res.status(err?.status || 500).send({
@@ -47,7 +48,29 @@ module.exports.registerNewUser = (req, res) => {
 				res.status(201).send({
 					status: 'OK',
 					message: 'Registration successful',
-					token: result,
+					data: result,
+				});
+			}
+		})
+		.catch((err) => {
+			res.status(err?.status || 500).send({
+				status: 'FAILED',
+				message: err?.message || 'Internal Server Error',
+			});
+		});
+};
+
+module.exports.getUserContacts = (req, res) => {
+	const id = auth.decode(req.headers.authorization).id;
+
+	userServices
+		.getUserContacts(id)
+		.then((result) => {
+			if (result) {
+				res.status(201).send({
+					status: 'OK',
+					message: 'Contacts found',
+					data: result,
 				});
 			}
 		})

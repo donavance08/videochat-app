@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
 		required: true,
 		index: { unique: true },
 		min: 12,
+		lowercase: true,
 	},
 	password: {
 		type: String,
@@ -21,7 +22,16 @@ const userSchema = new mongoose.Schema({
 		required: true,
 	},
 	contactsList: {
-		type: Array,
+		type: [
+			{
+				nickname: {
+					type: String,
+				},
+				_id: {
+					type: mongoose.ObjectId,
+				},
+			},
+		],
 		default: [],
 	},
 	phoneNumber: {
@@ -36,6 +46,13 @@ const userSchema = new mongoose.Schema({
 		default: new Date(),
 		required: true,
 	},
+});
+
+userSchema.pre('save', function (next) {
+	this.nickname =
+		this.nickname.trim()[0].toUpperCase() +
+		this.nickname.slice(1).toLowerCase();
+	next();
 });
 
 module.exports = mongoose.model('User', userSchema);

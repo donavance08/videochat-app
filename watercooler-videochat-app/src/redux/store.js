@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import tokenReducer from './token';
+import userReducer from './user';
+import chatReducer from './chat';
 
 export default configureStore({
 	reducer: {
-		token: tokenReducer,
+		user: userReducer,
+		chat: chatReducer,
 	},
 });

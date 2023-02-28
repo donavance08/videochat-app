@@ -3,11 +3,14 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import Home from './pages/Home';
 import AppNavBar from './components/AppNavBar';
+import Chat from './pages/Chat';
 import { useSelector } from 'react-redux';
 import './App.css';
 
+import Avatar from './components/Avatar';
+
 function App() {
-	const { token } = useSelector((state) => state.token);
+	const { token } = useSelector((state) => state.user);
 
 	return (
 		<div className='App'>
@@ -19,6 +22,10 @@ function App() {
 						element={token ? <Home /> : <Navigate to='/users/login' />}
 					/>
 					<Route
+						path='/chat'
+						element={<Chat />}
+					/>
+					<Route
 						path='/users/login'
 						element={<LandingPage component='login' />}
 					/>
@@ -26,6 +33,10 @@ function App() {
 					<Route
 						path='/users/'
 						element={<LandingPage component='register' />}
+					/>
+					<Route
+						path='/avatar'
+						element={<Avatar />}
 					/>
 				</Routes>
 			</BrowserRouter>
