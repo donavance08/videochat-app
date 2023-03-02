@@ -3,15 +3,33 @@ import { createSlice } from '@reduxjs/toolkit';
 export const chatSlice = createSlice({
 	name: 'chat',
 	initialState: {
-		activeContact: {},
+		activeContactId: '',
+		activeContactName: '',
+		messages: [],
 	},
 	reducers: {
-		setActiveContact: (state, action) => {
-			state.activeContact = action.payload;
+		setActiveContactId: (state, action) => {
+			state.activeContactId = action.payload;
+		},
+		setActiveContactName: (state, action) => {
+			state.activeContactName = action.payload;
+		},
+
+		setMessage: (state, action) => {
+			state.messages = [...state.messages, action.payload];
+		},
+
+		clearMessages: (state) => {
+			state.messages = [];
 		},
 	},
 });
 
-export const { setActiveContact } = chatSlice.actions;
+export const {
+	setActiveContactId,
+	setActiveContactName,
+	setMessage,
+	clearMessages,
+} = chatSlice.actions;
 
 export default chatSlice.reducer;

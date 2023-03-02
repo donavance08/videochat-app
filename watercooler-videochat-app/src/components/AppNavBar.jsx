@@ -5,16 +5,22 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import { useDispatch, useSelector } from 'react-redux';
 import { setToken, setNickname } from '../redux/user';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import UserContext from '../UserContext';
 
 /* Incomplete*/
 
 export default function AppNavBar() {
 	const { nickname } = useSelector((state) => state.user);
+	const { socket } = useContext(UserContext);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const handleLogout = (event) => {
 		dispatch(setToken(''));
 		dispatch(setNickname(''));
+
+		socket?.disconnect();
+
 		navigate('/');
 	};
 

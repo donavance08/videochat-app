@@ -14,7 +14,7 @@ module.exports.loginUser = (username, password) => {
 					id: result._id,
 				});
 
-				return { nickname: result.nickname, token };
+				return { id: result._id, nickname: result.nickname, token };
 			}
 
 			throw {

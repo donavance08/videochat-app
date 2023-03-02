@@ -1,12 +1,19 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setNickname, setToken } from '../redux/user';
+import { setNickname, setToken, setId } from '../redux/user';
 import { Navigate, useNavigate } from 'react-router-dom';
+import UserContext from '../UserContext';
+import { io } from 'socket.io-client';
+import useLocalStorage from '../customHooks.js/useLocalStorage';
+
+// adding localstorage hook and persist with redux
 
 export default function Login() {
 	const { token } = useSelector((state) => state.user);
+	const { setSocket } = useContext(UserContext);
 	const dispatch = useDispatch();
 	const navigate = useNavigate(Navigate);
+	const { printHello } = useLocalStorage('token');
 
 	const usernameRef = useRef();
 	const passwordRef = useRef();
@@ -30,6 +37,10 @@ export default function Login() {
 					console.log('result', result);
 					dispatch(setToken(result.data.token));
 					dispatch(setNickname(result.data.nickname));
+					dispatch(setId(result.data.id));
+
+					setSocket(io(`${process.env.REACT_APP_API_URL}`));
+
 					return;
 				}
 				console.log(result.message);

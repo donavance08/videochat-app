@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
-	const { token } = useSelector((state) => state.user);
 	const navigate = useNavigate();
 	function handleClick() {
 		navigate('/chat');

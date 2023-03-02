@@ -1,4 +1,3 @@
-import React, { useRef } from 'react';
 import Login from '../components/Login';
 import Registration from '../components/Registration';
 

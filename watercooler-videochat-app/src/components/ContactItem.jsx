@@ -1,12 +1,18 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { setActiveContact } from '../redux/chat';
+import {
+	setActiveContactId,
+	setActiveContactName,
+	clearMessages,
+} from '../redux/chat';
 
 export default function ContactItem({ data }) {
 	const dispatch = useDispatch();
 
 	function handleClick() {
-		dispatch(setActiveContact(data));
+		dispatch(setActiveContactId(data._id));
+		dispatch(setActiveContactName(data.nickname));
+		dispatch(clearMessages());
 	}
 	return (
 		<div className='contact-item-container'>

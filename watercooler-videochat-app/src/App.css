@@ -189,8 +189,6 @@ a {
 /* Contacts component section 
 ========================= */
 .contacts-container {
-	/* margin-top: 10px;
-	min-height: 100%; */
 }
 .contact-item-container {
 	box-sizing: border-box;
@@ -222,6 +220,12 @@ a {
 .chat-body-container {
 	display: flex;
 	flex-direction: column;
+	justify-content: end;
+}
+
+.chat-body-container > p {
+	text-align: center;
+	margin-bottom: 50px;
 }
 
 .chat-header {
@@ -237,5 +241,112 @@ a {
 
 .chat-history-container {
 	height: 100%;
+	display: inline-flex;
+	flex-direction: column;
+	margin: 0px 20px;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+.chat-history-container::-webkit-scrollbar {
+}
+
+.chat-input {
+	display: flex;
+	flex: row;
+	border: 1px solid black;
+	border-radius: 10px;
+	margin-left: 10px;
+	padding: 3px 3px 3px 10px;
+}
+
+.chat-input > form {
+	width: 100%;
+	display: inherit;
+}
+
+.chat-input > form > input {
+	width: 100%;
+	border-style: none;
+	margin-right: 5px;
+}
+
+.chat-input > form > input:focus {
+	outline: none;
+}
+
+.chat-input > form > button {
+	border: none;
+}
+
+.send-button-svg {
+	max-width: 30px;
+	max-height: 30px;
+}
+
+.send-button-svg > div {
+	max-height: 100%;
+}
+.send-button-svg > div > svg {
+	width: 100%;
+	max-height: 30px;
+}
+
+/* Loader component 
+=========================*/
+
+.loader-container {
+	border: 10px solid #f3f3f3;
+	border-top: 10px solid #3498db;
+	border-radius: 50%;
+	width: 80px;
+	height: 80px;
+	animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+/* MessageItem component 
+=========================*/
+
+.message-item-container {
+	display: flex;
+	margin: 10px;
+	align-items: center;
+}
+
+.message-item-container > div {
+	background-color: var(--primaryColor);
+	border-radius: 5px;
+	max-width: 80%;
+	display: flex;
+	padding: 10px 15px;
+	text-align: inherit;
+}
+
+.message-item-paragraph {
+	font-size: 16px;
+	color: var(--white);
+	line-height: 1em;
+	margin-bottom: 0px;
+	text-align: inherit;
+	display: block;
+	width: 100%;
+}
+
+.right-message {
+	justify-content: right;
+	text-align: right;
+}
+
+.left-message {
+	justify-content: left;
 }
 
