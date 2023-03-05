@@ -46,13 +46,14 @@ export default function ChatWindow() {
 			);
 		}
 
-		bottomRef.current?.scrollIntoView();
-
 		return () => {
 			socket.off('receive msg', listener);
 		};
-	}, []);
+	}, [messages]);
 
+	useEffect(() => {
+		bottomRef.current?.scrollIntoView();
+	});
 	return (
 		<div className='chat-body-container col-6'>
 			{!activeContactName ? (
