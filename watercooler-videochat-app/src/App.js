@@ -23,7 +23,7 @@ function App() {
 					<Routes>
 						<Route
 							path='/'
-							element={token ? <Home /> : <Navigate to='/users/login' />}
+							element={token ? <Chat /> : <Navigate to='/users/login' />}
 						/>
 						<Route
 							path='/chat'

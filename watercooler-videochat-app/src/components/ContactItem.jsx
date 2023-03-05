@@ -31,7 +31,6 @@ export default function ContactItem({ data }) {
 				if (result && result.data.length > 0) {
 					dispatch(setArrayOfMessages({ data: result.data, userId: id }));
 				}
-
 				dispatch(changeLoadingStatus(false));
 			})
 			.catch((err) => {
