@@ -1,20 +1,28 @@
-module.exports = (app) => {
-	const connectedUsers = new Map();
+const sio = require('socket.io');
 
-	app.io.on('connection', (socket) => {
+let io;
+let connectedUsers = new Map();
+
+module.exports.initialize = (server) => {
+	io = sio(server, {
+		cors: {},
+		reconnectionDelayMax: 10000,
+	});
+
+	io.on('connection', (socket) => {
 		socket.on('connect socket', (payload) => {
-			console.log('socket connected', payload.id);
-			connectedUsers.set(payload.id, socket.id);
+			// console.log('socket connected', payload.id);
+			connectedUsers.set(payload.id, socket);
 			socket.userId = payload.id;
-
-			console.log(connectedUsers);
 		});
 
 		socket.on('send msg', (payload) => {
-			const receiver = connectedUsers.get(payload.receiver);
+			console.log('send msg triggered');
 
-			if (receiver) {
-				socket.to(receiver).emit('receive msg', {
+			const receiverSocket = connectedUsers.get(payload.receiver);
+
+			if (receiverSocket) {
+				socket.to(receiverSocket.id).emit('receive msg', {
 					message: payload.message,
 					sender: payload.sender,
 				});
@@ -31,4 +39,19 @@ module.exports = (app) => {
 			}
 		});
 	});
+
+	return io;
+};
+
+module.exports.getIO = () => {
+	return io;
+};
+
+module.exports.fireReceiveMsgEvent = (payload) => {
+	const senderSocket = connectedUsers.get(payload.sender.toString());
+	const receiverSocket = connectedUsers.get(payload.receiver.toString());
+
+	if (senderSocket && receiverSocket) {
+		senderSocket.to(receiverSocket.id).emit('receive msg', payload);
+	}
 };

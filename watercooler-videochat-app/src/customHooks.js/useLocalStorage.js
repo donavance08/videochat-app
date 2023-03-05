@@ -20,10 +20,4 @@ export default function useLocalStorage(name) {
 	const deleteFromLocalStorage = () => {
 		localStorage.removeItem(name);
 	};
-
-	const printHello = () => {
-		console.log('Hello', name);
-	};
-
-	return [{ printHello }];
 }

@@ -13,7 +13,6 @@ export default function Login() {
 	const { setSocket } = useContext(UserContext);
 	const dispatch = useDispatch();
 	const navigate = useNavigate(Navigate);
-	const { printHello } = useLocalStorage('token');
 
 	const usernameRef = useRef();
 	const passwordRef = useRef();

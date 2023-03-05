@@ -1,6 +1,6 @@
 export default function MessageItem({ value }) {
-	const { ownMessage, message } = value;
-	const cssClassName = ownMessage ? 'right-message' : 'left-message';
+	const { isOwner, message } = value;
+	const cssClassName = isOwner ? 'right-message' : 'left-message';
 
 	return (
 		<div className={`${cssClassName} message-item-container`}>

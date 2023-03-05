@@ -1,6 +1,7 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+
 import { useNavigate } from 'react-router-dom';
+import Loader from '../utils/Loader';
 
 export default function Home() {
 	const navigate = useNavigate();
@@ -10,6 +11,7 @@ export default function Home() {
 	return (
 		<>
 			<h1>This is HOME</h1>
+			<Loader />
 			<button onClick={() => handleClick()}>go to chat</button>
 		</>
 	);

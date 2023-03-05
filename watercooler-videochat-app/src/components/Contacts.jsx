@@ -26,14 +26,17 @@ export default function Contact() {
 					);
 					return;
 				}
-
-				console.log(result.message);
 			})
 			.catch((err) => console.log(err.message));
 	}, []);
 
 	return (
 		<div className='contacts-container col-3 border border-dark'>
+			<div className='contacts-header-container'>
+				<h2>Contacts</h2>
+				<hr />
+			</div>
+
 			{contacts}
 			<div className='avatar-container'></div>
 		</div>

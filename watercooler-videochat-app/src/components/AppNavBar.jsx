@@ -7,6 +7,7 @@ import { setToken, setNickname } from '../redux/user';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import UserContext from '../UserContext';
+import { resetState } from '../redux/chat';
 
 /* Incomplete*/
 
@@ -18,6 +19,7 @@ export default function AppNavBar() {
 	const handleLogout = (event) => {
 		dispatch(setToken(''));
 		dispatch(setNickname(''));
+		dispatch(resetState());
 
 		socket?.disconnect();
 

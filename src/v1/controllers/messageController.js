@@ -3,18 +3,46 @@ const auth = require('../../../auth');
 const messageServices = require('../services/messageServices');
 
 module.exports.addMessage = (req, res) => {
-  const errors = validationResult(req);
-  const { body } = req;
+	// const errors = validationResult(req);
+	const { body } = req;
 
-  if (!errors.isEmpty()) {
-    return res.status(400).send({ errors: errors.array() });
-  }
+	const senderId = auth.decode(req.headers.authorization).id;
 
-  messageServices.addMessage(body.id, body.message);
+	// if (!errors.isEmpty()) {
+	// 	return res.status(400).send({ errors: errors.array() });
+	// }
+
+	messageServices
+		.addMessage(senderId, body.receiver, body.message)
+		.then((result) => {
+			res
+				.status(200)
+				.send({ status: 'OK', message: 'New message added', data: result });
+		})
+		.catch((err) => {
+			res.status(err?.status || 500).send({
+				status: 'FAILED',
+				message: err?.message || 'Internal Server Error',
+			});
+		});
 };
 
 module.exports.getConversationHistory = (req, res) => {
-  // const id = auth.decode(req.headers.id).id;
+	const sender = auth.decode(req.headers.authorization).id;
 
-  messageServices.getConversationHistory();
+	messageServices
+		.getConversationHistory(sender, req.params.receiver)
+		.then((result) => {
+			res.status(200).send({
+				status: 'OK',
+				message: 'Retrieved conversation successfully',
+				data: result,
+			});
+		})
+		.catch((err) => {
+			res.status(err?.status || 500).send({
+				status: 'FAILED',
+				message: err?.message || 'Internal server error',
+			});
+		});
 };

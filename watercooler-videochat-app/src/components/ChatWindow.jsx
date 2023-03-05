@@ -1,69 +1,90 @@
 import React, { useRef, useContext, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import {
+	setMessage,
+	deleteLastMessage,
+	changeLoadingStatus,
+} from '../redux/chat';
 import { ReactSVG } from 'react-svg';
 import UserContext from '../UserContext';
 import { v4 as uuid } from 'uuid';
 import MessageItem from './MessageItem';
+import Loader from '../utils/Loader';
 
 export default function ChatWindow() {
-	const { activeContactName, activeContactId } = useSelector(
-		(state) => state.chat
-	);
-	const { id } = useSelector((state) => state.user);
+	const { activeContactName, activeContactId, messages, isLoading } =
+		useSelector((state) => state.chat);
+	const { id, token } = useSelector((state) => state.user);
 	const { socket } = useContext(UserContext);
+	const [messageWidget, setmessageWidget] = useState();
+	const dispatch = useDispatch();
+
 	const composeMessageRef = useRef();
 	const bottomRef = useRef();
-	const [messages, setMessages] = useState([]);
-	const [messageItems, setMessageItems] = useState();
 
-	function callSetMessages(isOwner, message) {
-		setMessages([
-			...messages,
-			{
-				ownMessage: isOwner,
-				message: message,
-			},
-		]);
-	}
+	console.log('render loading state', isLoading);
 
 	function handleSubmit(event) {
 		event.preventDefault();
+
 		if (!composeMessageRef.current.value) {
 			return;
 		}
 
-		callSetMessages(true, composeMessageRef.current.value);
+		dispatch(
+			setMessage({ isOwner: true, message: composeMessageRef.current.value })
+		);
 
-		const payload = {
-			message: composeMessageRef.current.value,
-			sender: id,
-			receiver: activeContactId,
-		};
-
-		socket.emit('send msg', payload);
+		fetch(`${process.env.REACT_APP_API_URL}/api/messages`, {
+			method: 'POST',
+			headers: {
+				'content-type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			body: JSON.stringify({
+				message: composeMessageRef.current.value,
+				sender: id,
+				receiver: activeContactId,
+			}),
+		})
+			.then((response) => response.json())
+			.then((result) => {
+				if (!(result.status === 'OK')) {
+					dispatch(deleteLastMessage());
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 
 		document.querySelector('#new-msg-input').value = '';
 	}
 
 	useEffect(() => {
 		const listener = (payload) => {
-			callSetMessages(false, payload.message);
+			dispatch(setMessage({ isOwner: false, message: payload.message }));
 		};
 
 		socket.on('receive msg', listener);
 
-		setMessageItems(
-			messages.map((message) => {
-				const componentKey = uuid();
+		if (messages.length === 0) {
+			setmessageWidget(
+				<p>Send a message to {activeContactName} start convertion</p>
+			);
+		} else {
+			setmessageWidget(
+				messages.map((message) => {
+					const componentKey = uuid();
 
-				return (
-					<MessageItem
-						key={componentKey}
-						value={message}
-					/>
-				);
-			})
-		);
+					return (
+						<MessageItem
+							key={componentKey}
+							value={message}
+						/>
+					);
+				})
+			);
+		}
 
 		return () => {
 			socket.off('receive msg', listener);
@@ -78,12 +99,17 @@ export default function ChatWindow() {
 	return (
 		<div className='chat-body-container col-6'>
 			{!activeContactName ? (
-				<p>Select a contact to start conversation</p>
+				<>
+					<div className='empty-conversation-container'>
+						<p>Select a contact to start conversation</p>
+					</div>
+				</>
 			) : (
 				<>
 					<div className='chat-header'>{activeContactName}</div>
 					<div className='chat-history-container'>
-						{messageItems}
+						{isLoading ? <Loader /> : messageWidget}
+
 						<div ref={bottomRef} />
 					</div>
 					<div className='chat-input'>

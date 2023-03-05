@@ -17,31 +17,24 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 mongoose
-  .connect(`${process.env.MONGO_SERVER}`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log('MongoDB server online'))
-  .catch((err) =>
-    console.error(
-      'Error encountered when connecting with MongoDB server',
-      err.message
-    )
-  );
+	.connect(`${process.env.MONGO_SERVER}`, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	})
+	.then(() => console.log('MongoDB server online'))
+	.catch((err) =>
+		console.error(
+			'Error encountered when connecting with MongoDB server',
+			err.message
+		)
+	);
 
 /* ROUTES */
 app.use('/api/users', userRoutes);
 app.use('/api/messages', messageRoutes);
 
 const server = app.listen(port, () =>
-  console.log(`API running at localhost:${port}`)
+	console.log(`API running at localhost:${port}`)
 );
 
-/* SOCKET */
-
-app.io = socket(server, {
-  cors: {},
-  reconnectionDelayMax: 10000,
-});
-
-require('./io.js')(app);
+const io = require('./io.js').initialize(server);
