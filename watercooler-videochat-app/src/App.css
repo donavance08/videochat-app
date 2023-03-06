@@ -138,7 +138,7 @@ h2 {
 	width: 100%;
 	border: 1px solid #dadce0;
 	border-radius: 7px;
-	font-size: 16px;
+	font-size: 15px;
 	padding: 0 20px;
 	outline: none;
 	background: none;
@@ -169,6 +169,7 @@ h2 {
 	border: none;
 	background-color: var(--primaryColor);
 	color: var(--white);
+	border-radius: 5px;
 	border-radius: 6px;
 	cursor: pointer;
 	font-size: 16px;
@@ -192,8 +193,6 @@ h2 {
 
 /* CONTACTS component section 
 ========================= */
-.contacts-container {
-}
 
 .contacts-header-container {
 	margin: 10px 0px;
