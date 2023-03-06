@@ -11,7 +11,7 @@ export default function Home() {
 	return (
 		<>
 			<h1>This is HOME</h1>
-			<Loader />
+			<Loader size='big' />
 			<button onClick={() => handleClick()}>go to chat</button>
 		</>
 	);

@@ -285,7 +285,6 @@ h2 {
 	display: flex;
 	flex-direction: row;
 	width: 100%;
-	margin-left: 30px;
 }
 .chat-input {
 	display: flex;
@@ -294,6 +293,7 @@ h2 {
 	border-radius: 10px;
 	padding: 3px 3px 3px 10px;
 	width: calc(100% - 75px);
+	margin-left: 10px;
 }
 .chat-input > form {
 	display: inherit;
@@ -331,6 +331,10 @@ h2 {
 	background-color: transparent;
 }
 
+.emoji-button {
+	margin-left: 10px;
+}
+
 .input-button-svg > div {
 	max-height: 100%;
 }
@@ -355,12 +359,21 @@ em-emoji-picker {
 	align-items: center;
 }
 
-.loader {
-	border: 5px solid #f3f3f3;
-	border-top: 5px solid #3498db;
-	border-radius: 50%;
+.big-loader {
+	border: 5px solid var(--white);
 	width: 50px;
 	height: 50px;
+}
+
+.small-loader {
+	border: 3px solid var(--white);
+	width: 30px;
+	height: 30px;
+}
+
+.loader {
+	border-radius: 50%;
+	border-top: 5px solid var(--primaryColor);
 	animation: spin 1s linear infinite;
 }
 

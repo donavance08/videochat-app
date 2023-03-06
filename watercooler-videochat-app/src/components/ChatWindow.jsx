@@ -66,7 +66,7 @@ export default function ChatWindow() {
 				<>
 					<div className='chat-header'>{activeContactName}</div>
 					<div className='chat-history-container'>
-						{isLoading ? <Loader /> : messageWidget}
+						{isLoading ? <Loader size='big' /> : messageWidget}
 						<div ref={bottomRef}></div>
 					</div>
 					<ChatInput />

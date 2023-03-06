@@ -11,7 +11,6 @@ const promise = mongoose.connect(`${process.env.MONGO_SERVER}`, {
 });
 
 const storage = new GridFsStorage({
-	// url: dbConfig.url + dbConfig.database,
 	db: promise,
 	options: { useNewUrlParser: true, useUnifiedTopology: true },
 	file: (req, file) => {

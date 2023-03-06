@@ -14,7 +14,6 @@ const url = dbConfig.url;
 const mongoClient = new MongoClient(url);
 
 const uploadFiles = async (req, res) => {
-	console.log('upload file calling');
 	try {
 		await upload(req, res);
 		console.log('req.file', req.file);
@@ -38,66 +37,66 @@ const uploadFiles = async (req, res) => {
 	}
 };
 
-const getListFiles = async (req, res) => {
-	try {
-		await mongoClient.connect();
+// const getListFiles = async (req, res) => {
+// 	try {
+// 		await mongoClient.connect();
 
-		const database = mongoClient.db(dbConfig.database);
-		const images = database.collection(dbConfig.imgBucket + '.files');
+// 		const database = mongoClient.db(dbConfig.database);
+// 		const images = database.collection(dbConfig.imgBucket + '.files');
 
-		const cursor = images.find({});
+// 		const cursor = images.find({});
 
-		if ((await cursor.count()) === 0) {
-			return res.status(500).send({
-				message: 'No files found!',
-			});
-		}
+// 		if ((await cursor.count()) === 0) {
+// 			return res.status(500).send({
+// 				message: 'No files found!',
+// 			});
+// 		}
 
-		let fileInfos = [];
-		await cursor.forEach((doc) => {
-			fileInfos.push({
-				name: doc.filename,
-				url: baseUrl + doc.filename,
-			});
-		});
+// 		let fileInfos = [];
+// 		await cursor.forEach((doc) => {
+// 			fileInfos.push({
+// 				name: doc.filename,
+// 				url: baseUrl + doc.filename,
+// 			});
+// 		});
 
-		return res.status(200).send(fileInfos);
-	} catch (err) {
-		return res.status(err?.status || 500).send({
-			message: error.message,
-		});
-	}
-};
+// 		return res.status(200).send(fileInfos);
+// 	} catch (err) {
+// 		return res.status(err?.status || 500).send({
+// 			message: error.message,
+// 		});
+// 	}
+// };
 
-const download = async (req, res) => {
-	try {
-		await mongoClient.connect();
+// const download = async (req, res) => {
+// 	try {
+// 		await mongoClient.connect();
 
-		const database = mongoClient.db(dbConfig.database);
-		const bucket = new GridFsBucket(database, {
-			bucketName: dbConfig.imgBucket,
-		});
+// 		const database = mongoClient.db(dbConfig.database);
+// 		const bucket = new GridFsBucket(database, {
+// 			bucketName: dbConfig.imgBucket,
+// 		});
 
-		let downloadStream = bucket.openDownloadStreamByName(req.params.name);
+// 		let downloadStream = bucket.openDownloadStreamByName(req.params.name);
 
-		downloadStream.on('error', function (err) {
-			return res.send(err.status || 404).send({
-				message: 'Cannot download the Image!',
-			});
-		});
+// 		downloadStream.on('error', function (err) {
+// 			return res.send(err.status || 404).send({
+// 				message: 'Cannot download the Image!',
+// 			});
+// 		});
 
-		downloadStream.on('end', () => {
-			return res.send();
-		});
-	} catch (err) {
-		return res.status(err.status || 500).send({
-			message: err.message,
-		});
-	}
-};
+// 		downloadStream.on('end', () => {
+// 			return res.send();
+// 		});
+// 	} catch (err) {
+// 		return res.status(err.status || 500).send({
+// 			message: err.message,
+// 		});
+// 	}
+// };
 
 module.exports = {
 	uploadFiles,
-	getListFiles,
-	download,
+	// getListFiles,
+	// download,
 };

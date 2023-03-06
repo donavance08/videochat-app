@@ -1,7 +1,7 @@
-export default function Loader() {
+export default function Loader({ size }) {
 	return (
 		<div className='loader-container'>
-			<div className='loader'></div>
+			<div className={`${size}-loader loader`}></div>
 		</div>
 	);
 }

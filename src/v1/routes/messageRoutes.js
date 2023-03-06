@@ -7,15 +7,8 @@ const uploadController = require('../controllers/uploadController');
 
 router.post('/', auth.verify, messageController.addMessage);
 router.get('/:receiver', auth.verify, messageController.getConversationHistory);
-router.post(
-	'/upload',
-	(req, res, next) => {
-		console.log('going through upload');
-		next();
-	},
-	uploadController.uploadFiles
-);
-router.get('files', uploadController.getListFiles);
-router.get('/files/:name', uploadController.download);
+router.post('/upload', uploadController.uploadFiles);
+// router.get('files', uploadController.getListFiles);
+// router.get('/files/:name', uploadController.download);
 
 module.exports = router;
