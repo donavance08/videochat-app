@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-mongoose
+const mongo = mongoose
 	.connect(`${process.env.MONGO_SERVER}`, {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
@@ -29,6 +29,8 @@ mongoose
 		)
 	);
 
+const MongoClient = mongo.MongoClient;
+
 /* ROUTES */
 app.use('/api/users', userRoutes);
 app.use('/api/messages', messageRoutes);
@@ -38,3 +40,5 @@ const server = app.listen(port, () =>
 );
 
 const io = require('./io.js').initialize(server);
+
+module.exports = { MongoClient };
