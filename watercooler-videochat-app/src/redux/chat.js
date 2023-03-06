@@ -45,7 +45,7 @@ export const chatSlice = createSlice({
 		changeLoadingStatus: (state, action) => {
 			state.isLoading = action.payload;
 		},
-		resetState: (state) => {
+		resetChatState: (state) => {
 			state.activeContactId = '';
 			state.activeContactName = '';
 			state.messages = [];
@@ -62,7 +62,7 @@ export const {
 	setArrayOfMessages,
 	deleteLastMessage,
 	changeLoadingStatus,
-	resetState,
+	resetChatState,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

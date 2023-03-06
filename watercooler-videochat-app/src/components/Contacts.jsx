@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useContext, useEffect, useState } from 'react';
+import UserContext from '../UserContext';
 import ContactItem from './ContactItem';
 
 export default function Contact() {
-	const { token } = useSelector((state) => state.user);
+	const { token } = useContext(UserContext);
 	const [contacts, setContacts] = useState([]);
 
 	useEffect(() => {

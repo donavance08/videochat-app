@@ -6,18 +6,37 @@ import LandingPage from './pages/LandingPage';
 import Home from './pages/Home';
 import AppNavBar from './components/AppNavBar';
 import Chat from './pages/Chat';
-import { useSelector } from 'react-redux';
+import useLocalStorage from './customHooks.js/useLocalStorage';
 import './App.css';
-
 import Avatar from './components/Avatar';
 
 function App() {
-	const { token } = useSelector((state) => state.user);
+	const [token, setToken, clearToken] = useLocalStorage('token', '');
+	const [name, setName, clearName] = useLocalStorage('name', '');
+	const [id, setId, clearId] = useLocalStorage('id', '');
 	const [socket, setSocket] = useState();
+
+	const clearLocalStorage = () => {
+		clearToken();
+		clearName();
+		clearId();
+	};
 
 	return (
 		<div className='App'>
-			<UserProvider value={{ socket, setSocket }}>
+			<UserProvider
+				value={{
+					socket,
+					setSocket,
+					token,
+					setToken,
+					name,
+					setName,
+					id,
+					setId,
+					clearLocalStorage,
+				}}
+			>
 				<BrowserRouter>
 					<AppNavBar />
 					<Routes>

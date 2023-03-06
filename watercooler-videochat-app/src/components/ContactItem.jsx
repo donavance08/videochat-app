@@ -1,5 +1,5 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useContext } from 'react';
+import { useDispatch } from 'react-redux';
 import {
 	setActiveContactId,
 	setActiveContactName,
@@ -7,9 +7,10 @@ import {
 	setArrayOfMessages,
 	changeLoadingStatus,
 } from '../redux/chat';
+import UserContext from '../UserContext';
 
 export default function ContactItem({ data }) {
-	const { token, id } = useSelector((state) => state.user);
+	const { token, id } = useContext(UserContext);
 	const dispatch = useDispatch();
 
 	function handleClick(event) {

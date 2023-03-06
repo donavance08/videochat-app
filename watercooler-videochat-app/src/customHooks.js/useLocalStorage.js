@@ -1,23 +1,41 @@
-export default function useLocalStorage(name) {
-	const getLocalStorage = async () => {
+import { useEffect, useState } from 'react';
+
+export default function useLocalStorage(key, defaultValue = null) {
+	const [value, setValue] = useState(() => {
 		try {
-			const localStore = await localStorage.getItem(name);
-			if (localStore != null) {
-				return JSON.parse(localStore);
+			const saved = localStorage.getItem(key);
+			if (saved !== null) {
+				return JSON.parse(saved);
 			}
 
-			return null;
-		} catch (err) {
-			console.error(err);
-			return null;
+			localStorage.setItem(key, JSON.stringify(defaultValue));
+			return defaultValue;
+		} catch {
+			localStorage.setItem(key, JSON.stringify(defaultValue));
+			return defaultValue;
 		}
+	});
+
+	const clearValue = () => {
+		setValue(() => JSON.parse(null));
 	};
 
-	const setLocalStorage = (payload) => {
-		localStorage.setItem(name, payload);
-	};
+	useEffect(() => {
+		if (value === null) {
+			localStorage.removeItem(key);
+			return;
+		}
 
-	const deleteFromLocalStorage = () => {
-		localStorage.removeItem(name);
-	};
+		try {
+			const rawValue = JSON.stringify(value);
+			localStorage.setItem(key, rawValue);
+		} catch (error) {
+			console.error(
+				`The value you are trying to save as ${key} to localStorage is invalid`
+			);
+			console.error(error);
+		}
+	}, [value, key]);
+
+	return [value, setValue, clearValue];
 }

@@ -2,26 +2,24 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import { useDispatch, useSelector } from 'react-redux';
-import { setToken, setNickname } from '../redux/user';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import UserContext from '../UserContext';
-import { resetState } from '../redux/chat';
+import { resetChatState } from '../redux/chat';
 
 /* Incomplete*/
 
 export default function AppNavBar() {
-	const { nickname } = useSelector((state) => state.user);
-	const { socket } = useContext(UserContext);
+	const { socket, clearLocalStorage, name } = useContext(UserContext);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+
 	const handleLogout = (event) => {
-		dispatch(setToken(''));
-		dispatch(setNickname(''));
-		dispatch(resetState());
+		dispatch(resetChatState());
 
 		socket?.disconnect();
+		clearLocalStorage();
 
 		navigate('/');
 	};
@@ -37,12 +35,12 @@ export default function AppNavBar() {
 				</Navbar.Brand>
 				<Navbar.Toggle />
 
-				{nickname ? (
+				{name ? (
 					<Navbar.Collapse className='justify-content-end'>
 						<Nav className='ms-auto'>
 							<NavDropdown
 								className='text-light'
-								title={`${nickname}`}
+								title={`${name}`}
 								id='basic-nav-dropdown'
 							>
 								<NavDropdown.Item

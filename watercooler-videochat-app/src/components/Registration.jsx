@@ -1,7 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setToken, setNickname } from '../redux/user';
+import React, { useContext, useEffect, useRef } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
+import UserContext from '../UserContext';
 
 export default function Registration() {
 	const nicknameRef = useRef();
@@ -9,31 +8,25 @@ export default function Registration() {
 	const passwordRef = useRef();
 	const confirmPasswordRef = useRef();
 	const phoneNumberRef = useRef();
-	const dispatch = useDispatch();
+
 	const navigate = useNavigate(Navigate);
-	const { token } = useSelector((state) => state.user);
+	const { token, setToken, setName } = useContext(UserContext);
 
 	useEffect(() => {
-		console.count('useEffect');
 		if (token) {
-			console.log('token', token);
 			navigate('/');
 		}
 	}, [token]);
 
 	const matchPassword = () => {
-		if (passwordRef.current.value === confirmPasswordRef.current.value) {
-			return true;
-		}
-
-		return false;
+		return passwordRef.current.value === confirmPasswordRef.current.value;
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
 		if (!matchPassword()) {
-			//put badge error
+			// ADD badge error
 			console.log('passwords do not match');
 			return;
 		}
@@ -53,8 +46,8 @@ export default function Registration() {
 			.then((response) => response.json())
 			.then((result) => {
 				if (result.status === 'OK') {
-					dispatch(setToken(result.data.token));
-					dispatch(setNickname(result.data.nickname));
+					setToken(() => result.data.token);
+					setName(() => result.data.nickname);
 					return;
 				}
 				console.log(result.message);

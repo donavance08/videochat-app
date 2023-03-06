@@ -1,20 +1,18 @@
-import React, { useRef, useCallback, useState, useEffect } from 'react';
+import React, { useRef, useContext, useState, useEffect } from 'react';
 import { ReactSVG } from 'react-svg';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setMessage, deleteLastMessage } from '../redux/chat';
+import UserContext from '../UserContext';
 
 export default function ChatInput() {
+	const { id, token } = useContext(UserContext);
 	const [showEmojis, setShowEmojis] = useState(false);
-	const { id, token } = useSelector((state) => state.user);
-	const { activeContactName, activeContactId } = useSelector(
-		(state) => state.chat
-	);
+	const { activeContactId } = useSelector((state) => state.chat);
 	const emojiModalRef = useRef();
 	const inputMessageRef = useRef();
 	const emojiButtonRef = useRef();
-
 	const dispatch = useDispatch();
 
 	// function to handle clicking of submit button || On enter
