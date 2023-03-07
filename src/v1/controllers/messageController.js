@@ -4,16 +4,25 @@ const messageServices = require('../services/messageServices');
 
 module.exports.addMessage = (req, res) => {
 	// const errors = validationResult(req);
-	const { body } = req;
+	const {
+		body: { message },
+		params: { receiver },
+	} = req;
 
-	const senderId = auth.decode(req.headers.authorization).id;
+	const filename = res.file ? res.file.filename : undefined;
+
+	const sender = auth.decode(req.headers.authorization).id;
+
+	// if (req.file) {
+	// 	const { file } = req
+	// }
 
 	// if (!errors.isEmpty()) {
 	// 	return res.status(400).send({ errors: errors.array() });
 	// }
 
 	messageServices
-		.addMessage(senderId, body.receiver, body.message)
+		.addMessage({ sender, receiver, message, filename })
 		.then((result) => {
 			res
 				.status(200)

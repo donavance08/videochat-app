@@ -55,3 +55,5 @@ module.exports.fireReceiveMsgEvent = (payload) => {
 		senderSocket.to(receiverSocket.id).emit('receive msg', payload);
 	}
 };
+
+module.exports.fireImageSendEvent = (payload) => {};

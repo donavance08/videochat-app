@@ -395,7 +395,7 @@ em-emoji-picker {
 	align-items: center;
 }
 
-.message-item-container > div {
+.text-container{
 	background-color: var(--primaryColor);
 	border-radius: 5px;
 	max-width: 80%;
@@ -421,5 +421,13 @@ em-emoji-picker {
 
 .left-message {
 	justify-content: left;
+}
+
+.image-container {
+	max-width: 80%;
+}
+
+.image {
+	width: 100%;
 }
 

@@ -3,17 +3,20 @@ const Message = require('../models/Message');
 const io = require('../../../io');
 const ObjectId = require('mongoose').Types.ObjectId;
 
-module.exports.addMessage = async (fromId, receiverId, message) => {
+module.exports.addMessage = async ({ sender, receiver, message, filename }) => {
 	const newMessage = new Message({
-		message: message,
-		sender: fromId,
-		receiver: receiverId,
+		filename,
+		message,
+		sender,
+		receiver,
 		dateCreated: new Date(),
 	});
 
 	try {
 		const savedMessage = await messageDB.addMessage(newMessage);
+
 		io.fireReceiveMsgEvent(savedMessage);
+
 		return savedMessage;
 	} catch (err) {
 		console.log(err);

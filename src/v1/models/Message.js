@@ -6,6 +6,7 @@ const messageSchema = new mongoose.Schema({
 		minLength: 1,
 		maxLength: 500,
 	},
+	filename: { type: String, index: 1 },
 	sender: { type: mongoose.ObjectId, index: true },
 	receiver: { type: mongoose.ObjectId, index: true },
 	dateCreated: { type: Date, default: new Date() },

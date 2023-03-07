@@ -7,7 +7,7 @@ import MessageItem from './MessageItem';
 import Loader from '../utils/Loader';
 import ChatInput from './ChatInput';
 
-export default function ChatWindow() {
+export default function ChatHistory() {
 	const { activeContactName, messages, isLoading } = useSelector(
 		(state) => state.chat
 	);
@@ -20,6 +20,9 @@ export default function ChatWindow() {
 	useEffect(() => {
 		const listener = (payload) => {
 			console.log('recieved message', payload);
+			if (payload?.filename) {
+				dispatch(setMessage({ isOwner: false, image: payload.filename }));
+			}
 			dispatch(setMessage({ isOwner: false, message: payload.message }));
 		};
 

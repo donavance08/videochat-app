@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import UserContext from '../UserContext';
 import Contact from '../components/Contacts';
-import ChatWindow from '../components/ChatWindow';
+import ChatHistory from '../components/ChatHistory';
 import { useNavigate } from 'react-router-dom';
 
 // import useWebSocket from 'react-use-websocket';
@@ -21,7 +21,7 @@ export default function Chat() {
 	return (
 		<div className='chat-page-container d-flex flex-row '>
 			<Contact />
-			<ChatWindow activeChat='maria' />
+			<ChatHistory activeChat='maria' />
 		</div>
 	);
 }

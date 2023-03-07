@@ -24,6 +24,16 @@ export const chatSlice = createSlice({
 			const { data, userId } = action.payload;
 
 			const organizedMessages = data.map((datum) => {
+				// if message is an image and user logged is owner
+				if (datum.filename && datum.sender.toString() === userId) {
+					return { isOwner: true, image: datum.filename };
+				}
+
+				//if message is image and user logged is NOT owner
+				if (datum.filename) {
+					return { isOwner: false, image: datum.filename };
+				}
+
 				if (datum.sender.toString() === userId) {
 					return { isOwner: true, message: datum.message };
 				}

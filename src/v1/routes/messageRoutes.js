@@ -5,10 +5,15 @@ const auth = require('../../../auth');
 const messageController = require('../controllers/messageController');
 const uploadController = require('../controllers/uploadController');
 
-router.post('/', auth.verify, messageController.addMessage);
+router.post('/:receiver', auth.verify, messageController.addMessage);
+router.get('/files', uploadController.getListFiles);
 router.get('/:receiver', auth.verify, messageController.getConversationHistory);
-router.post('/upload', uploadController.uploadFiles);
-// router.get('files', uploadController.getListFiles);
-// router.get('/files/:name', uploadController.download);
+router.post(
+	'/upload/:receiver',
+	uploadController.uploadFiles,
+	messageController.addMessage
+);
+
+router.get('/files/:name', uploadController.download);
 
 module.exports = router;

@@ -1,10 +1,16 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useContext } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { ReactSVG } from 'react-svg';
+import { setMessage } from '../redux/chat';
+import UserContext from '../UserContext';
 import Loader from '../utils/Loader';
 
 export default function UploadFile() {
 	const inputFileRef = useRef();
 	const [isLoading, setIsLoading] = useState(false);
+	const { activeContactId } = useSelector((state) => state.chat);
+	const { token } = useContext(UserContext);
+	const dispatch = useDispatch();
 
 	const handleClick = () => {
 		inputFileRef.current.click();
@@ -17,17 +23,27 @@ export default function UploadFile() {
 		formData.append('file', inputFileRef.current.files[0]);
 
 		setIsLoading(() => true);
-		fetch(`${process.env.REACT_APP_API_URL}/api/messages/upload`, {
-			method: 'POST',
-			body: formData,
-		})
+		fetch(
+			`${process.env.REACT_APP_API_URL}/api/messages/upload/${activeContactId}`,
+			{
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+				body: formData,
+			}
+		)
 			.then((response) => response.json())
 			.then((result) => {
-				console.log(result);
+				if (result.status === 'OK') {
+					console.log(result);
+					dispatch(setMessage({ isOwner: true, image: result.data.filename }));
+				}
+
 				setIsLoading(() => false);
 			})
 			.catch((err) => {
-				console.err(err);
+				console.error(err);
 				setIsLoading(() => false);
 			});
 	};

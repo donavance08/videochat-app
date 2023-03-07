@@ -28,7 +28,7 @@ export default function ChatInput() {
 			setMessage({ isOwner: true, message: inputMessageRef.current.value })
 		);
 
-		fetch(`${process.env.REACT_APP_API_URL}/api/messages`, {
+		fetch(`${process.env.REACT_APP_API_URL}/api/messages/${activeContactId}`, {
 			method: 'POST',
 			headers: {
 				'content-type': 'application/json',

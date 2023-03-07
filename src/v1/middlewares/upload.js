@@ -5,7 +5,7 @@ const dbConfig = require('../configs/db');
 require('dotenv').config();
 const mongoose = require('mongoose');
 
-const promise = mongoose.connect(`${process.env.MONGO_SERVER}`, {
+const promise = mongoose.connect(dbConfig.url + dbConfig.database, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 });
