@@ -1,7 +1,8 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setActiveContactId, setActiveContactName } from '../redux/chat';
 
 export default function ContactItem({ data }) {
+	const { activeContactId } = useSelector((state) => state.chat);
 	const dispatch = useDispatch();
 
 	function handleClick(event) {

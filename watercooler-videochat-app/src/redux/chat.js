@@ -1,23 +1,27 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const initialState = {
+	activeContactId: '',
+	activeContactName: '',
+	messages: [],
+	isLoading: true,
+};
+
 export const chatSlice = createSlice({
 	name: 'chat',
-	initialState: {
-		activeContactId: '',
-		activeContactName: '',
-		messages: [],
-		isLoading: true,
-	},
+	initialState,
 	reducers: {
 		setActiveContactId: (state, action) => {
-			state.activeContactId = action.payload;
+			return { ...state, activeContactId: action.payload };
 		},
 		setActiveContactName: (state, action) => {
-			state.activeContactName = action.payload;
+			return { ...state, activeContactName: action.payload };
 		},
 
 		setMessage: (state, action) => {
-			state.messages = [...state.messages, action.payload];
+			const messages = [...state.messages, action.payload];
+
+			return { ...state, messages: messages };
 		},
 
 		setArrayOfMessages: (state, action) => {
@@ -41,7 +45,7 @@ export const chatSlice = createSlice({
 				return { isOwner: false, message: datum.message };
 			});
 
-			state.messages = organizedMessages;
+			return { ...state, messages: organizedMessages };
 		},
 
 		deleteLastMessage: (state) => {
@@ -54,13 +58,10 @@ export const chatSlice = createSlice({
 		},
 
 		changeLoadingStatus: (state, action) => {
-			state.isLoading = action.payload;
+			return { ...state, isLoading: action.payload };
 		},
 		resetChatState: (state) => {
-			state.activeContactId = '';
-			state.activeContactName = '';
-			state.messages = [];
-			state.isLoading = true;
+			return initialState;
 		},
 	},
 });
