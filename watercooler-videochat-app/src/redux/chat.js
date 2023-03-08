@@ -45,11 +45,12 @@ export const chatSlice = createSlice({
 		},
 
 		deleteLastMessage: (state) => {
-			state.messages = state.messages.slice(0, state.messages.length - 1);
+			const newMessages = state.messages.slice(0, state.messages.length - 1);
+			return { ...state, messages: newMessages };
 		},
 
 		clearMessages: (state) => {
-			state.messages = [];
+			return { ...state, messages: [] };
 		},
 
 		changeLoadingStatus: (state, action) => {

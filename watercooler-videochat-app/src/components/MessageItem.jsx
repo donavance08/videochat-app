@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import UserContext from '../UserContext';
 import Loader from '../utils/Loader';
 
-export default function MessageItem({ value }) {
+export default function MessageItem({ value, bottom }) {
 	const { isOwner, message, image } = value;
 	const { token } = useContext(UserContext);
 	const [imageObjectURL, setImageObjectURL] = useState();
@@ -19,6 +19,7 @@ export default function MessageItem({ value }) {
 				const imageBlob = await response.blob();
 				setImageObjectURL(URL.createObjectURL(imageBlob));
 				setIsLoading(false);
+				bottom.current?.scrollIntoView();
 			});
 		}
 	}, [message]);

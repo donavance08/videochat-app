@@ -18,7 +18,7 @@ export default function AppNavBar() {
 	const handleLogout = (event) => {
 		dispatch(resetChatState());
 
-		socket?.disconnect();
+		socket?.current.disconnect();
 		clearLocalStorage();
 
 		navigate('/');

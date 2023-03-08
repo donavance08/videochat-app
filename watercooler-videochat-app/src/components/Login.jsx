@@ -7,8 +7,7 @@ import useLocalStorage from '../customHooks.js/useLocalStorage';
 // adding localstorage hook and persist with redux
 
 export default function Login() {
-	const { setSocket, token, setToken, setName, setId } =
-		useContext(UserContext);
+	const { token, setToken, setName, setId } = useContext(UserContext);
 
 	const navigate = useNavigate(Navigate);
 
@@ -34,8 +33,6 @@ export default function Login() {
 					setToken(() => result.data.token);
 					setName(() => result.data.nickname);
 					setId(() => result.data.id);
-
-					setSocket(io(`${process.env.REACT_APP_API_URL}`));
 
 					return;
 				}

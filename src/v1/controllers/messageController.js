@@ -9,7 +9,7 @@ module.exports.addMessage = (req, res) => {
 		params: { receiver },
 	} = req;
 
-	const filename = res.file ? res.file.filename : undefined;
+	const filename = req.file ? req.file.filename : undefined;
 
 	const sender = auth.decode(req.headers.authorization).id;
 
