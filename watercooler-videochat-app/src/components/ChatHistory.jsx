@@ -20,27 +20,17 @@ export default function ChatHistory() {
 	const bottomRef = useRef();
 
 	useEffect(() => {
-		if (messages.length === 0) {
-			setMessageWidget(
-				<div className='placeholder-div'>
-					<p>Start a conversation by sending a message</p>
-				</div>
-			);
-		} else {
-			setMessageWidget(
-				messages.map((message) => {
-					const key = uuid();
-
-					return (
-						<MessageItem
-							bottom={bottomRef}
-							key={key}
-							value={message}
-						/>
-					);
-				})
-			);
-		}
+		setMessageWidget(
+			messages.map((message) => {
+				return (
+					<MessageItem
+						bottom={bottomRef}
+						key={uuid()}
+						value={message}
+					/>
+				);
+			})
+		);
 	}, [messages]);
 
 	useEffect(() => {
@@ -80,8 +70,22 @@ export default function ChatHistory() {
 				<>
 					<div className='chat-header'>{activeContactName}</div>
 					<div className='chat-history-container'>
-						{isLoading ? <Loader size='big' /> : messageWidget}
-						<div ref={bottomRef}></div>
+						{isLoading ? (
+							<Loader size='big' />
+						) : (
+							<>
+								{messages.length === 0 ? (
+									<div className='placeholder-div'>
+										<p>Start a conversation by sending a message</p>
+									</div>
+								) : (
+									<>
+										{messageWidget}
+										<div ref={bottomRef}></div>
+									</>
+								)}
+							</>
+						)}
 					</div>
 					<ChatInput />
 				</>
