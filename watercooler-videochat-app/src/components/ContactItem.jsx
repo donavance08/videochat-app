@@ -1,9 +1,10 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 import { setActiveContactId, setActiveContactName } from '../redux/chat';
 import { useDispatch } from 'react-redux';
 import { customAlphabet } from 'nanoid';
 import { ReactSVG } from 'react-svg';
 import Loader from '../utils/Loader';
+import { useNavigate } from 'react-router-dom';
 /***
  * This component handles the functions under each item in the contact list
  * */
@@ -18,14 +19,20 @@ export default function ContactItem({ data }) {
 	const subButtonsRef = useRef();
 	const contactButtonRef = useRef();
 	const [contactClick, setContactClick] = useState();
+	const navigate = useNavigate();
 	const elementId = generateValidElementId();
 
 	// function to handle user click on a contact
-	function handleClick(event) {
+	function handleContactClick(event) {
 		document.body.addEventListener('click', onClickOutside);
 		setContactClick((state) => !state);
+	}
+
+	function handleSubButtonClick({ route }) {
 		dispatch(setActiveContactId(data._id));
 		dispatch(setActiveContactName(data.nickname));
+
+		navigate(`/home/${route}`);
 	}
 
 	// create an elementId and make sure it starts with a letter
@@ -68,7 +75,7 @@ export default function ContactItem({ data }) {
 		<div className='contact-item-container'>
 			<button
 				ref={contactButtonRef}
-				onClick={(e) => handleClick(e)}
+				onClick={(e) => handleContactClick(e)}
 			>
 				{data.nickname}
 			</button>
@@ -83,6 +90,7 @@ export default function ContactItem({ data }) {
 							className='input-button-svg'
 							src='/icons/chat-button.svg'
 							loading={() => <Loader size='small' />}
+							onClick={() => handleSubButtonClick({ route: 'chat' })}
 						/>
 					</button>
 					<button className='contact-sub-button'>
@@ -90,6 +98,7 @@ export default function ContactItem({ data }) {
 							className='input-button-svg'
 							src='/icons/video-chat-button.svg'
 							loading={() => <Loader size='small' />}
+							onClick={() => handleSubButtonClick({ route: 'video-chat' })}
 						/>
 					</button>
 				</div>

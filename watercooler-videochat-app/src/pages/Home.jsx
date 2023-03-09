@@ -9,7 +9,7 @@ import { setMessage } from '../redux/chat';
 import VideoChat from '../components/VideoChat';
 import Peer from 'simple-peer';
 
-export default function Chat() {
+export default function Chat({ component }) {
 	const { socket, token, id, name } = useContext(UserContext);
 	const { activeContactId, activeContactName } = useSelector(
 		(state) => state.chat
@@ -131,8 +131,11 @@ export default function Chat() {
 	return (
 		<div className='chat-page-container d-flex flex-row '>
 			<Contacts />
-			<ChatHistory />
-			{/* <VideoChat personalVideoSrc={personalStream} /> */}
+			{component === 'chat' ? (
+				<ChatHistory />
+			) : (
+				<VideoChat personalVideoSrc={personalStream} />
+			)}
 		</div>
 	);
 }

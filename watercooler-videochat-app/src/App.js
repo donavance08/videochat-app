@@ -54,6 +54,14 @@ function App() {
 							path='/users/registration'
 							element={<LandingPage component='register' />}
 						/>
+						<Route
+							path='/home/video-chat'
+							element={<Home component='videoChat' />}
+						/>
+						<Route
+							path='/home/chat'
+							element={<Home component='chat' />}
+						/>
 					</Routes>
 				</BrowserRouter>
 			</UserProvider>
