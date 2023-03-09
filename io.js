@@ -10,15 +10,13 @@ module.exports.initialize = (server) => {
 	});
 
 	io.on('connection', (socket) => {
-		socket.on('connect socket', (payload) => {
-			// console.log('socket connected', payload.id);
-			connectedUsers.set(payload.id, socket);
-			socket.userId = payload.id;
-		});
+		connectedUsers.set(socket.handshake.headers.id, socket);
+		socket.userId = socket.handshake.headers.id;
+
+		socket.emit('connection', { message: 'Socket online' });
+		// console.log(connectedUsers);
 
 		socket.on('send msg', (payload) => {
-			console.log('send msg triggered');
-
 			const receiverSocket = connectedUsers.get(payload.receiver);
 
 			if (receiverSocket) {
@@ -27,8 +25,6 @@ module.exports.initialize = (server) => {
 					sender: payload.sender,
 				});
 			}
-
-			//ADD message to database
 		});
 
 		socket.on('disconnect', () => {
@@ -37,6 +33,16 @@ module.exports.initialize = (server) => {
 			if (connectedUsers.delete(socket.userId)) {
 				console.log(`${id} disconnected from server`);
 			}
+		});
+
+		socket.on('initiateCall', (payload) => {
+			io.to(payload.callee).emit('initiateCall', payload);
+
+			// need signal data and caller
+		});
+
+		socket.on('acceptCall', (payload) => {
+			io.to(payload.caller).emit('acceptCall', payload.signal);
 		});
 	});
 
@@ -55,5 +61,3 @@ module.exports.fireReceiveMsgEvent = (payload) => {
 		senderSocket.to(receiverSocket.id).emit('receive msg', payload);
 	}
 };
-
-module.exports.fireImageSendEvent = (payload) => {};

@@ -14,6 +14,8 @@ export default function UploadFile() {
 
 	const handleClick = () => {
 		inputFileRef.current.click();
+		console.log('clicked');
+		console.log(inputFileRef.current);
 	};
 
 	const handleChange = (event) => {

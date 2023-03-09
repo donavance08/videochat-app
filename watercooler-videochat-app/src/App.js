@@ -4,7 +4,7 @@ import { UserProvider } from './UserContext';
 import { useRef } from 'react';
 import LandingPage from './pages/LandingPage';
 import AppNavBar from './components/AppNavBar';
-import Chat from './pages/Chat';
+import Home from './pages/Home';
 import useLocalStorage from './customHooks.js/useLocalStorage';
 import './App.css';
 
@@ -39,11 +39,11 @@ function App() {
 					<Routes>
 						<Route
 							path='/'
-							element={token ? <Chat /> : <Navigate to='/users/login' />}
+							element={token ? <Home /> : <Navigate to='/users/login' />}
 						/>
 						<Route
-							path='/chat'
-							element={token ? <Chat /> : <Navigate to='/users/login' />}
+							path='/home'
+							element={token ? <Home /> : <Navigate to='/users/login' />}
 						/>
 						<Route
 							path='/users/login'
@@ -51,7 +51,7 @@ function App() {
 						/>
 
 						<Route
-							path='/users/'
+							path='/users/registration'
 							element={<LandingPage component='register' />}
 						/>
 					</Routes>

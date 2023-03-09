@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import UserContext from '../UserContext';
 import ContactItem from './ContactItem';
+import { v4 as uuid } from 'uuid';
 
 export default function Contact() {
 	const { token } = useContext(UserContext);
@@ -19,6 +20,7 @@ export default function Contact() {
 					setContacts(
 						result.data.map((contact) => (
 							<ContactItem
+								elementId={uuid()}
 								key={contact._id}
 								data={contact}
 							/>

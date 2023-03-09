@@ -216,8 +216,30 @@ h2 {
 	padding: 10px;
 }
 
-.contact-item-container > button:hover {
+.hstack {
+	display: flex;
+	justify-content: center;
+}
+
+.contact-sub-button {
+	font-weight: 600;
+	line-height: 1.5rem;
+	border-radius: 50%;
+	min-width: 50px;
+	min-height: 50px;
 	background-color: var(--primaryColor);
+	color: var(--white);
+	border: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.contact-sub-button:hover {
+	border: 0.15rem solid darkviolet;
+}
+
+.injected-svg {
 	color: var(--white);
 }
 
@@ -395,7 +417,7 @@ em-emoji-picker {
 	align-items: center;
 }
 
-.text-container{
+.text-container {
 	background-color: var(--primaryColor);
 	border-radius: 5px;
 	max-width: 80%;
@@ -431,3 +453,23 @@ em-emoji-picker {
 	width: 100%;
 }
 
+/* VIDEOCHAT component
+===================== */
+
+.video-chat-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: end;
+}
+.personal-video-container {
+	max-width: 200px;
+	height: 100%;
+}
+
+.personal-video-container > video {
+	width: 100%;
+}
+
+.contact-video-container {
+	max-width: 100%;
+}
