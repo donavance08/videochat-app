@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import VideoChatControl from './VideoChatControl';
 
 export default function VideoChat({ contactVideoSrc, personalVideoSrc }) {
 	const { activeContactName } = useSelector((state) => state.chat);
@@ -23,6 +24,7 @@ export default function VideoChat({ contactVideoSrc, personalVideoSrc }) {
 			<div className='contact-video-container'>
 				<video ref={contactVideoRef}></video>
 			</div>
+			<VideoChatControl />
 		</div>
 	);
 }

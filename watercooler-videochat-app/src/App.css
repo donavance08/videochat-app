@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@1,300&family=Quicksand:wght@300&display=swap');
 :root {
 	--primaryColor: #0096ff;
+	--red: #dc1818;
 	--white: white;
 }
 
@@ -28,6 +29,7 @@ a {
 
 h2 {
 	font-size: 25px;
+	text-align: center;
 }
 
 .cursor-pointer {
@@ -198,9 +200,6 @@ h2 {
 	margin: 10px 0px;
 }
 
-.contacts-header-container > h2 {
-	text-align: center;
-}
 .contact-item-container {
 	box-sizing: border-box;
 	margin: 0px;
@@ -216,7 +215,7 @@ h2 {
 	padding: 10px;
 }
 
-.hstack {
+.contact-options-container {
 	display: flex;
 	justify-content: center;
 }
@@ -460,16 +459,64 @@ em-emoji-picker {
 	display: flex;
 	flex-direction: column;
 	justify-content: end;
+	height: 100%;
 }
 .personal-video-container {
 	max-width: 200px;
-	height: 100%;
+	display: inline;
 }
 
 .personal-video-container > video {
 	width: 100%;
 }
 
+.video-chat-control-container {
+	min-height: 120px;
+	padding-bottom: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: end;
+}
+
 .contact-video-container {
+	max-width: 80%;
+	height: 100%;
+}
+
+.call-buttons-container {
+	justify-content: end;
+}
+
+.call-control-container {
+	display: flex;
+}
+
+.call-control {
+	background-color: transparent;
+	overflow: visible;
+	border: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+}
+
+.call-control.small-button {
+	max-width: 70px;
+	max-height: 70px;
+	background-color: var(--primaryColor);
+}
+
+.call-control-svg > div > svg {
 	max-width: 100%;
+}
+
+.call-control-large-svg > div > svg {
+	max-width: 100%;
+}
+
+.call-control.large-button {
+	max-width: 100px;
+	max-height: 100px;
+	background-color: var(--red);
 }

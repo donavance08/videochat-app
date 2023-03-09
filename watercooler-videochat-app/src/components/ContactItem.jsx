@@ -81,7 +81,7 @@ export default function ContactItem({ data }) {
 			</button>
 			{contactClick ? (
 				<div
-					className='hstack gap-1'
+					className='hstack gap-1 contact-options-container'
 					ref={subButtonsRef}
 					id={elementId}
 				>
