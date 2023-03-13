@@ -3,6 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
 	activeContactId: '',
 	activeContactName: '',
+	prevActiveContactId: '',
+	prevActiveContactName: '',
 	messages: [],
 	isLoading: true,
 };
@@ -12,10 +14,18 @@ export const chatSlice = createSlice({
 	initialState,
 	reducers: {
 		setActiveContactId: (state, action) => {
-			return { ...state, activeContactId: action.payload };
+			return {
+				...state,
+				prevActiveContactId: state.activeContactId,
+				activeContactId: action.payload,
+			};
 		},
 		setActiveContactName: (state, action) => {
-			return { ...state, activeContactName: action.payload };
+			return {
+				...state,
+				prevActiveContactName: state.activeContactName,
+				activeContactName: action.payload,
+			};
 		},
 
 		setMessage: (state, action) => {

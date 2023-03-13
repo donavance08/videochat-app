@@ -7,58 +7,168 @@ import io from 'socket.io-client';
 import { useDispatch, useSelector } from 'react-redux';
 import { setMessage } from '../redux/chat';
 import VideoChat from '../components/VideoChat';
-import Peer from 'simple-peer';
+import PendingCallDialog from '../components/PendingCallDialog';
+import CancelCallDialog from '../components/CancelCallDialog';
+import { setActiveContactId, setActiveContactName } from '../redux/chat';
+const SimplePeer = require('simple-peer');
 
 export default function Chat({ component }) {
-	const { socket, token, id, name } = useContext(UserContext);
-	const { activeContactId, activeContactName } = useSelector(
-		(state) => state.chat
-	);
+	const {
+		socket,
+		token,
+		id,
+		personalStream,
+		setContactStream,
+		showPendingCallDialog,
+		setShowCallDialog,
+		callOngoing,
+		setCallOngoing,
+		callInitiator,
+		setCallInitiator,
+		showCancelCallDialog,
+		setShowCancelCallDialog,
+		connectionRef,
+		setPersonalStream,
+	} = useContext(UserContext);
+	const { activeContactId, prevActiveContactName, prevActiveContactId } =
+		useSelector((state) => state.chat);
+
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const [personalStream, setPersonalStream] = useState();
-	const [contactStream, setContactStream] = useState();
-	const [recievingCall, setReceivingCall] = useState();
-	const [contactId, setContactId] = useState();
-	const [contactName, setContactName] = useState();
+
 	const [contactSignal, setContactSignal] = useState();
-	const [callAccepted, setCallAccepted] = useState();
-	const [idToCall, setIdToCall] = useState();
-	const [callEnded, setCallEnded] = useState();
+	const [cancelReason, setCancelReason] = useState();
 
-	// const personalVideo = useRef();
-	// const contactVideo = useRef();
-	const connectionRef = useRef();
+	/**
+	 * handler for the answercall button of the incoming call dialog
+	 */
+	const answerCall = () => {
+		setCallOngoing(true);
 
-	useEffect(() => {
-		navigator.mediaDevices
-			.getUserMedia({ video: true, audio: true })
-			.then((stream) => {
-				setPersonalStream(stream);
+		console.log('personal Stream', personalStream);
+		const peer = new SimplePeer({
+			initiator: false,
+			trickle: false,
+			stream: personalStream,
+		});
+
+		peer.on('signal', (payload) => {
+			socket.current.emit('acceptCall', {
+				signal: payload,
+				to: activeContactId,
 			});
+		});
 
+		peer.on('stream', (stream) => {
+			setContactStream(stream);
+		});
+
+		peer.signal(contactSignal);
+		connectionRef.current = peer;
+	};
+
+	/**
+	 * cancel/decline call handler
+	 * if callee declined call, cancel call with reason declined
+	 * if call is ongoing and one of the other drops call, then call reason cancelled
+	 * if caller cancelled call before callee responded, call reason cancelled
+	 */
+	const declineCall = () => {
+		if (!callInitiator && !callOngoing) {
+			socket.current.emit('cancelCall', {
+				to: activeContactId,
+				reason: 'declined',
+			});
+		} else {
+			socket.current.emit('cancelCall', {
+				to: activeContactId,
+				reason: 'cancelled',
+			});
+			if (callOngoing) {
+				console.log(connectionRef.current);
+				connectionRef.current.destroy();
+				setCallOngoing(false);
+			}
+		}
+
+		setShowCallDialog(false);
+		setContactSignal(null);
+		setContactStream(null);
+	};
+
+	/**
+	 * initiate socket whenever activeContactId changes
+	 */
+	useEffect(() => {
 		socket.current = io(`${process.env.REACT_APP_API_URL}`, {
 			extraHeaders: {
 				id,
 			},
 		});
-		socket.current.on('connection', (payload) => {
-			console.log(payload);
-		});
 
-		socket.current.on('initiateCall', (payload) => {
-			setReceivingCall(true);
-			setContactId(payload.caller);
-			setContactName(payload.name);
-			setContactSignal(payload.signal);
-		});
+		navigator.mediaDevices
+			.getUserMedia({ video: true, audio: true })
+			.then((stream) => {
+				setPersonalStream(stream);
+			});
+	}, []);
 
+	/**
+	 * also redirect back to login if user is not yet logged in
+	 * socket will listen for incoming calls
+	 */
+	useEffect(() => {
 		if (!token) {
 			navigate('/');
 		}
-	}, []);
 
-	// effect for handling incoming chat messages
+		// socket.current.on('connection', (payload) => {
+
+		// });
+
+		const initiateCallListener = (payload) => {
+			console.log('recieved a call');
+
+			if (callOngoing) {
+				return;
+			}
+
+			setShowCallDialog(true);
+			setCallInitiator(false);
+			dispatch(setActiveContactId(payload.from));
+			dispatch(setActiveContactName(payload.name));
+			setContactSignal(payload.signal);
+		};
+
+		const cancelCallListener = (payload) => {
+			console.log('call cancelled', payload);
+			setShowCallDialog(false);
+			setShowCancelCallDialog(true);
+			setCancelReason(payload);
+			setContactStream(null);
+			setCallOngoing(false);
+			dispatch(setActiveContactId(prevActiveContactId));
+			dispatch(setActiveContactName(prevActiveContactName));
+		};
+
+		try {
+			const io = socket.current;
+
+			io.on('initiateCall', initiateCallListener);
+			io.on('cancelCall', cancelCallListener);
+
+			return () => {
+				io.off('initiateCall', initiateCallListener);
+				io.off('cancelCall', cancelCallListener);
+				console.log('listeners turned off');
+			};
+		} catch (e) {}
+	});
+
+	/**
+	 * handles listener for incoming chat messages
+	 *
+	 */
 	useEffect(() => {
 		const listener = (payload) => {
 			if (payload.sender !== activeContactId) {
@@ -78,63 +188,17 @@ export default function Chat({ component }) {
 		};
 	}, [activeContactId]);
 
-	// const initiateCall = (id) => {
-	// 	const peer = new Peer({
-	// 		initiator: true,
-	// 		trickle: false,
-	// 		stream: personalStream,
-	// 	});
-
-	// 	peer.on('signal', (payload) => {
-	// 		socket.emit('initiateCall', {
-	// 			callee: id,
-	// 			signalData: payload,
-	// 			caller: id,
-	// 			name,
-	// 		});
-	// 	});
-
-	// 	peer.on('stream', (stream) => {
-	// 		setContactStream(stream);
-	// 	});
-
-	// 	socket.on('acceptCall', (signal) => {
-	// 		setCallAccepted(true);
-	// 		peer.signal(signal);
-	// 	});
-
-	// 	connectionRef.current = peer;
-	// };
-
-	// const answerCall = () => {
-	// 	setCallAccepted(true);
-
-	// 	const peer = new Peer({
-	// 		initiator: false,
-	// 		trickle: false,
-	// 		stream: personalStream,
-	// 	});
-
-	// 	peer.on('signal', (payload) => {
-	// 		socket.current.emit('acceptCall', { signal: payload, to: contactId });
-	// 	});
-
-	// 	peer.signal(contactSignal);
-	// 	connectionRef.current = peer;
-	// };
-
-	// const leaveCall = () => {
-	// 	setCallEnded(true);
-	// 	connectionRef.current.destroy();
-	// };
-
 	return (
 		<div className='chat-page-container d-flex flex-row '>
+			{showPendingCallDialog && (
+				<PendingCallDialog callHandlers={{ answerCall, declineCall }} />
+			)}
+			{showCancelCallDialog && <CancelCallDialog cancelReason={cancelReason} />}
 			<Contacts />
 			{component === 'chat' ? (
 				<ChatHistory />
 			) : (
-				<VideoChat personalVideoSrc={personalStream} />
+				<VideoChat declineCallHandler={declineCall} />
 			)}
 		</div>
 	);

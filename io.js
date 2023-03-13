@@ -13,7 +13,7 @@ module.exports.initialize = (server) => {
 		connectedUsers.set(socket.handshake.headers.id, socket);
 		socket.userId = socket.handshake.headers.id;
 
-		socket.emit('connection', { message: 'Socket online' });
+		socket.emit('connection', { message: 'Socket online', id: socket.id });
 		// console.log(connectedUsers);
 
 		socket.on('send msg', (payload) => {
@@ -36,13 +36,31 @@ module.exports.initialize = (server) => {
 		});
 
 		socket.on('initiateCall', (payload) => {
-			io.to(payload.callee).emit('initiateCall', payload);
-
-			// need signal data and caller
+			console.log(connectedUsers.keys());
+			const callee = connectedUsers.get(payload.to);
+			if (callee) {
+				io.to(callee.id).emit('initiateCall', payload);
+				console.log('calling', callee.id);
+			} else {
+				console.log('callee not found');
+				io.to(socket.id).emit('cancelCall', { status: 'callee not available' });
+			}
 		});
 
 		socket.on('acceptCall', (payload) => {
-			io.to(payload.caller).emit('acceptCall', payload.signal);
+			const to = connectedUsers.get(payload.to);
+
+			console.log('callee accepted call from ', to.id);
+			io.to(to.id).emit('acceptCall', payload.signal);
+
+			//set a response back to calle when caller became offline
+		});
+
+		socket.on('cancelCall', (payload) => {
+			const to = connectedUsers.get(payload.to);
+			if (to) {
+				io.to(to.id).emit('cancelCall', payload.reason);
+			}
 		});
 	});
 

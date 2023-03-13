@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@1,300&family=Quicksand:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lobster&family=Roboto&display=swap');
 :root {
 	--primaryColor: #0096ff;
 	--red: #dc1818;
@@ -9,6 +10,7 @@
 html {
 	margin: 0;
 	padding: 0;
+	min-width: 800px;
 }
 
 html,
@@ -468,6 +470,7 @@ em-emoji-picker {
 
 .personal-video-container > video {
 	width: 100%;
+	pointer-events: none;
 }
 
 .video-chat-control-container {
@@ -476,15 +479,27 @@ em-emoji-picker {
 	display: flex;
 	justify-content: center;
 	align-items: end;
+	margin-top: 10px;
+}
+
+.user-video-container {
+	position: absolute;
+	max-width: 200px;
+	max-height: 200px;
 }
 
 .contact-video-container {
+	margin: auto;
 	max-width: 80%;
 	height: 100%;
+	display: flex;
+	align-items: flex-end;
 }
 
-.call-buttons-container {
-	justify-content: end;
+.contact-video {
+	width: 100%;
+	min-width: 500px;
+	pointer-events: none;
 }
 
 .call-control-container {
@@ -511,12 +526,68 @@ em-emoji-picker {
 	max-width: 100%;
 }
 
-.call-control-large-svg > div > svg {
-	max-width: 100%;
+/* INCOMING CALL DIALOG component 
+========================== */
+
+.pending-call-container {
+	z-index: 1000;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	font-family: 'Lobster', cursive;
+	background-color: rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(4px);
 }
 
-.call-control.large-button {
-	max-width: 100px;
-	max-height: 100px;
-	background-color: var(--red);
+.pending-call-box {
+	width: 300px;
+	height: 400px;
+	background: linear-gradient(
+		168.68deg,
+		#0052c9 1.12%,
+		var(--primaryColor) 100%
+	);
+	flex: none;
+	align-self: inherit;
+	border-radius: 2rem;
+	box-shadow: 10px 2px 0px 5px rgba(52, 168, 226, 0.05);
+}
+
+.pending-call-display {
+	margin-top: 4rem;
+	color: var(--white);
+}
+
+.pendingcall-header {
+	margin-top: 2rem;
+	font-size: 4rem;
+}
+
+.incoming-call-controls {
+	justify-content: space-around;
+	padding: 1.5rem;
+}
+
+.pending-call-display {
+	height: 100%;
+}
+
+.incoming-call-btn {
+	border-radius: 50%;
+	height: 70px;
+	width: 70px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 5px 2px 0px 5px rgba(52, 168, 226, 0.05);
+}
+
+.incoming-call-btn > div > div > svg {
+	height: 80px;
+	width: 80px;
 }

@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { UserProvider } from './UserContext';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import LandingPage from './pages/LandingPage';
 import AppNavBar from './components/AppNavBar';
 import Home from './pages/Home';
@@ -12,6 +12,14 @@ function App() {
 	const [token, setToken, clearToken] = useLocalStorage('token', '');
 	const [name, setName, clearName] = useLocalStorage('name', '');
 	const [id, setId, clearId] = useLocalStorage('id', '');
+	const [personalStream, setPersonalStream] = useState();
+	const [contactStream, setContactStream] = useState();
+	const [showPendingCallDialog, setShowCallDialog] = useState();
+	const [callOngoing, setCallOngoing] = useState();
+	const [callInitiator, setCallInitiator] = useState();
+	const [showCancelCallDialog, setShowCancelCallDialog] = useState();
+	const connectionRef = useRef();
+
 	const socket = useRef();
 
 	const clearLocalStorage = () => {
@@ -32,6 +40,19 @@ function App() {
 					id,
 					setId,
 					clearLocalStorage,
+					setPersonalStream,
+					personalStream,
+					contactStream,
+					setContactStream,
+					showPendingCallDialog,
+					setShowCallDialog,
+					callOngoing,
+					setCallOngoing,
+					callInitiator,
+					setCallInitiator,
+					showCancelCallDialog,
+					setShowCancelCallDialog,
+					connectionRef,
 				}}
 			>
 				<BrowserRouter>
