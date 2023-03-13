@@ -9,13 +9,8 @@ export default function PendingCallDialog(props) {
 	} = props;
 
 	const { activeContactName } = useSelector((state) => state.chat);
-	const {
-		setPersonalStream,
-		setShowCallDialog,
-		setCallOngoing,
-		callOngoing,
-		callInitiator,
-	} = useContext(UserContext);
+	const { setShowCallDialog, setCallOngoing, callOngoing, callInitiator } =
+		useContext(UserContext);
 
 	const acceptCall = () => {
 		setShowCallDialog(false);

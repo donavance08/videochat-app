@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { ReactSVG } from 'react-svg';
 import UserContext from '../UserContext';
 
@@ -8,7 +8,7 @@ export default function VideoChatControl({
 }) {
 	const [muted, setMuted] = useState(false);
 	const [offVideo, setOffVideo] = useState(false);
-	const { callOngoing, setPersonalStream } = useContext(UserContext);
+	const { callOngoing } = useContext(UserContext);
 
 	function handleMuteClick() {
 		setMuted((state) => !state);

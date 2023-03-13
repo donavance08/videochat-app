@@ -1,9 +1,9 @@
-import { useContext, useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useContext } from 'react';
+import { useSelector } from 'react-redux';
 import VideoChatControl from './VideoChatControl';
 import ContactVideo from './ContactVideo';
 import UserContext from '../UserContext';
-import { connect } from 'mongoose';
+
 const SimplePeer = require('simple-peer');
 
 export default function VideoChat({ declineCallHandler }) {
@@ -11,12 +11,10 @@ export default function VideoChat({ declineCallHandler }) {
 		(state) => state.chat
 	);
 	const {
-		setPersonalStream,
 		personalStream,
 		setContactStream,
 		setShowCallDialog,
 		setCallInitiator,
-		callOngoing,
 		setCallOngoing,
 		connectionRef,
 	} = useContext(UserContext);
