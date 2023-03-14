@@ -1,21 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { ReactSVG } from 'react-svg';
+import UserContext from '../UserContext';
 
-export default function RecordControls({ setRecording }) {
-	const [paused, setPaused] = useState();
+export default function RecordControls({ functions }) {
+	const [stopRecording] = functions;
+	const [recorderPause, setRecorderPaused] = useState();
+	const { contactStream } = useContext(UserContext);
 
 	const pauseRecording = () => {
-		setPaused((paused) => !paused);
+		setRecorderPaused((paused) => !paused);
 	};
-
-	useEffect(() => {
-		console.log(paused);
-	});
 
 	return (
 		<div className='recording-control-container'>
 			<div className='recording-control-box'>
-				{paused ? (
+				{recorderPause ? (
 					<button onClick={pauseRecording}>
 						<ReactSVG
 							className='call-control-svg'
@@ -30,7 +29,7 @@ export default function RecordControls({ setRecording }) {
 						/>
 					</button>
 				)}
-				<button onClick={() => setRecording(false)}>
+				<button onClick={stopRecording}>
 					<ReactSVG
 						className='call-control-svg'
 						src='/icons/stop.svg'

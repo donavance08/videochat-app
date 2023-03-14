@@ -1,7 +1,7 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { ReactSVG } from 'react-svg';
 import UserContext from '../UserContext';
-import RecordControls from './RecordControls';
+import RecordControl from './RecordControl';
 
 export default function VideoChatControl({
 	initiateCall,
@@ -10,27 +10,59 @@ export default function VideoChatControl({
 }) {
 	const [offVideo, setOffVideo] = useState(false);
 	const [recording, setRecording] = useState(false);
-	const { callOngoing, setMuted, muted } = useContext(UserContext);
+	const { callOngoing, setMuted, muted, contactStream } =
+		useContext(UserContext);
+	const [recordedChunks, setRecordedChunks] = useState([]);
+	const mediaRecorder = useRef();
 
-	function handleMuteClick() {
-		setMuted((state) => !state);
-	}
+	const downloadRecordedVideo = () => {
+		console.log(mediaRecorder.current.mimeType);
+		const blob = new Blob(recordedChunks, {
+			type: 'video/webm',
+		});
 
-	function handleCallClick() {
-		initiateCall();
-	}
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		document.body.appendChild(a);
+		a.style = 'display: none';
+		a.href = url;
+		a.download = 'recording.webm';
+		a.click();
+		console.log('video downloaded');
+	};
 
-	function handleCallEnd() {
-		dropCallHandler();
-	}
+	const handleRecord = () => {
+		const vp9Codec = 'video/webm; codex=vp=9';
+		const vp9Options = { mimeType: vp9Codec };
 
-	function handleVideoClick() {
-		setOffVideo((state) => !state);
-	}
+		if (MediaRecorder.isTypeSupported(vp9Codec)) {
+			mediaRecorder.current = new MediaRecorder(contactStream, vp9Options);
+		} else {
+			mediaRecorder.current = new MediaRecorder(contactStream);
+		}
 
-	function handleRecord() {
+		mediaRecorder.current.ondataavailable = (event) => {
+			if (event.data.size > 0) {
+				setRecordedChunks((recordedChunks) => [...recordedChunks, event.data]);
+				downloadRecordedVideo();
+			}
+		};
+
+		console.log(mediaRecorder.current);
+		mediaRecorder.current.start();
 		setRecording(true);
-	}
+	};
+
+	const stopRecording = () => {
+		console.log('stop recording');
+		setRecording(false);
+		mediaRecorder.current.stop();
+	};
+
+	/* Ensure that RecordControl hides if a user drops the call while recording */
+	useEffect(() => {
+		setRecording(false);
+	}, [callOngoing]);
 
 	return (
 		<div className='video-chat-control-container'>
@@ -46,12 +78,12 @@ export default function VideoChatControl({
 						/>
 					</button>
 				) : (
-					<RecordControls setRecording={setRecording} />
+					<RecordControl functions={[stopRecording]} />
 				)}
 				{muted ? (
 					<button
 						className='call-control small-button'
-						onClick={(e) => handleMuteClick()}
+						onClick={() => setMuted((state) => !state)}
 					>
 						<ReactSVG
 							className='call-control-svg'
@@ -61,7 +93,7 @@ export default function VideoChatControl({
 				) : (
 					<button
 						className='call-control small-button'
-						onClick={(e) => handleMuteClick()}
+						onClick={() => setMuted((state) => !state)}
 					>
 						<ReactSVG
 							className='call-control-svg'
@@ -73,7 +105,7 @@ export default function VideoChatControl({
 				{callOngoing ? (
 					<button
 						className='call-control large-end-button'
-						onClick={(e) => handleCallEnd()}
+						onClick={dropCallHandler}
 					>
 						<ReactSVG
 							className='call-control-large-svg'
@@ -83,7 +115,7 @@ export default function VideoChatControl({
 				) : (
 					<button
 						className='call-control large-calling-button'
-						onClick={(e) => handleCallClick()}
+						onClick={initiateCall}
 					>
 						<ReactSVG
 							className='call-control-large-svg'
@@ -95,7 +127,7 @@ export default function VideoChatControl({
 				{offVideo ? (
 					<button
 						className='call-control small-button'
-						onClick={(e) => handleVideoClick()}
+						onClick={(e) => setOffVideo((state) => !state)}
 					>
 						<ReactSVG
 							className='call-control-svg'
@@ -105,7 +137,7 @@ export default function VideoChatControl({
 				) : (
 					<button
 						className='call-control small-button'
-						onClick={(e) => handleVideoClick()}
+						onClick={(e) => setOffVideo((state) => !state)}
 					>
 						<ReactSVG
 							className='call-control-svg'
