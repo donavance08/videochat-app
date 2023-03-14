@@ -24,7 +24,6 @@ export default function Chat({ component }) {
 		setShowPendingCallDialog,
 		callOngoing,
 		setCallOngoing,
-		callInitiator,
 		setCallInitiator,
 		showCancelCallDialog,
 		setShowCancelCallDialog,

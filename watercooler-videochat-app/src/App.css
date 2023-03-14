@@ -516,6 +516,14 @@ em-emoji-picker {
 	border-radius: 50%;
 }
 
+.call-buttons-container {
+	display: flex;
+	width: 100%;
+	min-width: 100%;
+	justify-content: center;
+	flex-wrap: nowrap;
+}
+
 .call-control.small-button {
 	max-width: 70px;
 	max-height: 70px;
@@ -590,4 +598,23 @@ em-emoji-picker {
 .incoming-call-btn > div > div > svg {
 	height: 80px;
 	width: 80px;
+}
+
+/* RECORDING component 
+=====================*/
+.recording-control-box {
+	background-color: var(--primaryColor);
+	border-radius: 30%;
+	color: var(--white);
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+
+.recording-control-box > button {
+	border: none;
+	border-radius: 50%;
+	background-color: inherit;
+	color: inherit;
 }
