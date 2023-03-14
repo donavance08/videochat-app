@@ -44,12 +44,13 @@ export default function VideoChat({ declineCallHandler }) {
 		});
 
 		socket.current.on('acceptCall', (signal) => {
+			console.log('recieved an accept call response');
 			try {
 				setCallOngoing(true);
 				setShowCallDialog(false);
 				peer.signal(signal);
 			} catch (err) {
-				console.error(err);
+				console.log(err);
 			}
 		});
 

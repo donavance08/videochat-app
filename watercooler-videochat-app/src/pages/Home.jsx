@@ -100,10 +100,14 @@ export default function Chat({ component }) {
 	 * initiate socket whenever activeContactId changes
 	 */
 	useEffect(() => {
+		console.log('initialzing socket');
 		socket.current = io(`${process.env.REACT_APP_API_URL}`, {
 			extraHeaders: {
 				id,
 			},
+			reconnection: true,
+			reconnectionAttempts: Infinity,
+			reconnectionDelay: 1000,
 		});
 
 		navigator.mediaDevices
@@ -122,12 +126,19 @@ export default function Chat({ component }) {
 			navigate('/');
 		}
 
+		socket.current.on('disconnect', (payload) => {
+			console.log('socket disconnected');
+			console.log('socket current', socket.current);
+			socket.current.reconnect();
+		});
+
+		console.log('curr', socket.current);
 		// socket.current.on('connection', (payload) => {
 
 		// });
 
 		const initiateCallListener = (payload) => {
-			console.log('recieved a call');
+			console.log('recieved a call ');
 
 			if (callOngoing) {
 				return;
@@ -152,17 +163,17 @@ export default function Chat({ component }) {
 		};
 
 		try {
-			const io = socket.current;
-
-			io.on('initiateCall', initiateCallListener);
-			io.on('cancelCall', cancelCallListener);
+			socket.current.on('initiateCall', initiateCallListener);
+			socket.current.on('cancelCall', cancelCallListener);
 
 			return () => {
-				io.off('initiateCall', initiateCallListener);
-				io.off('cancelCall', cancelCallListener);
+				socket.current.off('initiateCall', initiateCallListener);
+				socket.current.off('cancelCall', cancelCallListener);
 				console.log('listeners turned off');
 			};
-		} catch (e) {}
+		} catch (e) {
+			console.log('error', e);
+		}
 	});
 
 	/**

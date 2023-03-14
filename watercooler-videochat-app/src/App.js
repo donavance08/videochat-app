@@ -18,6 +18,7 @@ function App() {
 	const [callOngoing, setCallOngoing] = useState();
 	const [callInitiator, setCallInitiator] = useState();
 	const [showCancelCallDialog, setShowCancelCallDialog] = useState();
+	const [muted, setMuted] = useState(true);
 	const connectionRef = useRef();
 
 	const socket = useRef();
@@ -53,6 +54,8 @@ function App() {
 					showCancelCallDialog,
 					setShowCancelCallDialog,
 					connectionRef,
+					muted,
+					setMuted,
 				}}
 			>
 				<BrowserRouter>

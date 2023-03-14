@@ -6,9 +6,8 @@ export default function VideoChatControl({
 	initiateCall,
 	declineCallHandler: declineCall,
 }) {
-	const [muted, setMuted] = useState(false);
 	const [offVideo, setOffVideo] = useState(false);
-	const { callOngoing } = useContext(UserContext);
+	const { callOngoing, setMuted, muted } = useContext(UserContext);
 
 	function handleMuteClick() {
 		setMuted((state) => !state);
