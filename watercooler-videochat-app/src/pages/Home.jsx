@@ -96,6 +96,17 @@ export default function Chat({ component }) {
     setContactStream(null);
   };
 
+  const dropCall = () => {
+    if (callOngoing) {
+      socket.current.emit('drop call', {
+        to: activeContactId,
+        reason: 'cancelled',
+      });
+      setCallOngoing(false);
+      connectionRef.current.destroy();
+    }
+  };
+
   /**
    * initiate socket whenever activeContactId changes
    */
@@ -129,7 +140,7 @@ export default function Chat({ component }) {
     socket.current.on('disconnect', (payload) => {
       console.log('socket disconnected');
       console.log('socket current', socket.current);
-      socket.current.reconnect();
+      //   socket.current.reconnect();
     });
 
     console.log('curr', socket.current);
@@ -151,31 +162,58 @@ export default function Chat({ component }) {
       setContactSignal(payload.signal);
     };
 
-    const cancelCallListener = (payload) => {
-      console.log('call cancelled', payload);
-      setShowCallDialog(false);
-      setShowCancelCallDialog(true);
-      setCancelReason(payload);
-      setContactStream(null);
-      setCallOngoing(false);
-      dispatch(setActiveContactId(prevActiveContactId));
-      dispatch(setActiveContactName(prevActiveContactName));
-    };
-
     try {
       socket.current.on('initiateCall', initiateCallListener);
-      socket.current.on('cancelCall', cancelCallListener);
-      socket.current.on('user disconnect', ({ id }) => {
+
+      socket.current.on('cancelCall', (payload) => {
+        setShowCallDialog(false);
+        setShowCancelCallDialog(true);
+        setCancelReason(payload);
+        setContactStream(null);
+        setCallOngoing(false);
+        dispatch(setActiveContactId(prevActiveContactId));
+        dispatch(setActiveContactName(prevActiveContactName));
+      });
+
+      socket.current.on('decline call', (payload) => {
+        setShowCallDialog(false);
+        setShowCancelCallDialog(true);
+        setCancelReason(payload.reason);
+        connectionRef.current.destroy();
+      });
+
+      /**
+       * Handler for contact initiated drop call
+       *
+       *  */
+      const dropCallHandler = (payload) => {
+        console.log('call cancelled', payload);
+
+        if (callOngoing) {
+          setShowCancelCallDialog(true);
+          setCancelReason(payload.reason);
+          setCallOngoing(false);
+          connectionRef.current.destroy();
+        }
+      };
+
+      socket.current.on('drop call', dropCallHandler);
+
+      const userDisconnectHandler = ({ id }) => {
         if (callOngoing && activeContactId === id) {
           setShowCancelCallDialog(true);
           setCancelReason('cancelled');
           connectionRef.current.destroy();
           setCallOngoing(false);
         }
-      });
+      };
+
+      socket.current.on('user disconnect', userDisconnectHandler);
       return () => {
-        socket.current.removeAllListeners();
-        console.log('listeners turned off');
+        socket.current.on('user disconnect', userDisconnectHandler);
+        socket.current.on('drop call', dropCallHandler);
+
+        //         console.log('listeners turned off');
       };
     } catch (e) {
       console.log('error', e);
@@ -215,7 +253,10 @@ export default function Chat({ component }) {
       {component === 'chat' ? (
         <ChatHistory />
       ) : (
-        <VideoChat declineCallHandler={declineCall} />
+        <VideoChat
+          declineCallHandler={declineCall}
+          dropCallHandler={dropCall}
+        />
       )}
     </div>
   );

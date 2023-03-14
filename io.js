@@ -48,8 +48,9 @@ module.exports.initialize = (server) => {
         }
       });
       const callee = connectedUsers.get(payload.to);
-      console.log(`socket ${socket.id}initiated call to `, callee.id);
       if (callee) {
+        console.log(`socket ${socket.id}initiated call to `, callee.id);
+
         io.to(callee.id).emit('initiateCall', payload);
       } else {
         io.to(socket.id).emit('cancelCall', { status: 'callee not available' });
@@ -72,6 +73,12 @@ module.exports.initialize = (server) => {
       //set a response back to calle when caller became offline
     });
 
+    socket.on('drop call', (payload) => {
+      const to = connectedUsers.get(payload.to);
+      if (to) {
+        io.to(to.id).emit('drop call', payload);
+      }
+    });
     socket.on('cancelCall', (payload) => {
       const to = connectedUsers.get(payload.to);
       if (to) {
