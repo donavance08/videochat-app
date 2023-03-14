@@ -14,7 +14,7 @@ function App() {
 	const [id, setId, clearId] = useLocalStorage('id', '');
 	const [personalStream, setPersonalStream] = useState();
 	const [contactStream, setContactStream] = useState();
-	const [showPendingCallDialog, setShowCallDialog] = useState();
+	const [showPendingCallDialog, setShowPendingCallDialog] = useState();
 	const [callOngoing, setCallOngoing] = useState();
 	const [callInitiator, setCallInitiator] = useState();
 	const [showCancelCallDialog, setShowCancelCallDialog] = useState();
@@ -46,7 +46,7 @@ function App() {
 					contactStream,
 					setContactStream,
 					showPendingCallDialog,
-					setShowCallDialog,
+					setShowPendingCallDialog,
 					callOngoing,
 					setCallOngoing,
 					callInitiator,
