@@ -174,8 +174,7 @@ export default function Chat({ component }) {
         }
       });
       return () => {
-        socket.current.off('initiateCall', initiateCallListener);
-        socket.current.off('cancelCall', cancelCallListener);
+        socket.current.removeAllListeners();
         console.log('listeners turned off');
       };
     } catch (e) {
