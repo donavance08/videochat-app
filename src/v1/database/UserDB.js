@@ -2,9 +2,18 @@ const User = require('../models/User');
 const customError = require('../utils/customError');
 
 const findExistingUserByName = (username) => {
-	return User.findOne({ username }, { username: 1 }).then((result) => {
-		return result;
-	});
+	return User.findOne({ username }, { username: 1 })
+		.then((result) => {
+			if (result) {
+				return result;
+			}
+
+			return null;
+		})
+		.catch((err) => {
+			console.log(err);
+			return null;
+		});
 };
 
 //projection is for values to be excluded
@@ -14,15 +23,33 @@ const findExistingUserById = async (id, projection = {}) => {
 		password: 0,
 	};
 
-	return User.findOne({ _id: id }, projection).then((result) => result);
+	return User.findOne({ _id: id }, projection)
+		.then((result) => {
+			if (result) {
+				return result;
+			}
+
+			return null;
+		})
+		.catch((err) => {
+			console.log(err);
+			return null;
+		});
 };
 
 const findExistingPhoneNumber = (phoneNumber) => {
-	return User.findOne({ phoneNumber }).then((result) => {
-		if (result) {
-			return result;
-		}
-	});
+	return User.findOne({ phoneNumber })
+		.then((result) => {
+			if (result) {
+				return result;
+			}
+
+			return null;
+		})
+		.catch((err) => {
+			console.log(err);
+			return null;
+		});
 };
 
 const loginUser = async (username, password) => {

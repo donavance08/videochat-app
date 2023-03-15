@@ -1,12 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
-// const { v4: uuidv4 } = require('uuid');
 const socket = require('socket.io');
-// const http = require('http');
 const cors = require('cors');
 const userRoutes = require('./src/v1/routes/userRoutes');
 const messageRoutes = require('./src/v1/routes/messageRoutes');
+const smsRoutes = require('./src/v1/routes/smsRoutes');
 require('dotenv').config();
+const client = require('twilio')(process.env.ACCOUNTSID, process.env.AUTHTOKEN);
 
 const port = process.env.PORT || 8000;
 
@@ -34,6 +34,7 @@ const MongoClient = mongo.MongoClient;
 /* ROUTES */
 app.use('/api/users', userRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/sms', smsRoutes);
 
 const server = app.listen(port, () =>
 	console.log(`API running at localhost:${port}`)
