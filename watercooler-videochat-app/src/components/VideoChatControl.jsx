@@ -12,12 +12,13 @@ export default function VideoChatControl({
 	const [recording, setRecording] = useState(false);
 	const { callOngoing, setMuted, muted, contactStream } =
 		useContext(UserContext);
-	const recordedChunks = useRef([]);
+	let recordedChunks = useRef([]);
 	const mediaRecorder = useRef();
 
 	const downloadRecordedVideo = () => {
-		console.log(mediaRecorder.current.mimeType);
-		const blob = new Blob(recordedChunks.current);
+		const blob = new Blob(recordedChunks.current, {
+			type: 'video/webm',
+		});
 
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
@@ -26,9 +27,10 @@ export default function VideoChatControl({
 		a.href = url;
 		a.download = 'recording.webm';
 		a.click();
-		console.log('video downloaded');
 
-		URL.revokeObjectURL(url);
+		window.URL.revokeObjectURL(url);
+
+		recordedChunks.current = [];
 	};
 
 	const handleRecord = () => {
@@ -48,7 +50,6 @@ export default function VideoChatControl({
 			}
 		};
 
-		console.log(mediaRecorder.current);
 		mediaRecorder.current.start();
 		setRecording(true);
 	};
