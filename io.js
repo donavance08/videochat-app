@@ -12,8 +12,14 @@ module.exports.initialize = (server) => {
 	io.on('connection', (socket) => {
 		connectedUsers.set(socket.handshake.headers.id, socket);
 		socket.userId = socket.handshake.headers.id;
+		const recordsId = connectedUsers.get(socket.userId).id;
 
 		console.log(`User: ${socket.userId} connected. Id: ${socket.id}`);
+		console.log(
+			`records show that the socket id saved ${
+				recordsId === socket.id ? 'matches' : `does not match: ${recordsId}`
+			} `
+		);
 		socket.emit('connection', { message: 'Socket online', id: socket.id });
 		// console.log(connectedUsers);
 
@@ -66,9 +72,10 @@ module.exports.initialize = (server) => {
 				}
 			});
 			const to = connectedUsers.get(payload.to);
-
-			console.log(`callee ${socket.id} accepted call from `, to.id);
-			io.to(to.id).emit('acceptCall', payload.signal);
+			if (to) {
+				console.log(`callee ${socket.id} accepted call from `, to.id);
+				io.to(to.id).emit('acceptCall', payload.signal);
+			}
 		});
 
 		socket.on('drop call', (payload) => {

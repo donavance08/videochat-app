@@ -12,14 +12,12 @@ export default function VideoChatControl({
 	const [recording, setRecording] = useState(false);
 	const { callOngoing, setMuted, muted, contactStream } =
 		useContext(UserContext);
-	const [recordedChunks, setRecordedChunks] = useState([]);
+	const recordedChunks = useRef([]);
 	const mediaRecorder = useRef();
 
 	const downloadRecordedVideo = () => {
 		console.log(mediaRecorder.current.mimeType);
-		const blob = new Blob(recordedChunks, {
-			type: 'video/webm',
-		});
+		const blob = new Blob(recordedChunks.current);
 
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
@@ -29,6 +27,9 @@ export default function VideoChatControl({
 		a.download = 'recording.webm';
 		a.click();
 		console.log('video downloaded');
+
+		URL.revokeObjectURL(url);
+		console.log('url', url);
 	};
 
 	const handleRecord = () => {
@@ -43,7 +44,7 @@ export default function VideoChatControl({
 
 		mediaRecorder.current.ondataavailable = (event) => {
 			if (event.data.size > 0) {
-				setRecordedChunks((recordedChunks) => [...recordedChunks, event.data]);
+				recordedChunks.current.push(event.data);
 				downloadRecordedVideo();
 			}
 		};
@@ -54,9 +55,16 @@ export default function VideoChatControl({
 	};
 
 	const stopRecording = () => {
-		console.log('stop recording');
 		setRecording(false);
 		mediaRecorder.current.stop();
+	};
+
+	const pauseRecording = () => {
+		mediaRecorder.current.pause();
+	};
+
+	const resumeRecording = () => {
+		mediaRecorder.current.resume();
 	};
 
 	/* Ensure that RecordControl hides if a user drops the call while recording */
@@ -78,7 +86,9 @@ export default function VideoChatControl({
 						/>
 					</button>
 				) : (
-					<RecordControl functions={[stopRecording]} />
+					<RecordControl
+						functions={[stopRecording, pauseRecording, resumeRecording]}
+					/>
 				)}
 				{muted ? (
 					<button
