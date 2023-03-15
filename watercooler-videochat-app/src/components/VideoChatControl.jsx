@@ -29,7 +29,6 @@ export default function VideoChatControl({
 		console.log('video downloaded');
 
 		URL.revokeObjectURL(url);
-		console.log('url', url);
 	};
 
 	const handleRecord = () => {
