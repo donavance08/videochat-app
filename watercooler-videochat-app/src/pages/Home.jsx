@@ -107,6 +107,10 @@ export default function Chat({ component }) {
 			.then((stream) => {
 				setPersonalStream(stream);
 			});
+
+		socket.current.on('connection', (payload) => {
+			console.log(payload);
+		});
 	}, []);
 
 	/**

@@ -10,18 +10,15 @@ module.exports.initialize = (server) => {
 	});
 
 	io.on('connection', (socket) => {
-		connectedUsers.set(socket.handshake.headers.id, socket);
 		socket.userId = socket.handshake.headers.id;
-		const recordsId = connectedUsers.get(socket.userId).id;
+		connectedUsers.set(socket.handshake.headers.id, socket);
 
-		console.log(`User: ${socket.userId} connected. Id: ${socket.id}`);
-		console.log(
-			`records show that the socket id saved ${
-				recordsId === socket.id ? 'matches' : `does not match: ${recordsId}`
-			} `
-		);
+		console.log('Registered users');
+		connectedUsers.forEach((socket) => {
+			console.log(`${socket.userId} : ${socket.id}`);
+		});
+
 		socket.emit('connection', { message: 'Socket online', id: socket.id });
-		// console.log(connectedUsers);
 
 		socket.on('send msg', (payload) => {
 			console.log('event fired');
