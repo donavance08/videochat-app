@@ -3,6 +3,7 @@ import { ReactSVG } from 'react-svg';
 import UserContext from '../UserContext';
 import RecordControl from './RecordControl';
 import ToggleVideoEnabledButton from './ToggleVideoEnabledButton';
+import ToggleMuteButton from './ToggleMuteButton';
 
 export default function VideoChatControl({
 	initiateCall,
@@ -10,8 +11,7 @@ export default function VideoChatControl({
 	dropCallHandler,
 }) {
 	const [recording, setRecording] = useState(false);
-	const { callOngoing, setMuted, muted, contactStream } =
-		useContext(UserContext);
+	const { callOngoing, contactStream } = useContext(UserContext);
 	let recordedChunks = useRef([]);
 	const mediaRecorder = useRef();
 
@@ -90,27 +90,7 @@ export default function VideoChatControl({
 						functions={[stopRecording, pauseRecording, resumeRecording]}
 					/>
 				)}
-				{muted ? (
-					<button
-						className='call-control small-button'
-						onClick={() => setMuted((state) => !state)}
-					>
-						<ReactSVG
-							className='call-control-svg'
-							src='/icons/unmuted-button.svg'
-						/>
-					</button>
-				) : (
-					<button
-						className='call-control small-button'
-						onClick={() => setMuted((state) => !state)}
-					>
-						<ReactSVG
-							className='call-control-svg'
-							src='/icons/muted-button.svg'
-						/>
-					</button>
-				)}
+				<ToggleMuteButton />
 				{callOngoing ? (
 					<button
 						className='call-control large-end-button'

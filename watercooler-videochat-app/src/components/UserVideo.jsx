@@ -11,14 +11,6 @@ export default function UserVideo() {
 		}
 	}, [personalStream, muted]);
 
-	useEffect(() => {
-		if (muted) {
-			personalStream.getAudioTracks()[0].enabled = false;
-			return;
-		}
-		personalStream.getAudioTracks()[0].enabled = true;
-	}, [muted]);
-
 	return (
 		<div className='personal-video-container'>
 			<video
