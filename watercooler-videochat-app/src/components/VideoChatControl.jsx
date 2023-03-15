@@ -2,13 +2,13 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { ReactSVG } from 'react-svg';
 import UserContext from '../UserContext';
 import RecordControl from './RecordControl';
+import ToggleVideoEnabledButton from './ToggleVideoEnabledButton';
 
 export default function VideoChatControl({
 	initiateCall,
 	declineCallHandler: declineCall,
 	dropCallHandler,
 }) {
-	const [offVideo, setOffVideo] = useState(false);
 	const [recording, setRecording] = useState(false);
 	const { callOngoing, setMuted, muted, contactStream } =
 		useContext(UserContext);
@@ -111,7 +111,6 @@ export default function VideoChatControl({
 						/>
 					</button>
 				)}
-
 				{callOngoing ? (
 					<button
 						className='call-control large-end-button'
@@ -133,28 +132,7 @@ export default function VideoChatControl({
 						/>
 					</button>
 				)}
-
-				{offVideo ? (
-					<button
-						className='call-control small-button'
-						onClick={(e) => setOffVideo((state) => !state)}
-					>
-						<ReactSVG
-							className='call-control-svg'
-							src='/icons/camera-off-button.svg'
-						/>
-					</button>
-				) : (
-					<button
-						className='call-control small-button'
-						onClick={(e) => setOffVideo((state) => !state)}
-					>
-						<ReactSVG
-							className='call-control-svg'
-							src='/icons/camera-on-button.svg'
-						/>
-					</button>
-				)}
+				<ToggleVideoEnabledButton />
 			</div>
 		</div>
 	);

@@ -13,7 +13,6 @@ import { setActiveContactId, setActiveContactName } from '../redux/chat';
 const SimplePeer = require('simple-peer');
 
 export default function Chat({ component }) {
-	console.log('home render');
 	const {
 		socket,
 		token,
@@ -92,7 +91,6 @@ export default function Chat({ component }) {
 	 * initiate socket whenever activeContactId changes
 	 */
 	useEffect(() => {
-		console.log('initialzing socket');
 		socket.current = io(`${process.env.REACT_APP_API_URL}`, {
 			extraHeaders: {
 				id,
@@ -128,8 +126,6 @@ export default function Chat({ component }) {
 		});
 
 		const initiateCallListener = (payload) => {
-			console.log('recieved a call ');
-
 			if (callOngoing) {
 				return;
 			}
