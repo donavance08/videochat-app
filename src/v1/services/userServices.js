@@ -17,6 +17,8 @@ const loginUser = (username, password) => {
 
 				return { id: result._id, nickname: result.nickname, token };
 			}
+
+			customError.throwCustomError(403, 'Invalid username or password');
 		})
 		.catch((err) => {
 			throw err;

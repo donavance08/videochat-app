@@ -14,9 +14,13 @@ const loginUser = (req, res) => {
 	userServices
 		.loginUser(username.toLowerCase(), password)
 		.then((result) => {
-			res
-				.status(200)
-				.send({ status: 'OK', message: 'Login successful', data: result });
+			if (res) {
+				res.status(200).send({
+					status: 'OK',
+					message: 'Login successful',
+					data: result,
+				});
+			}
 		})
 		.catch((err) => {
 			res.status(err?.status || 500).send({
