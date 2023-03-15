@@ -69,10 +69,7 @@ const registerNewUser = async (newUserData) => {
 	const existingUser = await findExistingUserByName(newUserData.username);
 
 	if (existingUser) {
-		throw {
-			status: 403,
-			message: 'Username already exists',
-		};
+		customError.throwCustomError(403, 'Username already exists');
 	}
 
 	const existingPhoneNumber = await findExistingPhoneNumber(
@@ -80,10 +77,7 @@ const registerNewUser = async (newUserData) => {
 	);
 
 	if (existingPhoneNumber) {
-		throw {
-			status: 403,
-			message: 'phoneNumber already registered',
-		};
+		customError.throwCustomError(403, 'phoneNumber already registered');
 	}
 
 	return newUserData
@@ -93,10 +87,7 @@ const registerNewUser = async (newUserData) => {
 				return result;
 			}
 
-			throw {
-				status: 500,
-				message: 'Registration failed',
-			};
+			customError.throwCustomError(500, 'Registration failed');
 		})
 		.catch((err) => {
 			throw err;

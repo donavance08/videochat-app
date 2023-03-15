@@ -2,7 +2,7 @@ const userServices = require('../services/userServices');
 const { validationResult } = require('express-validator');
 const auth = require('../../../auth');
 
-module.exports.loginUser = (req, res) => {
+const loginUser = (req, res) => {
 	const { username, password } = req.body;
 
 	if (!username || !password) {
@@ -26,7 +26,7 @@ module.exports.loginUser = (req, res) => {
 		});
 };
 
-module.exports.registerNewUser = (req, res) => {
+const registerNewUser = (req, res) => {
 	const { body } = req;
 	const errors = validationResult(req);
 
@@ -60,9 +60,9 @@ module.exports.registerNewUser = (req, res) => {
 		});
 };
 
-module.exports.getUserContacts = (req, res) => {
+const getUserContacts = (req, res) => {
 	const id = auth.decode(req.headers.authorization).id;
-
+	console.log('id', id);
 	userServices
 		.getUserContacts(id)
 		.then((result) => {
@@ -80,4 +80,10 @@ module.exports.getUserContacts = (req, res) => {
 				message: err?.message || 'Internal Server Error',
 			});
 		});
+};
+
+module.exports = {
+	loginUser,
+	registerNewUser,
+	getUserContacts,
 };

@@ -2,8 +2,7 @@ const { validationResult } = require('express-validator');
 const auth = require('../../../auth');
 const messageServices = require('../services/messageServices');
 
-module.exports.addMessage = (req, res) => {
-	// const errors = validationResult(req);
+const addMessage = (req, res) => {
 	const {
 		body: { message },
 		params: { receiver },
@@ -12,14 +11,6 @@ module.exports.addMessage = (req, res) => {
 	const filename = req.file ? req.file.filename : undefined;
 
 	const sender = auth.decode(req.headers.authorization).id;
-
-	// if (req.file) {
-	// 	const { file } = req
-	// }
-
-	// if (!errors.isEmpty()) {
-	// 	return res.status(400).send({ errors: errors.array() });
-	// }
 
 	messageServices
 		.addMessage({ sender, receiver, message, filename })
@@ -36,7 +27,7 @@ module.exports.addMessage = (req, res) => {
 		});
 };
 
-module.exports.getConversationHistory = (req, res) => {
+const getConversationHistory = (req, res) => {
 	const sender = auth.decode(req.headers.authorization).id;
 
 	messageServices
@@ -54,4 +45,9 @@ module.exports.getConversationHistory = (req, res) => {
 				message: err?.message || 'Internal server error',
 			});
 		});
+};
+
+module.exports = {
+	addMessage,
+	getConversationHistory,
 };
