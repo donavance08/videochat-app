@@ -7,7 +7,7 @@ import { setMessage, deleteLastMessage } from '../redux/chat';
 import UserContext from '../UserContext';
 import UploadFile from '../components/UploadFile';
 
-export default function ChatInput() {
+export default function ChatInput({ component }) {
 	const { id, token } = useContext(UserContext);
 	const [showEmojis, setShowEmojis] = useState(false);
 	const { activeContactId } = useSelector((state) => state.chat);
@@ -28,18 +28,21 @@ export default function ChatInput() {
 			setMessage({ isOwner: true, message: inputMessageRef.current.value })
 		);
 
-		fetch(`${process.env.REACT_APP_API_URL}/api/messages/${activeContactId}`, {
-			method: 'POST',
-			headers: {
-				'content-type': 'application/json',
-				Authorization: `Bearer ${token}`,
-			},
-			body: JSON.stringify({
-				message: inputMessageRef.current.value,
-				sender: id,
-				receiver: activeContactId,
-			}),
-		})
+		fetch(
+			`${process.env.REACT_APP_API_URL}/api/${component}/${activeContactId}`,
+			{
+				method: 'POST',
+				headers: {
+					'content-type': 'application/json',
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify({
+					message: inputMessageRef.current.value,
+					sender: id,
+					receiver: activeContactId,
+				}),
+			}
+		)
 			.then((response) => response.json())
 			.then((result) => {
 				if (!(result.status === 'OK')) {
@@ -88,27 +91,31 @@ export default function ChatInput() {
 
 	return (
 		<div className='input-container'>
-			<button
-				title='Insert Emoji'
-				className='emoji-button input-button'
-				ref={emojiButtonRef}
-				onClick={(e) => handleShowEmojiWindow(e)}
-			>
-				<ReactSVG
-					className='input-button-svg'
-					src='/icons/emoji-button.svg'
-				/>
-			</button>
-			{showEmojis && (
-				<div ref={emojiModalRef}>
-					<Picker
-						className='emoji-expand'
-						data={data}
-						onEmojiSelect={(e) => handleEmojiSelect(e)}
-					/>
-				</div>
+			{component === 'chat' && (
+				<>
+					<button
+						title='Insert Emoji'
+						className='emoji-button input-button'
+						ref={emojiButtonRef}
+						onClick={(e) => handleShowEmojiWindow(e)}
+					>
+						<ReactSVG
+							className='input-button-svg'
+							src='/icons/emoji-button.svg'
+						/>
+					</button>
+					{showEmojis && (
+						<div ref={emojiModalRef}>
+							<Picker
+								className='emoji-expand'
+								data={data}
+								onEmojiSelect={(e) => handleEmojiSelect(e)}
+							/>
+						</div>
+					)}
+				</>
 			)}
-			<UploadFile />
+			{component === 'chat' && <UploadFile />}
 			<div className='chat-input'>
 				<form onSubmit={(e) => handleSubmit(e)}>
 					<input

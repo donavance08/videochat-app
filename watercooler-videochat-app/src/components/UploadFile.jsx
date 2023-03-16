@@ -26,7 +26,7 @@ export default function UploadFile() {
 
 		setIsLoading(() => true);
 		fetch(
-			`${process.env.REACT_APP_API_URL}/api/messages/upload/${activeContactId}`,
+			`${process.env.REACT_APP_API_URL}/api/chat/upload/${activeContactId}`,
 			{
 				method: 'POST',
 				headers: {

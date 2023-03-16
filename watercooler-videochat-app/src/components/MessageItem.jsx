@@ -11,7 +11,7 @@ export default function MessageItem({ value, bottom }) {
 	useEffect(() => {
 		if (image) {
 			setIsLoading(true);
-			fetch(`${process.env.REACT_APP_API_URL}/api/messages/files/${image}`, {
+			fetch(`${process.env.REACT_APP_API_URL}/api/chat/files/${image}`, {
 				headers: {
 					Authorization: `Bearer ${token}`,
 				},

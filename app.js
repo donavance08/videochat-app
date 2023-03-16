@@ -33,7 +33,7 @@ const MongoClient = mongo.MongoClient;
 
 /* ROUTES */
 app.use('/api/users', userRoutes);
-app.use('/api/messages', messageRoutes);
+app.use('/api/chat', messageRoutes);
 app.use('/api/sms', smsRoutes);
 
 const server = app.listen(port, () =>

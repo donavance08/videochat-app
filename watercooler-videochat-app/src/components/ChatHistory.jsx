@@ -11,7 +11,7 @@ import {
 	changeLoadingStatus,
 } from '../redux/chat';
 
-export default function ChatHistory() {
+export default function ChatHistory({ component }) {
 	const { activeContactName, messages, isLoading, activeContactId } =
 		useSelector((state) => state.chat);
 	const { token, id } = useContext(UserContext);
@@ -40,12 +40,15 @@ export default function ChatHistory() {
 
 		dispatch(changeLoadingStatus(true));
 		dispatch(clearMessages());
-		fetch(`${process.env.REACT_APP_API_URL}/api/messages/${activeContactId}`, {
-			headers: {
-				'content-type': 'application/json',
-				Authorization: `Bearer ${token}`,
-			},
-		})
+		fetch(
+			`${process.env.REACT_APP_API_URL}/api/${component}/${activeContactId}`,
+			{
+				headers: {
+					'content-type': 'application/json',
+					Authorization: `Bearer ${token}`,
+				},
+			}
+		)
 			.then((response) => response.json())
 			.then((result) => {
 				if (result && result.data.length > 0) {
@@ -87,7 +90,7 @@ export default function ChatHistory() {
 							</>
 						)}
 					</div>
-					<ChatInput />
+					<ChatInput component={component} />
 				</>
 			)}
 		</div>

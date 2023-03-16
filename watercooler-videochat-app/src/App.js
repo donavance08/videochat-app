@@ -85,6 +85,10 @@ function App() {
 							path='/home/chat'
 							element={<Home component='chat' />}
 						/>
+						<Route
+							path='/home/sms'
+							element={<Home component='sms' />}
+						/>
 					</Routes>
 				</BrowserRouter>
 			</UserProvider>

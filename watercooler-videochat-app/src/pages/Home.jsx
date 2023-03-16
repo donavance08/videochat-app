@@ -29,8 +29,7 @@ export default function Chat({ component }) {
 		connectionRef,
 		setPersonalStream,
 	} = useContext(UserContext);
-	const { activeContactId, prevActiveContactName, prevActiveContactId } =
-		useSelector((state) => state.chat);
+	const { activeContactId } = useSelector((state) => state.chat);
 
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
@@ -214,14 +213,14 @@ export default function Chat({ component }) {
 			)}
 			{showCancelCallDialog && <CancelCallDialog cancelReason={cancelReason} />}
 			<Contacts />
-			{component === 'chat' ? (
-				<ChatHistory />
-			) : (
+			{component === 'chat' && <ChatHistory component='chat' />}
+			{component === 'videoChat' && (
 				<VideoChat
 					declineCallHandler={declineCall}
 					dropCallHandler={dropCall}
 				/>
 			)}
+			{component === 'sms' && <ChatHistory component='sms' />}
 		</div>
 	);
 }
