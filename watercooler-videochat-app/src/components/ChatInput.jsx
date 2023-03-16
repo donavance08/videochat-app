@@ -8,7 +8,7 @@ import UserContext from '../UserContext';
 import UploadFile from '../components/UploadFile';
 
 export default function ChatInput({ component }) {
-	const { id, token } = useContext(UserContext);
+	const { token } = useContext(UserContext);
 	const [showEmojis, setShowEmojis] = useState(false);
 	const { activeContactId } = useSelector((state) => state.chat);
 	const emojiModalRef = useRef();
@@ -17,7 +17,7 @@ export default function ChatInput({ component }) {
 	const dispatch = useDispatch();
 
 	// function to handle clicking of submit button || On enter
-	function handleSubmit(event) {
+	const handleSubmit = (event) => {
 		event.preventDefault();
 
 		if (!inputMessageRef.current.value) {
@@ -38,8 +38,6 @@ export default function ChatInput({ component }) {
 				},
 				body: JSON.stringify({
 					message: inputMessageRef.current.value,
-					sender: id,
-					receiver: activeContactId,
 				}),
 			}
 		)
@@ -54,7 +52,7 @@ export default function ChatInput({ component }) {
 			});
 
 		document.querySelector('#new-msg-input').value = '';
-	}
+	};
 
 	// Used to automatically hide emoji window when clicking anywhere outside of it
 	useEffect(() => {
@@ -117,7 +115,7 @@ export default function ChatInput({ component }) {
 			)}
 			{component === 'chat' && <UploadFile />}
 			<div className='chat-input'>
-				<form onSubmit={(e) => handleSubmit(e)}>
+				<form onSubmit={handleSubmit}>
 					<input
 						id='new-msg-input'
 						type='text'
