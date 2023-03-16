@@ -3,12 +3,19 @@ const auth = require('../../../auth');
 
 const addSMS = async (req, res) => {
 	//extract the data
-	const { receiver, message } = req.body;
-	const sender = auth.decode(req.headers.authorization).phoneNumber;
+	const {
+		params: { receiverId },
+		body: { message },
+	} = req;
+	const senderPhoneNumber = auth.decode(req.headers.authorization).phoneNumber;
 
 	// verify length of sms,
 	try {
-		const result = await smsServices.addSMS({ sender, receiver, message });
+		const result = await smsServices.addSMS({
+			senderPhoneNumber,
+			receiverId,
+			message,
+		});
 
 		res.status(200).send({
 			status: 'OK',
@@ -25,11 +32,11 @@ const addSMS = async (req, res) => {
 
 const getSMSHistory = (req, res) => {
 	// extract phone number of sender and the id of receiver from req.body
-	const sender = auth.decode(req.headers.authorization).phoneNumber;
+	const senderPhoneNumber = auth.decode(req.headers.authorization).phoneNumber;
 
 	// call services to download sms history
 	smsServices
-		.getSMSHistory(sender, req.params.receiver)
+		.getSMSHistory(senderPhoneNumber, req.params.receiverId)
 		.then((result) => {
 			res.status(200).send({
 				status: 'OK',

@@ -11,14 +11,13 @@ const addSMS = async (newSMS) => {
 	}
 };
 
-const getSMSHistory = async (sender, receiver) => {
+const getSMSHistory = async (senderPhoneNumber, receiverPhoneNumber) => {
 	try {
 		const messages = await SMS.find({
-			$or: [
-				{ sender, receiver },
+			$and: [
+				{ sender: { $in: [senderPhoneNumber, receiverPhoneNumber] } },
 				{
-					sender: receiver,
-					receiver: sender,
+					receiver: { $in: [senderPhoneNumber, receiverPhoneNumber] },
 				},
 			],
 		}).sort({ dateCreated: 1 });
