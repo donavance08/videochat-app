@@ -6,7 +6,6 @@ const userRoutes = require('./src/v1/routes/userRoutes');
 const messageRoutes = require('./src/v1/routes/messageRoutes');
 const smsRoutes = require('./src/v1/routes/smsRoutes');
 require('dotenv').config();
-const client = require('twilio')(process.env.ACCOUNTSID, process.env.AUTHTOKEN);
 
 const port = process.env.PORT || 8000;
 

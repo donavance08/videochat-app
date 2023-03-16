@@ -1,8 +1,8 @@
 const smsDB = require('../database/smsDB');
 const UserDB = require('../database/UserDB');
 const SMS = require('../models/SMS');
-const ObjectId = require('mongoose').Types.ObjectId;
 const customError = require('../utils/customError');
+const twilioClient = require('../twilio/client');
 
 const getReceiverData = async (receiverId) => {
 	try {
@@ -15,21 +15,32 @@ const getReceiverData = async (receiverId) => {
 };
 
 const addSMS = async ({ senderPhoneNumber, receiverId, message }) => {
-	const receiverData = await getReceiverData(receiverId);
-
-	if (!receiverData) {
-		customError.throwCustomError(404, 'Receiver not found');
-	}
-
-	const newSMS = new SMS({
-		sender: senderPhoneNumber,
-		receiver: receiverData.phoneNumber,
-		message,
-		dateCreated: new Date(),
-	});
-
+	console.log('senderPhoneNumber', senderPhoneNumber);
 	try {
-		const savedMessage = await smsDB.addSMS(newSMS);
+		const receiverData = await getReceiverData(receiverId);
+
+		if (!receiverData) {
+			customError.throwCustomError(404, 'Receiver not found');
+		}
+
+		const sentSMS = await twilioClient.sendSMS(
+			senderPhoneNumber,
+			receiverData.phoneNumber,
+			message
+		);
+
+		if (!sentSMS) {
+			return;
+		}
+
+		const newSMSDocument = new SMS({
+			sender: senderPhoneNumber,
+			receiver: receiverData.phoneNumber,
+			message: message,
+			dateCreated: sentSMS.dateCreated,
+		});
+
+		const savedMessage = await smsDB.addSMS(newSMSDocument);
 
 		return savedMessage;
 	} catch (err) {
@@ -39,9 +50,6 @@ const addSMS = async ({ senderPhoneNumber, receiverId, message }) => {
 
 const getSMSHistory = async (senderPhoneNumber, receiverId) => {
 	// ADD a cleaner or sanitizer for reciever id?
-	// console.log(receiver);
-	// receiver = new ObjectId(receiver);
-	// console.log(receiver);
 	const receiverData = await getReceiverData(receiverId);
 
 	if (!receiverData) {
