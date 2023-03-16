@@ -23,6 +23,29 @@ const addSMS = async (req, res) => {
 	}
 };
 
+const getSMSHistory = (req, res) => {
+	// extract phone number of sender and the id of receiver from req.body
+	const sender = auth.decode(req.headers.authorization).phoneNumber;
+
+	// call services to download sms history
+	smsServices
+		.getSMSHistory(sender, req.params.receiver)
+		.then((result) => {
+			res.status(200).send({
+				status: 'OK',
+				message: 'SMS successfully retrieved',
+				data: result,
+			});
+		})
+		.catch((err) => {
+			res.status(err?.status || 500).send({
+				status: 'FAILED',
+				message: err?.message || 'Internal server error',
+			});
+		});
+};
+
 module.exports = {
 	addSMS,
+	getSMSHistory,
 };
