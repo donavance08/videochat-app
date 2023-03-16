@@ -222,21 +222,20 @@ h2 {
 	justify-content: center;
 }
 
-.contact-sub-button {
-	font-weight: 600;
-	line-height: 1.5rem;
+.contact-options-button {
+	min-width: 30px;
+	min-height: 30px;
+	max-width: 30px;
+	max-height: 30px;
 	border-radius: 50%;
-	min-width: 50px;
-	min-height: 50px;
 	background-color: var(--primaryColor);
-	color: var(--white);
 	border: none;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
-.contact-sub-button:hover {
+.contact-options-button:hover {
 	border: 0.15rem solid darkviolet;
 }
 

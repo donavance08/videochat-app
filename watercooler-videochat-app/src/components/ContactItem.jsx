@@ -3,102 +3,109 @@ import { setActiveContactId, setActiveContactName } from '../redux/chat';
 import { useDispatch } from 'react-redux';
 import { customAlphabet } from 'nanoid';
 import { ReactSVG } from 'react-svg';
-import Loader from '../utils/Loader';
 import { useNavigate } from 'react-router-dom';
 /***
- * This component handles the functions under each item in the contact list
+ * This component handles the options that appears when user click on a contact
  * */
 
-// options for nanoid
 const alphabet =
 	'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 const nanoid = customAlphabet(alphabet, 10);
 
-export default function ContactItem({ data }) {
-	const dispatch = useDispatch();
-	const subButtonsRef = useRef();
-	const contactButtonRef = useRef();
-	const [contactClick, setContactClick] = useState();
-	const navigate = useNavigate();
-	const elementId = generateValidElementId();
+const generateValidElementId = () => {
+	let tempId;
+	while (true) {
+		tempId = nanoid();
 
-	// function to handle user click on a contact
-	function handleContactClick(event) {
-		document.body.addEventListener('click', onClickOutside);
-		setContactClick((state) => !state);
+		if (tempId && isNaN(tempId.split('')[0])) {
+			break;
+		}
 	}
 
-	function handleSubButtonClick({ route }) {
+	return tempId;
+};
+
+export default function ContactItem({ data }) {
+	const [isContactSelected, setIsContactSelected] = useState();
+	const dispatch = useDispatch();
+	const optionsRef = useRef();
+	const contactRef = useRef();
+
+	const navigate = useNavigate();
+
+	const randomElementId = generateValidElementId();
+
+	// function to handle user click on a contact
+	const handleContactClick = (event) => {
+		document.body.addEventListener('click', onClickOutside);
+		setIsContactSelected((state) => !state);
+	};
+
+	const handleOptionsClick = ({ route }) => {
 		dispatch(setActiveContactId(data._id));
 		dispatch(setActiveContactName(data.nickname));
 
 		navigate(`/home/${route}`);
-	}
-
-	// create an elementId and make sure it starts with a letter
-	function generateValidElementId() {
-		let tempId;
-		while (true) {
-			tempId = nanoid();
-
-			if (tempId && isNaN(tempId.split('')[0])) {
-				break;
-			}
-		}
-
-		return tempId;
-	}
-
-	// setup listener to close or hide chat and video chat buttons when user clicks outside of its area
-	// useEffect(() => {
-	// document.body.addEventListener('click', onClickOutside);
-	// return () => document.body.removeEventListener('click', onClickOutside);
-	// }, []);
+	};
 
 	// function to handle hiding chat and video call buttons after click even triggered
-	function onClickOutside(e) {
+	const onClickOutside = (e) => {
 		const element = e.target;
 
 		if (
-			contactButtonRef.current &&
-			!contactButtonRef.current.contains(element) &&
-			!subButtonsRef.current.contains(element)
+			contactRef.current &&
+			!contactRef.current.contains(element) &&
+			!optionsRef.current.contains(element)
 		) {
 			e.preventDefault();
 			e.stopPropagation();
-			setContactClick(false);
+			setIsContactSelected(false);
 			document.body.removeEventListener('click', onClickOutside);
 		}
-	}
+	};
 
 	return (
 		<div className='contact-item-container'>
 			<button
-				ref={contactButtonRef}
+				ref={contactRef}
 				onClick={(e) => handleContactClick(e)}
 			>
 				{data.nickname}
 			</button>
-			{contactClick ? (
+			{isContactSelected ? (
 				<div
 					className='hstack gap-1 contact-options-container'
-					ref={subButtonsRef}
-					id={elementId}
+					ref={optionsRef}
+					id={randomElementId}
 				>
-					<button className='contact-sub-button'>
+					<button
+						className='contact-options-button'
+						title='Chat'
+					>
 						<ReactSVG
 							className='input-button-svg'
 							src='/icons/chat-button.svg'
-							loading={() => <Loader size='small' />}
-							onClick={() => handleSubButtonClick({ route: 'chat' })}
+							onClick={() => handleOptionsClick({ route: 'chat' })}
 						/>
 					</button>
-					<button className='contact-sub-button'>
+					<button
+						className='contact-options-button'
+						title='Video chat'
+					>
 						<ReactSVG
 							className='input-button-svg'
 							src='/icons/video-chat-button.svg'
-							loading={() => <Loader size='small' />}
-							onClick={() => handleSubButtonClick({ route: 'video-chat' })}
+							onClick={() => handleOptionsClick({ route: 'video-chat' })}
+						/>
+					</button>
+					<button
+						className='contact-options-button'
+						title='SMS'
+					>
+						<ReactSVG
+							className='input-button-svg'
+							src='/icons/sms.svg'
+							onClick={() => handleOptionsClick({ route: 'sms' })}
 						/>
 					</button>
 				</div>
@@ -106,8 +113,8 @@ export default function ContactItem({ data }) {
 				<>
 					<div
 						className='hstack gap-1'
-						ref={subButtonsRef}
-						id={elementId}
+						ref={optionsRef}
+						id={randomElementId}
 					></div>
 				</>
 			)}
