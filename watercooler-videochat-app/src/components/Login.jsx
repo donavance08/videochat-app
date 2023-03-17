@@ -15,8 +15,6 @@ export default function Login() {
 	const usernameRef = useRef();
 	const passwordRef = useRef();
 
-	console.log('loading status', isLoading);
-
 	const handleSubmit = (event) => {
 		event.preventDefault();
 
