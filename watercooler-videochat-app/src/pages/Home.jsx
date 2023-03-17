@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState, useCallback } from 'react';
 import UserContext from '../UserContext';
 import Contacts from '../components/Contacts';
-import ChatHistory from '../components/ChatHistory';
+import Messaging from '../components/Messaging';
 import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,7 +11,7 @@ import CancelCallDialog from '../components/CancelCallDialog';
 import { setActiveContactId, setActiveContactName } from '../redux/chat';
 const SimplePeer = require('simple-peer');
 
-export default function Chat({ component }) {
+export default function Home({ component }) {
 	console.log('render home');
 	const {
 		socket,
@@ -208,7 +208,7 @@ export default function Chat({ component }) {
 			)}
 			{showCancelCallDialog && <CancelCallDialog cancelReason={cancelReason} />}
 			<Contacts />
-			{component === 'chat' && <ChatHistory activeComponent='chat' />}
+			{component === 'chat' && <Messaging activeComponent='chat' />}
 			{component === 'videoChat' && (
 				<VideoChat
 					declineCallHandler={declineCall}
@@ -216,7 +216,7 @@ export default function Chat({ component }) {
 					z
 				/>
 			)}
-			{component === 'sms' && <ChatHistory activeComponent='sms' />}
+			{component === 'sms' && <Messaging activeComponent='sms' />}
 		</div>
 	);
 }

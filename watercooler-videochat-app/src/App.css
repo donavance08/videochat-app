@@ -300,6 +300,18 @@ h2 {
 	overflow-x: hidden;
 }
 
+.try-again-btn {
+	border: none;
+	background-color: transparent;
+	color: blue;
+	letter-spacing: inherit;
+	padding: 0;
+}
+
+.try-again-btn:hover {
+	text-decoration: underline;
+}
+
 /* CHAT INPUT component
 =========================== */
 

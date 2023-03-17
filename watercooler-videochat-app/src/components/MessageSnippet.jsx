@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import UserContext from '../UserContext';
 import Loader from '../utils/Loader';
 
-export default function MessageItem({ value, bottom }) {
+export default function MessageSnippet({ value, bottom }) {
 	const { isOwner, message, image } = value;
 	const { token } = useContext(UserContext);
 	const [imageObjectURL, setImageObjectURL] = useState();
