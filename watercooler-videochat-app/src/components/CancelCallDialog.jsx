@@ -9,7 +9,7 @@ export default function CancelCallDialog({ cancelReason }) {
 	useEffect(() => {
 		setTimeout(() => {
 			setShowCancelCallDialog(false);
-		}, 10000);
+		}, 3000);
 	});
 
 	return (
