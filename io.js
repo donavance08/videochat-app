@@ -108,16 +108,16 @@ module.exports.fireReceiveMsgEvent = async ({
 	const senderSocket = connectedUsers.get(sender.toString());
 	const receiverSocket = connectedUsers.get(receiver.toString());
 
+	if (!(senderSocket && receiverSocket)) {
+		return;
+	}
+
 	console.log(`${senderSocket.id} sending message to ${receiverSocket.id}`);
 	const sockets = await io.fetchSockets();
 
 	const filteredSocket = sockets.filter(
 		(socket) => socket.userId === receiver.toString()
 	);
-	// sockets.forEach((s) => {
-
-	// 	console.log(`${s.userId} : ${s.id}`);
-	// });
 
 	console.log('sockets online');
 	filteredSocket.forEach((s) => {

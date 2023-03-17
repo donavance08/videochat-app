@@ -28,15 +28,15 @@ const addSMS = async ({ senderPhoneNumber, senderId, receiverId, message }) => {
 			customError.throwCustomError(404, 'Receiver not found');
 		}
 
-		// const sentSMS = await twilioClient.sendSMS(
-		// 	senderPhoneNumber,
-		// 	receiverData.phoneNumber,
-		// 	message
-		// );
+		const sentSMS = await twilioClient.sendSMS(
+			senderPhoneNumber,
+			receiverData.phoneNumber,
+			message
+		);
 
-		// if (!sentSMS) {
-		// 	return;
-		// }
+		if (!sentSMS) {
+			return;
+		}
 
 		const newSMSDocument = new SMS({
 			sender: senderId,
@@ -44,8 +44,7 @@ const addSMS = async ({ senderPhoneNumber, senderId, receiverId, message }) => {
 			receiver: receiverId,
 			receiverPhone: receiverData.phoneNumber,
 			message: message,
-			// dateCreated: sentSMS.dateCreated,
-			dateCreated: new Date(),
+			dateCreated: sentSMS.dateCreated,
 			header: 'sms',
 		});
 

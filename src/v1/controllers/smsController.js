@@ -49,6 +49,7 @@ const getSMSHistory = (req, res) => {
 			res.status(err?.status || 500).send({
 				status: 'FAILED',
 				message: err?.message || 'Internal server error',
+				data: [],
 			});
 		});
 };

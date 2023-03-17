@@ -5,7 +5,7 @@ const sendSMS = async (senderPhoneNumber, receiverPhoneNumber, message) => {
 		.create({
 			body: message,
 			to: `+${receiverPhoneNumber}`,
-			from: senderPhoneNumber,
+			from: `+${senderPhoneNumber}`,
 		})
 		.then((result) => {
 			console.log('goest rhough result');
