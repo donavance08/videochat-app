@@ -31,6 +31,7 @@ export default function VideoChat({ declineCallHandler, dropCallHandler }) {
 		setCallInitiator(true);
 
 		peer.on('signal', (payload) => {
+			console.log('initiating call', socket.current);
 			socket.current.emit('initiateCall', {
 				to: activeContactId,
 				signal: payload,
@@ -43,6 +44,7 @@ export default function VideoChat({ declineCallHandler, dropCallHandler }) {
 			setContactStream(stream);
 		});
 
+		console.log('listening to acceptCall', socket.current);
 		socket.current.on('acceptCall', (signal) => {
 			console.log('recieved an accept call response');
 			try {
@@ -53,6 +55,8 @@ export default function VideoChat({ declineCallHandler, dropCallHandler }) {
 				console.log(err);
 			}
 		});
+
+		console.log('listening to declineCall', socket.current);
 
 		socket.current.on('decline call', (payload) => {
 			console.log('trigger from initatecall');

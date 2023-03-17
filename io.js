@@ -47,7 +47,7 @@ module.exports.initialize = (server) => {
 			if (callee) {
 				io.to(callee.id).emit('initiateCall', payload);
 			} else {
-				io.to(socket.id).emit('decline call', { reason: 'declined' });
+				io.to(socket.id).emit('decline call', { reason: 'offline' });
 			}
 		});
 

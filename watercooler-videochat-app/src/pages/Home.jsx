@@ -186,7 +186,6 @@ export default function Chat({ component }) {
 			activeSocket.off('drop call', dropCallHandler);
 			activeSocket.off('decline call', declineCallHandler);
 			activeSocket.off('initiateCall', initiateCallListener);
-			console.log('listeners left', activeSocket._callbacks);
 		};
 	});
 

@@ -9,7 +9,7 @@ export default function CancelCallDialog({ cancelReason }) {
 	useEffect(() => {
 		setTimeout(() => {
 			setShowCancelCallDialog(false);
-		}, 5000);
+		}, 10000);
 	});
 
 	return (
@@ -17,11 +17,9 @@ export default function CancelCallDialog({ cancelReason }) {
 			<div className='vstack pending-call-box'>
 				<div className='pending-call-display'>
 					<h2 className='pendingcall-header'>{prevActiveContactName}</h2>
-					{cancelReason === 'cancelled' ? (
-						<h2>Call disconnected</h2>
-					) : (
-						<h2>Call declined</h2>
-					)}
+					{cancelReason === 'cancelled' && <h3>Call disconnected</h3>}
+					{cancelReason === 'declined' && <h3>Call declined</h3>}
+					{cancelReason === 'offline' && <h3>Offline</h3>}
 				</div>
 			</div>
 		</div>
