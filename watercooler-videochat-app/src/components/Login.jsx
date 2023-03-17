@@ -1,22 +1,26 @@
-import React, { useRef, useEffect, useContext } from 'react';
+import React, { useRef, useEffect, useContext, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import UserContext from '../UserContext';
-import { io } from 'socket.io-client';
 import useLocalStorage from '../customHooks.js/useLocalStorage';
+import Loader from '../utils/Loader';
 
 // adding localstorage hook and persist with redux
 
 export default function Login() {
 	const { token, setToken, setName, setId } = useContext(UserContext);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const navigate = useNavigate(Navigate);
 
 	const usernameRef = useRef();
 	const passwordRef = useRef();
 
+	console.log('loading status', isLoading);
+
 	const handleSubmit = (event) => {
 		event.preventDefault();
 
+		setIsLoading(() => true);
 		fetch(`${process.env.REACT_APP_API_URL}/api/users/login`, {
 			method: 'POST',
 			headers: {
@@ -33,13 +37,12 @@ export default function Login() {
 					setToken(() => result.data.token);
 					setName(() => result.data.nickname);
 					setId(() => result.data.id);
-
-					return;
 				}
-				console.log(result.message);
+				setIsLoading(() => false);
 			})
 			.catch((err) => {
-				console.log('error', err);
+				console.log(err.message);
+				setIsLoading(() => false);
 			});
 	};
 
@@ -56,13 +59,13 @@ export default function Login() {
 		if (token) {
 			navigate('/');
 		}
-	}, [token]);
+	}, [token, navigate]);
 
 	return (
 		<div className='login-form-container'>
 			<form
 				className='login-form'
-				onSubmit={(e) => handleSubmit(e)}
+				onSubmit={handleSubmit}
 			>
 				<h1 className='form-header'>Login</h1>
 				<div className='input-container'>
@@ -71,7 +74,7 @@ export default function Login() {
 						name='username'
 						type='email'
 						placeholder='Johndoe@email.com'
-						onChange={(e) => handleChange(e)}
+						onChange={handleChange}
 						ref={usernameRef}
 					/>
 					<label
@@ -88,7 +91,7 @@ export default function Login() {
 						name='password'
 						type='password'
 						placeholder='Enter password'
-						onChange={(e) => handleChange(e)}
+						onChange={handleChange}
 						ref={passwordRef}
 					/>
 					<label
@@ -108,7 +111,11 @@ export default function Login() {
 					</a>
 				</p>
 				<div className='button-container'>
-					<button type='submit'>Submit</button>
+					{isLoading ? (
+						<Loader size='small' />
+					) : (
+						<button type='submit'>Submit</button>
+					)}
 				</div>
 			</form>
 		</div>
