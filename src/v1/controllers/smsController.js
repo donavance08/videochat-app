@@ -7,12 +7,13 @@ const addSMS = async (req, res) => {
 		params: { receiverId },
 		body: { message },
 	} = req;
-	const senderPhoneNumber = auth.decode(req.headers.authorization).phoneNumber;
+	const sender = auth.decode(req.headers.authorization);
 
 	// verify length of sms,
 	try {
 		const result = await smsServices.addSMS({
-			senderPhoneNumber,
+			senderPhoneNumber: sender.phoneNumber,
+			senderId: sender.id,
 			receiverId,
 			message,
 		});

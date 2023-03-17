@@ -9,12 +9,18 @@ import {
 	clearMessages,
 	setArrayOfMessages,
 	changeLoadingStatus,
+	setMessage,
 } from '../redux/chat';
 
-export default function ChatHistory({ component }) {
-	const { activeContactName, messages, isLoading, activeContactId } =
-		useSelector((state) => state.chat);
-	const { token, id } = useContext(UserContext);
+export default function ChatHistory({ activeComponent }) {
+	const {
+		activeContactName,
+		messages,
+
+		isLoading,
+		activeContactId,
+	} = useSelector((state) => state.chat);
+	const { token, id, socket } = useContext(UserContext);
 	const [messageWidget, setMessageWidget] = useState();
 	const dispatch = useDispatch();
 	const bottomRef = useRef();
@@ -34,14 +40,10 @@ export default function ChatHistory({ component }) {
 	}, [messages]);
 
 	useEffect(() => {
-		if (!activeContactId) {
-			return;
-		}
-
 		dispatch(changeLoadingStatus(true));
 		dispatch(clearMessages());
 		fetch(
-			`${process.env.REACT_APP_API_URL}/api/${component}/${activeContactId}`,
+			`${process.env.REACT_APP_API_URL}/api/${activeComponent}/${activeContactId}`,
 			{
 				headers: {
 					'content-type': 'application/json',
@@ -59,7 +61,40 @@ export default function ChatHistory({ component }) {
 			.catch((err) => {
 				console.log(err);
 			});
-	}, [activeContactName]);
+	}, [activeContactId, activeComponent, token, id, dispatch]);
+
+	/**
+	 * handles listener for incoming chat messages
+	 *
+	 */
+	useEffect(() => {
+		const activeSocket = socket.current;
+		if (!activeSocket) {
+			return;
+		}
+		console.log('socket loaded');
+		const listener = (payload) => {
+			console.log('payload', payload);
+			if (
+				payload.header !== activeComponent ||
+				payload.sender !== activeContactId
+			) {
+				return;
+			}
+
+			if (payload?.filename) {
+				dispatch(setMessage({ isOwner: false, image: payload.filename }));
+			}
+			dispatch(setMessage({ isOwner: false, message: payload.message }));
+		};
+
+		activeSocket.on('receive msg', listener);
+
+		return () => {
+			activeSocket.off('receive msg', listener);
+			console.log('socket off');
+		};
+	}, [activeContactId, dispatch, activeComponent, socket]);
 
 	return (
 		<div className='chat-body-container col-6'>
@@ -90,7 +125,7 @@ export default function ChatHistory({ component }) {
 							</>
 						)}
 					</div>
-					<ChatInput component={component} />
+					<ChatInput activeComponent={activeComponent} />
 				</>
 			)}
 		</div>

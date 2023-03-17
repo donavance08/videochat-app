@@ -13,6 +13,7 @@ import { setActiveContactId, setActiveContactName } from '../redux/chat';
 const SimplePeer = require('simple-peer');
 
 export default function Chat({ component }) {
+	console.log('render home');
 	const {
 		socket,
 		token,
@@ -90,6 +91,9 @@ export default function Chat({ component }) {
 	 * initiate socket whenever activeContactId changes
 	 */
 	useEffect(() => {
+		if (socket.current) {
+			return;
+		}
 		socket.current = io(`${process.env.REACT_APP_API_URL}`, {
 			extraHeaders: {
 				id,
@@ -183,29 +187,6 @@ export default function Chat({ component }) {
 		};
 	});
 
-	/**
-	 * handles listener for incoming chat messages
-	 *
-	 */
-	useEffect(() => {
-		const listener = (payload) => {
-			if (payload.sender !== activeContactId) {
-				return;
-			}
-
-			if (payload?.filename) {
-				dispatch(setMessage({ isOwner: false, image: payload.filename }));
-			}
-			dispatch(setMessage({ isOwner: false, message: payload.message }));
-		};
-
-		socket.current.on('receive msg', listener);
-
-		return () => {
-			socket.current.off('receive msg', listener);
-		};
-	}, [activeContactId]);
-
 	return (
 		<div className='chat-page-container d-flex flex-row '>
 			{showPendingCallDialog && (
@@ -213,14 +194,15 @@ export default function Chat({ component }) {
 			)}
 			{showCancelCallDialog && <CancelCallDialog cancelReason={cancelReason} />}
 			<Contacts />
-			{component === 'chat' && <ChatHistory component='chat' />}
+			{component === 'chat' && <ChatHistory activeComponent='chat' />}
 			{component === 'videoChat' && (
 				<VideoChat
 					declineCallHandler={declineCall}
 					dropCallHandler={dropCall}
+					z
 				/>
 			)}
-			{component === 'sms' && <ChatHistory component='sms' />}
+			{component === 'sms' && <ChatHistory activeComponent='sms' />}
 		</div>
 	);
 }

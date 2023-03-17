@@ -1,6 +1,7 @@
 const smsDB = require('../database/smsDB');
 const UserDB = require('../database/UserDB');
 const SMS = require('../models/SMS');
+const io = require('../../../io');
 const customError = require('../utils/customError');
 const twilioClient = require('../twilio/client');
 
@@ -14,35 +15,50 @@ const getReceiverData = async (receiverId) => {
 	}
 };
 
-const addSMS = async ({ senderPhoneNumber, receiverId, message }) => {
+const addSMS = async ({ senderPhoneNumber, senderId, receiverId, message }) => {
 	console.log('senderPhoneNumber', senderPhoneNumber);
+	console.log('senderId', senderId);
+	console.log('receiverId', receiverId);
+	console.log('message', message);
 	try {
 		const receiverData = await getReceiverData(receiverId);
 
+		console.log('receiverData', receiverData);
 		if (!receiverData) {
 			customError.throwCustomError(404, 'Receiver not found');
 		}
 
-		const sentSMS = await twilioClient.sendSMS(
-			senderPhoneNumber,
-			receiverData.phoneNumber,
-			message
-		);
+		// const sentSMS = await twilioClient.sendSMS(
+		// 	senderPhoneNumber,
+		// 	receiverData.phoneNumber,
+		// 	message
+		// );
 
-		if (!sentSMS) {
-			return;
-		}
+		// if (!sentSMS) {
+		// 	return;
+		// }
 
 		const newSMSDocument = new SMS({
-			sender: senderPhoneNumber,
-			receiver: receiverData.phoneNumber,
+			sender: senderId,
+			senderPhone: senderPhoneNumber,
+			receiver: receiverId,
+			receiverPhone: receiverData.phoneNumber,
 			message: message,
-			dateCreated: sentSMS.dateCreated,
+			// dateCreated: sentSMS.dateCreated,
+			dateCreated: new Date(),
+			header: 'sms',
 		});
 
 		const savedMessage = await smsDB.addSMS(newSMSDocument);
 
+		io.fireReceiveMsgEvent({
+			sender: senderId,
+			receiver: receiverId,
+			savedMessage,
+		});
+
 		return savedMessage;
+		return;
 	} catch (err) {
 		throw err;
 	}

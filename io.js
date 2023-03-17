@@ -13,6 +13,7 @@ module.exports.initialize = (server) => {
 		socket.userId = socket.handshake.headers.id;
 		connectedUsers.set(socket.handshake.headers.id, socket);
 
+		console.log(`socket online ${socket.id}`);
 		console.log('Registered users');
 		connectedUsers.forEach((socket) => {
 			console.log(`${socket.userId} : ${socket.id}`);
@@ -36,6 +37,7 @@ module.exports.initialize = (server) => {
 			const id = socket.userId;
 
 			socket.broadcast.emit('user disconnect', { id });
+			console.log('user disconnected', id);
 
 			if (connectedUsers.delete(socket.userId)) {
 				console.log(`${id} disconnected from server`);
@@ -98,11 +100,32 @@ module.exports.getIO = () => {
 	return io;
 };
 
-module.exports.fireReceiveMsgEvent = (payload) => {
-	const senderSocket = connectedUsers.get(payload.sender.toString());
-	const receiverSocket = connectedUsers.get(payload.receiver.toString());
+module.exports.fireReceiveMsgEvent = async ({
+	sender,
+	receiver,
+	savedMessage,
+}) => {
+	const senderSocket = connectedUsers.get(sender.toString());
+	const receiverSocket = connectedUsers.get(receiver.toString());
+
+	console.log(`${senderSocket.id} sending message to ${receiverSocket.id}`);
+	const sockets = await io.fetchSockets();
+
+	const filteredSocket = sockets.filter(
+		(socket) => socket.userId === receiver.toString()
+	);
+	// sockets.forEach((s) => {
+
+	// 	console.log(`${s.userId} : ${s.id}`);
+	// });
+
+	console.log('sockets online');
+	filteredSocket.forEach((s) => {
+		console.log(`${s.userId} : ${s.id}`);
+		console.log(`connected: ${s.connected}`);
+	});
 
 	if (senderSocket && receiverSocket) {
-		senderSocket.to(receiverSocket.id).emit('receive msg', payload);
+		senderSocket.to(receiverSocket.id).emit('receive msg', savedMessage);
 	}
 };

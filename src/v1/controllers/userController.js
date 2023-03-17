@@ -66,7 +66,7 @@ const registerNewUser = (req, res) => {
 
 const getUserContacts = (req, res) => {
 	const id = auth.decode(req.headers.authorization).id;
-	console.log('id', id);
+
 	userServices
 		.getUserContacts(id)
 		.then((result) => {

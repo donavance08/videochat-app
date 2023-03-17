@@ -10,12 +10,13 @@ const addMessage = async ({ sender, receiver, message, filename }) => {
 		sender,
 		receiver,
 		dateCreated: new Date(),
+		header: 'chat',
 	});
 
 	try {
 		const savedMessage = await messageDB.addMessage(newMessage);
 
-		io.fireReceiveMsgEvent(savedMessage);
+		io.fireReceiveMsgEvent({ sender, receiver, savedMessage });
 
 		return savedMessage;
 	} catch (err) {

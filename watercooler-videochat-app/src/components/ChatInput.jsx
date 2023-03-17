@@ -7,7 +7,7 @@ import { setMessage, deleteLastMessage } from '../redux/chat';
 import UserContext from '../UserContext';
 import UploadFile from '../components/UploadFile';
 
-export default function ChatInput({ component }) {
+export default function ChatInput({ activeComponent }) {
 	const { token } = useContext(UserContext);
 	const [showEmojis, setShowEmojis] = useState(false);
 	const { activeContactId } = useSelector((state) => state.chat);
@@ -29,7 +29,7 @@ export default function ChatInput({ component }) {
 		);
 
 		fetch(
-			`${process.env.REACT_APP_API_URL}/api/${component}/${activeContactId}`,
+			`${process.env.REACT_APP_API_URL}/api/${activeComponent}/${activeContactId}`,
 			{
 				method: 'POST',
 				headers: {
@@ -38,6 +38,7 @@ export default function ChatInput({ component }) {
 				},
 				body: JSON.stringify({
 					message: inputMessageRef.current.value,
+					header: activeComponent,
 				}),
 			}
 		)
@@ -89,7 +90,7 @@ export default function ChatInput({ component }) {
 
 	return (
 		<div className='input-container'>
-			{component === 'chat' && (
+			{activeComponent === 'chat' && (
 				<>
 					<button
 						title='Insert Emoji'
@@ -113,7 +114,7 @@ export default function ChatInput({ component }) {
 					)}
 				</>
 			)}
-			{component === 'chat' && <UploadFile />}
+			{activeComponent === 'chat' && <UploadFile />}
 			<div className='chat-input'>
 				<form onSubmit={handleSubmit}>
 					<input

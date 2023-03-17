@@ -10,6 +10,7 @@ const messageSchema = new mongoose.Schema({
 	sender: { type: mongoose.ObjectId, index: true },
 	receiver: { type: mongoose.ObjectId, index: true },
 	dateCreated: { type: Date, default: new Date() },
+	header: { type: String, required: true, default: 'chat' },
 });
 
 module.exports = mongoose.model('Message', messageSchema);
