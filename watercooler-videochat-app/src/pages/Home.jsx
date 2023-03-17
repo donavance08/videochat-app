@@ -5,7 +5,6 @@ import ChatHistory from '../components/ChatHistory';
 import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import { useDispatch, useSelector } from 'react-redux';
-import { setMessage } from '../redux/chat';
 import VideoChat from '../components/VideoChat';
 import PendingCallDialog from '../components/PendingCallDialog';
 import CancelCallDialog from '../components/CancelCallDialog';
@@ -123,7 +122,9 @@ export default function Chat({ component }) {
 			navigate('/');
 		}
 
-		socket.current.on('disconnect', (payload) => {
+		const activeSocket = socket.current;
+
+		activeSocket.on('disconnect', (payload) => {
 			console.log('socket disconnected');
 			console.log('socket current', socket.current);
 		});
@@ -140,7 +141,7 @@ export default function Chat({ component }) {
 			setContactSignal(payload.signal);
 		};
 
-		socket.current.on('initiateCall', initiateCallListener);
+		activeSocket.on('initiateCall', initiateCallListener);
 
 		const declineCallHandler = (payload) => {
 			console.log('trigger decline call handler');
@@ -151,7 +152,7 @@ export default function Chat({ component }) {
 				connectionRef.current.destroy();
 			}
 		};
-		socket.current.on('decline call', declineCallHandler);
+		activeSocket.on('decline call', declineCallHandler);
 
 		/**
 		 * Handler for contact initiated drop call
@@ -168,7 +169,7 @@ export default function Chat({ component }) {
 			}
 		};
 
-		socket.current.on('drop call', dropCallHandler);
+		activeSocket.on('drop call', dropCallHandler);
 
 		const userDisconnectHandler = ({ id }) => {
 			if (callOngoing && activeContactId === id) {
@@ -179,11 +180,13 @@ export default function Chat({ component }) {
 			}
 		};
 
-		socket.current.on('user disconnect', userDisconnectHandler);
+		activeSocket.on('user disconnect', userDisconnectHandler);
 		return () => {
-			socket.current.off('user disconnect', userDisconnectHandler);
-			socket.current.off('drop call', dropCallHandler);
-			socket.current.off('decline call', declineCallHandler);
+			activeSocket.off('user disconnect', userDisconnectHandler);
+			activeSocket.off('drop call', dropCallHandler);
+			activeSocket.off('decline call', declineCallHandler);
+			activeSocket.off('initiateCall', initiateCallListener);
+			console.log('listeners left', activeSocket._callbacks);
 		};
 	});
 
