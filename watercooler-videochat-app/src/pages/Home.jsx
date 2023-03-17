@@ -90,8 +90,9 @@ export default function Chat({ component }) {
 	 * initiate socket whenever activeContactId changes
 	 */
 	useEffect(() => {
+		console.log('running effect');
 		if (socket.current) {
-			return;
+			socket.current.connect();
 		}
 		socket.current = io(`${process.env.REACT_APP_API_URL}`, {
 			extraHeaders: {
@@ -111,6 +112,15 @@ export default function Chat({ component }) {
 		socket.current.on('connection', (payload) => {
 			console.log(payload);
 		});
+
+		const disconnectListener = (payload) => {
+			console.log(`${socket.current} got disconnected`);
+		};
+		socket.current.on('disconnect', disconnectListener);
+
+		return () => {
+			socket.current.disconnect();
+		};
 	}, []);
 
 	/**
