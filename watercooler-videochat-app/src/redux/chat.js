@@ -6,7 +6,6 @@ const initialState = {
 	prevActiveContactId: '',
 	prevActiveContactName: '',
 	messages: [],
-	isLoading: true,
 };
 
 export const chatSlice = createSlice({
@@ -67,9 +66,6 @@ export const chatSlice = createSlice({
 			return { ...state, messages: [] };
 		},
 
-		changeLoadingStatus: (state, action) => {
-			return { ...state, isLoading: action.payload };
-		},
 		resetChatState: (state) => {
 			return initialState;
 		},
@@ -83,7 +79,6 @@ export const {
 	clearMessages,
 	setArrayOfMessages,
 	deleteLastMessage,
-	changeLoadingStatus,
 	resetChatState,
 } = chatSlice.actions;
 
