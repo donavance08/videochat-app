@@ -28,6 +28,17 @@ function App() {
 		clearId();
 	};
 
+	const resetContextValues = () => {
+		setPersonalStream(null);
+		setContactStream(null);
+		setShowPendingCallDialog(false);
+		setCallOngoing(false);
+		setShowCancelCallDialog(false);
+		clearLocalStorage();
+		socket?.current.disconnect();
+		connectionRef.current = null;
+	};
+
 	return (
 		<div className='App'>
 			<UserProvider
@@ -53,6 +64,7 @@ function App() {
 					showCancelCallDialog,
 					setShowCancelCallDialog,
 					connectionRef,
+					resetContextValues,
 				}}
 			>
 				<BrowserRouter>

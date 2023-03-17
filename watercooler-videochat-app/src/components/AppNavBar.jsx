@@ -11,15 +11,13 @@ import { resetChatState } from '../redux/chat';
 /* Incomplete*/
 
 export default function AppNavBar() {
-	const { socket, clearLocalStorage, name } = useContext(UserContext);
+	const { name, resetContextValues } = useContext(UserContext);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
 	const handleLogout = (event) => {
 		dispatch(resetChatState());
-
-		socket?.current.disconnect();
-		clearLocalStorage();
+		resetContextValues();
 
 		navigate('/');
 	};
