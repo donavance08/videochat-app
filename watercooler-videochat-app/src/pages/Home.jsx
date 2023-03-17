@@ -63,6 +63,7 @@ export default function Chat({ component }) {
 
 		peer.signal(contactSignal);
 		connectionRef.current = peer;
+		navigate('/home/video-chat');
 	};
 
 	const declineCall = () => {
