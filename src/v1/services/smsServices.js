@@ -16,14 +16,9 @@ const getReceiverData = async (receiverId) => {
 };
 
 const addSMS = async ({ senderPhoneNumber, senderId, receiverId, message }) => {
-	console.log('senderPhoneNumber', senderPhoneNumber);
-	console.log('senderId', senderId);
-	console.log('receiverId', receiverId);
-	console.log('message', message);
 	try {
 		const receiverData = await getReceiverData(receiverId);
 
-		console.log('receiverData', receiverData);
 		if (!receiverData) {
 			customError.throwCustomError(404, 'Receiver not found');
 		}
