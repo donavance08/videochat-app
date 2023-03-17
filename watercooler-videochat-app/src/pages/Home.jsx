@@ -115,6 +115,7 @@ export default function Chat({ component }) {
 
 		const disconnectListener = (payload) => {
 			console.log(`${socket.current} got disconnected`);
+			socket.current.connect();
 		};
 		socket.current.on('disconnect', disconnectListener);
 
