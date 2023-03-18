@@ -2,11 +2,11 @@ import { useSelector } from 'react-redux';
 import ChatInput from './ChatInput';
 import MessageHistory from './MessageHistory';
 
-export default function Messaging({ activeComponent }) {
+export default function Messaging({ activeComponent, column }) {
 	const { activeContactName } = useSelector((state) => state.chat);
 
 	return (
-		<div className='chat-body-container col-6'>
+		<div className={`chat-body-container col-${column}`}>
 			{!activeContactName ? (
 				<>
 					<div className='empty-conversation-container'>

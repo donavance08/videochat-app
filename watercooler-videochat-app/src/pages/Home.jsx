@@ -208,15 +208,30 @@ export default function Home({ component }) {
 			)}
 			{showCancelCallDialog && <CancelCallDialog cancelReason={cancelReason} />}
 			<Contacts />
-			{component === 'chat' && <Messaging activeComponent='chat' />}
-			{component === 'videoChat' && (
-				<VideoChat
-					declineCallHandler={declineCall}
-					dropCallHandler={dropCall}
-					z
+			{component === 'chat' && (
+				<Messaging
+					activeComponent='chat'
+					column='6'
 				/>
 			)}
-			{component === 'sms' && <Messaging activeComponent='sms' />}
+			{component === 'videoChat' && (
+				<>
+					<VideoChat
+						declineCallHandler={declineCall}
+						dropCallHandler={dropCall}
+					/>
+					<Messaging
+						activeComponent='chat'
+						column='3'
+					/>
+				</>
+			)}
+			{component === 'sms' && (
+				<Messaging
+					activeComponent='sms'
+					column='6'
+				/>
+			)}
 		</div>
 	);
 }

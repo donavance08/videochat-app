@@ -3,13 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import UserContext from '../UserContext';
 import MessageSnippet from './MessageSnippet';
 import { v4 as uuid } from 'uuid';
-import { clearMessages, setArrayOfMessages } from '../redux/chat';
+import { clearMessages, setArrayOfMessages, setMessage } from '../redux/chat';
 import Loader from '../utils/Loader';
 
 export default function MessageHistory({ activeComponent }) {
-	const { messages, activeContactId, setMessage } = useSelector(
-		(state) => state.chat
-	);
+	const { messages, activeContactId } = useSelector((state) => state.chat);
 	const { token, id, socket } = useContext(UserContext);
 	const [messageWidget, setMessageWidget] = useState();
 	const dispatch = useDispatch();
@@ -57,11 +55,11 @@ export default function MessageHistory({ activeComponent }) {
 		};
 
 		activeSocket.on('receive msg', listener);
-
+		console.log('activeSocket', activeSocket);
 		return () => {
 			activeSocket.off('receive msg', listener);
 		};
-	}, [activeContactId, dispatch, activeComponent, socket, setMessage]);
+	}, [activeContactId, dispatch, activeComponent, socket]);
 
 	const fetchData = useCallback(() => {
 		fetch(
