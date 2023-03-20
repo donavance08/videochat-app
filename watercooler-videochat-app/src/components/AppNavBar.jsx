@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import UserContext from '../UserContext';
 import { resetChatState } from '../redux/chat';
+import Avatar from 'react-avatar';
 
 /* Incomplete*/
 
@@ -37,23 +38,19 @@ export default function AppNavBar() {
 					<Navbar.Collapse className='justify-content-end'>
 						<Nav className='ms-auto'>
 							<NavDropdown
-								className='text-light'
-								title={`${name}`}
+								title={
+									<Avatar
+										name={`${name}`}
+										maxInitials={2}
+										size={'45px'}
+										round={true}
+									/>
+								}
 								id='basic-nav-dropdown'
 							>
 								<NavDropdown.Item onClick={handleLogout}>
 									Logout
 								</NavDropdown.Item>
-								{/* <NavDropdown.Item href='#action/3.2'>
-									Another action
-								</NavDropdown.Item>
-								<NavDropdown.Item href='#action/3.3'>
-									Something
-								</NavDropdown.Item>
-								<NavDropdown.Divider />
-								<NavDropdown.Item href='#action/3.4'>
-									Separated link
-								</NavDropdown.Item> */}
 							</NavDropdown>
 						</Nav>
 					</Navbar.Collapse>
