@@ -19,8 +19,6 @@ export default function UploadFile() {
 	};
 
 	const handleChange = (event) => {
-		event.preventDefault();
-
 		const formData = new FormData();
 		formData.append('file', inputFileRef.current.files[0]);
 
