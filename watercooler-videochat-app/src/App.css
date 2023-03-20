@@ -115,9 +115,9 @@ h2 {
 	border-width: 0px;
 	margin: auto;
 }
+
 .login-button-container > button:hover {
-	border-width: 0px 2px 2px 0px;
-	border-color: rgba(0, 0, 0, 0.2);
+	box-shadow: 5px 5px 10px 2px rgba(0, 0, 0, 0.8);
 }
 
 .form-header {
@@ -181,8 +181,7 @@ h2 {
 }
 
 .button-container > button:hover {
-	background-color: #1b4cf1;
-	transform: translateY(-2px);
+	box-shadow: 5px 5px 10px 2px rgba(0, 0, 0, 0.8);
 }
 
 .form-input:focus + .label,
