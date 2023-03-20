@@ -85,8 +85,13 @@ h2 {
 	border-radius: inherit;
 	min-height: 30px;
 	min-width: 80%;
-	padding: 6px 0px 6px 4px;
+	padding: 6px 0px 6px 6px;
 	margin: 0px;
+}
+
+.search-bar-container > form > input:focus {
+	outline: none;
+	box-shadow: none;
 }
 
 .search-bar-container > form > div {
