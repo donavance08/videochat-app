@@ -96,18 +96,17 @@ const getUserContacts = async (id) => {
 };
 
 const findAllUsersByName = async (name) => {
-	const users = await User.find({ nickname: `^${name}` })
+	return await User.find({ nickname: { $regex: `${name}`, $options: 'i' } })
 		.then((result) => {
-			if (!result) {
-				customError.throwCustomError(404, 'No user found with the given name');
+			if (result.length > 0) {
+				return result;
 			}
-			return result;
+
+			customError.throwCustomError(404, 'No user found with the given name');
 		})
 		.catch((err) => {
-			customError.throwCustomError(500, err.message);
+			throw err;
 		});
-
-	return users;
 };
 
 module.exports = {
