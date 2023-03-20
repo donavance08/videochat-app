@@ -109,10 +109,26 @@ const getUserContacts = async (id) => {
 	return user;
 };
 
+const findAllUsersByName = async (name) => {
+	const users = await User.find({ nickname: `^${name}` })
+		.then((result) => {
+			if (!result) {
+				customError.throwCustomError(404, 'No user found with the given name');
+			}
+			return result;
+		})
+		.catch((err) => {
+			customError.throwCustomError(500, err.message);
+		});
+
+	return users;
+};
+
 module.exports = {
 	findExistingUserByName,
 	findExistingUserById,
 	loginUser,
 	getUserContacts,
 	registerNewUser,
+	findAllUsersByName,
 };

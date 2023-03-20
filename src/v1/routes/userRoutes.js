@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
-const { body, param } = require('express-validator');
+const { body, header } = require('express-validator');
 const auth = require('../../../auth');
 
 module.exports = router;
 
-const validations = [
+const regValidations = [
 	body('nickname')
 		.trim()
 		.isLength({ min: 3, max: 15 })
@@ -27,8 +27,24 @@ const validations = [
 		.withMessage('Phone number should be min of 7 and max of 15'),
 ];
 
+const searchValidations = [
+	header('name')
+		.escape()
+		.trim()
+		.stripLow()
+		.isLength({ min: 1, max: 60 })
+		.withMessage('Name should not exceed 60 characters long'),
+];
+
 router.post('/login', userController.loginUser);
 
-router.post('/', validations, userController.registerNewUser);
+router.post('/', regValidations, userController.registerNewUser);
 
 router.get('/contacts', auth.verify, userController.getUserContacts);
+
+router.get(
+	'/search/:name',
+	auth.verify,
+	searchValidations,
+	userController.findAllUsersByName
+);

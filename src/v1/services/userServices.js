@@ -66,8 +66,19 @@ const getUserContacts = (userId) => {
 		});
 };
 
+const findAllUsersByName = (name) => {
+	return UserDB.findAllUsersByName(name)
+		.then((result) => {
+			return result;
+		})
+		.catch((err) => {
+			throw err;
+		});
+};
+
 module.exports = {
 	loginUser,
 	registerNewUser,
 	getUserContacts,
+	findAllUsersByName,
 };

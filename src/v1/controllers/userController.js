@@ -86,8 +86,26 @@ const getUserContacts = (req, res) => {
 		});
 };
 
+const findAllUsersByName = (req, res) => {
+	userServices
+		.findAllUsersByName(req.params.name)
+		.then((result) => {
+			res
+				.status(200)
+				.send({ status: 'OK', message: 'Search result', data: result });
+		})
+		.catch((err) => {
+			res.status(err?.status || 500).send({
+				status: 'FAILED',
+				message: err?.message || 'Internal Server Error',
+				data: [],
+			});
+		});
+};
+
 module.exports = {
 	loginUser,
 	registerNewUser,
 	getUserContacts,
+	findAllUsersByName,
 };
