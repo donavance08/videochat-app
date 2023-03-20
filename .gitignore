@@ -131,8 +131,13 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-
 capstone-project.code-workspace
 .code-workspace
 
+# Project dev notes
 notes.txt
+
+# Build file 
+./watercooler-videochat-app/build
+
+build/

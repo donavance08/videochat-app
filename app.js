@@ -5,6 +5,7 @@ const cors = require('cors');
 const userRoutes = require('./src/v1/routes/userRoutes');
 const messageRoutes = require('./src/v1/routes/messageRoutes');
 const smsRoutes = require('./src/v1/routes/smsRoutes');
+// const path = require('path');
 require('dotenv').config();
 
 const port = process.env.PORT || 8000;
@@ -12,6 +13,12 @@ const port = process.env.PORT || 8000;
 const app = express();
 
 app.use(express.json());
+
+// const home = path.join(__dirname, 'watercooler-videochat-app/build/index.html');
+// app.use(
+// 	express.static(path.join(__dirname, 'watercooler-videochat-app', 'build'))
+// );
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
@@ -29,6 +36,10 @@ const mongo = mongoose
 	);
 
 const MongoClient = mongo.MongoClient;
+
+// app.use('*', (req, res) => {
+// 	res.sendFile(home);
+// });
 
 /* ROUTES */
 app.use('/api/users', userRoutes);

@@ -74,20 +74,20 @@ function App() {
 						<Route
 							path='/'
 							element={
-								token ? <Navigate to='/home' /> : <Navigate to='/users/login' />
+								token ? <Navigate to='/home' /> : <Navigate to='/login' />
 							}
 						/>
 						<Route
 							path='/home'
-							element={token ? <Home /> : <Navigate to='/users/login' />}
+							element={token ? <Home /> : <Navigate to='/login' />}
 						/>
 						<Route
-							path='/users/login'
+							path='/login'
 							element={<LandingPage component='login' />}
 						/>
 
 						<Route
-							path='/users/registration'
+							path='/registration'
 							element={<LandingPage component='register' />}
 						/>
 						<Route
