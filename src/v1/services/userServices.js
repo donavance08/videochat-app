@@ -51,7 +51,7 @@ const registerNewUser = async (data) => {
 		dateCreated: new Date(),
 	});
 
-	UserDB.registerNewUser(userDataFromClient)
+	return UserDB.registerNewUser(userDataFromClient)
 		.then((result) => {
 			const token = auth.createAccessToken({
 				nickname: result.nickname,

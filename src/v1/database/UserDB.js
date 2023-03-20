@@ -65,7 +65,7 @@ const loginUser = async (username, password) => {
 		});
 };
 
-const registerNewUser = async (newUserData) => {
+const registerNewUser = (newUserData) => {
 	return newUserData
 		.save()
 		.then((result) => {

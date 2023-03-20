@@ -1,6 +1,7 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import UserContext from '../UserContext';
+import Loader from '../utils/Loader';
 
 export default function Registration() {
 	const nicknameRef = useRef();
@@ -8,6 +9,7 @@ export default function Registration() {
 	const passwordRef = useRef();
 	const confirmPasswordRef = useRef();
 	const phoneNumberRef = useRef();
+	const [isLoading, setIsLoading] = useState(false);
 
 	const navigate = useNavigate(Navigate);
 	const { token, setToken, setName } = useContext(UserContext);
@@ -16,7 +18,7 @@ export default function Registration() {
 		if (token) {
 			navigate('/');
 		}
-	}, [token]);
+	}, [token, navigate]);
 
 	const matchPassword = () => {
 		return passwordRef.current.value === confirmPasswordRef.current.value;
@@ -26,11 +28,11 @@ export default function Registration() {
 		e.preventDefault();
 
 		if (!matchPassword()) {
-			// ADD badge error
 			console.log('passwords do not match');
 			return;
 		}
 
+		setIsLoading(true);
 		fetch(`${process.env.REACT_APP_API_URL}/api/users/`, {
 			method: 'POST',
 			headers: {
@@ -48,11 +50,14 @@ export default function Registration() {
 				if (result.status === 'OK') {
 					setToken(() => result.data.token);
 					setName(() => result.data.nickname);
-					return;
+					setIsLoading(false);
+					navigate('/');
 				}
-				console.log(result.message);
 			})
-			.catch((err) => console.error(err));
+			.catch((err) => {
+				setIsLoading(false);
+				console.error(err);
+			});
 	};
 
 	// helper function for adding an attribute that will be used by CSS to animate input fields
@@ -177,7 +182,11 @@ export default function Registration() {
 					</a>
 				</p>
 				<div className='button-container'>
-					<button type='submit'>Submit</button>
+					{isLoading ? (
+						<Loader size='small' />
+					) : (
+						<button type='submit'>Submit</button>
+					)}
 				</div>
 			</form>
 		</div>
