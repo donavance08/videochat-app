@@ -66,20 +66,6 @@ const loginUser = async (username, password) => {
 };
 
 const registerNewUser = async (newUserData) => {
-	const existingUser = await findExistingUserByName(newUserData.username);
-
-	if (existingUser) {
-		customError.throwCustomError(403, 'Username already exists');
-	}
-
-	const existingPhoneNumber = await findExistingPhoneNumber(
-		newUserData.phoneNumber
-	);
-
-	if (existingPhoneNumber) {
-		customError.throwCustomError(403, 'phoneNumber already registered');
-	}
-
 	return newUserData
 		.save()
 		.then((result) => {
@@ -131,4 +117,5 @@ module.exports = {
 	getUserContacts,
 	registerNewUser,
 	findAllUsersByName,
+	findExistingPhoneNumber,
 };

@@ -25,8 +25,24 @@ const loginUser = (username, password) => {
 		});
 };
 
+/**
+ * @param data - contains username, nickname, phoneNumber and password of the new registrant
+ * Tasks are to check if username and phoneNumber is already in use, create a new model object from the data, and let UserDB save the data.
+ */
 const registerNewUser = async (data) => {
-	const { password } = data;
+	const { password, username, phoneNumber } = data;
+
+	const existingUser = await UserDB.findExistingUserByName(username);
+
+	if (existingUser) {
+		customError.throwCustomError(403, 'Username already exists');
+	}
+
+	const existingPhoneNumber = await UserDB.findExistingPhoneNumber(phoneNumber);
+
+	if (existingPhoneNumber) {
+		customError.throwCustomError(403, 'phoneNumber already registered');
+	}
 
 	const userDataFromClient = new User({
 		...data,
