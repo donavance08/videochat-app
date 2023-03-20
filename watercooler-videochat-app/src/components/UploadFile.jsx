@@ -14,8 +14,6 @@ export default function UploadFile() {
 
 	const handleClick = () => {
 		inputFileRef.current.click();
-		console.log('clicked');
-		console.log(inputFileRef.current);
 	};
 
 	const handleChange = (event) => {
@@ -36,7 +34,6 @@ export default function UploadFile() {
 			.then((response) => response.json())
 			.then((result) => {
 				if (result.status === 'OK') {
-					console.log(result);
 					dispatch(setMessage({ isOwner: true, image: result.data.filename }));
 				}
 
