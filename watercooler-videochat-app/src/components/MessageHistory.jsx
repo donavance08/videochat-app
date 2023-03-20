@@ -62,6 +62,7 @@ export default function MessageHistory({ activeComponent }) {
 	}, [activeContactId, dispatch, activeComponent, socket]);
 
 	const fetchData = useCallback(() => {
+		console.time('fetch');
 		fetch(
 			`${process.env.REACT_APP_API_URL}/api/${activeComponent}/${activeContactId}`,
 			{
@@ -78,7 +79,7 @@ export default function MessageHistory({ activeComponent }) {
 				} else {
 					setIsError(true);
 				}
-
+				console.timeEnd('fetch');
 				setIsLoading(false);
 			})
 			.catch((err) => {
