@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@1,300&family=Quicksand:wght@300&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Lobster&family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lobster&family=Montserrat:wght@200&family=Roboto&display=swap');
+
 :root {
 	--primaryColor: #0096ff;
 	--red: #dc1818;
@@ -48,6 +50,10 @@ h2 {
 	background-color: var(--primaryColor);
 }
 
+.navbar > .container {
+	height: 50px;
+}
+
 .navbar-brand {
 	font-size: 30px;
 	font-weight: 900;
@@ -58,20 +64,37 @@ h2 {
 	font-size: 20px;
 }
 
-/* Avatar 
-===============================*/
-
-.avatar-container {
-	width: 50;
-	max-width: 50px;
-	height: 100px;
-	border-radius: 50%;
-	object-fit: fill;
+.search-bar-container {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	border-radius: 1.2rem;
 }
 
-.avatar-container > img {
-	max-width: 100%;
-	max-height: 100%;
+.search-bar-container > form {
+	background-color: var(--white);
+	border-radius: 0.5rem;
+	width: 30%;
+}
+
+.search-bar-container > form > input {
+	border: none;
+	background-color: transparent;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 14px;
+	border-radius: inherit;
+	min-height: 30px;
+	min-width: 80%;
+	padding: 6px 0px 6px 4px;
+	margin: 0px;
+}
+
+.search-bar-container > form > div {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: auto;
+	min-width: 40px;
 }
 
 /* LOGIN section and Registration section

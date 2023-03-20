@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import UserContext from '../UserContext';
 import { resetChatState } from '../redux/chat';
+import { ReactSVG } from 'react-svg';
 import Avatar from 'react-avatar';
 
 /* Incomplete*/
@@ -32,9 +33,28 @@ export default function AppNavBar() {
 				>
 					WaterCooler
 				</Navbar.Brand>
+
+				<div className='search-bar-container'>
+					<form
+						className='d-flex'
+						role='search'
+					>
+						<input
+							className='form-control me-2'
+							type='search'
+							placeholder='Search People or Friends'
+							aria-label='Search'
+						/>
+						<ReactSVG
+							className='input-button-svg'
+							src='/icons/search.svg'
+							// onClick={() => handleOptionsClick({ route: 'video-chat' })}
+						/>
+					</form>
+				</div>
 				<Navbar.Toggle />
 
-				{name ? (
+				{name && (
 					<Navbar.Collapse className='justify-content-end'>
 						<Nav className='ms-auto'>
 							<NavDropdown
@@ -54,8 +74,6 @@ export default function AppNavBar() {
 							</NavDropdown>
 						</Nav>
 					</Navbar.Collapse>
-				) : (
-					<></>
 				)}
 			</Container>
 		</Navbar>
