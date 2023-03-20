@@ -27,6 +27,7 @@ const loginUser = (username, password) => {
 
 const registerNewUser = async (data) => {
 	const { password } = data;
+
 	const userDataFromClient = new User({
 		...data,
 		password: bcrypt.hashSync(password, 10),
@@ -44,7 +45,7 @@ const registerNewUser = async (data) => {
 			});
 
 			return {
-				nickname: newUserData.nickname,
+				nickname: result.nickname,
 				token,
 			};
 		})
