@@ -170,7 +170,7 @@ export default function Registration() {
 				<p>
 					Already have an account?{' '}
 					<a
-						href='/users/login'
+						href='/login'
 						className='navigation-link-small'
 					>
 						Log in
