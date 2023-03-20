@@ -102,7 +102,7 @@ export default function Login() {
 				<p>
 					Don't have an account yet?{' '}
 					<a
-						href='/users/registration'
+						href='/registration'
 						className='navigation-link-small'
 					>
 						Register
