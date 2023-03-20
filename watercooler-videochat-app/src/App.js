@@ -5,6 +5,7 @@ import { useRef, useState } from 'react';
 import LandingPage from './pages/LandingPage';
 import AppNavBar from './components/AppNavBar';
 import Home from './pages/Home';
+import ErrorPage from './pages/ErrorPage';
 import useLocalStorage from './customHooks.js/useLocalStorage';
 import './App.css';
 
@@ -100,6 +101,10 @@ function App() {
 						<Route
 							path='/home/sms'
 							element={<Home component='sms' />}
+						/>
+						<Route
+							path='*'
+							element={<ErrorPage />}
 						/>
 					</Routes>
 				</BrowserRouter>

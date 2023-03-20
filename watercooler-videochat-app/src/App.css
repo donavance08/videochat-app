@@ -632,3 +632,25 @@ em-emoji-picker {
 	background-color: inherit;
 	color: inherit;
 }
+
+/* ErrorPage component */
+.error-page-container {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.error-page-msg-container {
+	text-align: center;
+}
+
+.error-page-msg-container > button {
+	border-width: 0px;
+	background-color: var(--primaryColor);
+	color: var(--white);
+}
+.error-page-msg-container > button:hover {
+	box-shadow: 5px 5px 10px 2px rgba(0, 0, 0, 0.8);
+}
