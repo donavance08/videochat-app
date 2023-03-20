@@ -63,6 +63,7 @@ export default function MessageHistory({ activeComponent }) {
 
 	const fetchData = useCallback(() => {
 		console.time('fetch');
+		setIsError(false);
 		fetch(
 			`${process.env.REACT_APP_API_URL}/api/${activeComponent}/${activeContactId}`,
 			{
@@ -74,7 +75,7 @@ export default function MessageHistory({ activeComponent }) {
 		)
 			.then((response) => response.json())
 			.then((result) => {
-				if (result?.status === 'OK' && result.data.length > 0) {
+				if (result?.status === 'OK') {
 					dispatch(setArrayOfMessages({ data: result.data, userId: id }));
 				} else {
 					setIsError(true);
