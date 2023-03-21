@@ -45,6 +45,13 @@ export default function Search() {
 			});
 	};
 
+	/**
+	 * Tasked to attach a listener to the body element
+	 * when the results table is showing
+	 *
+	 * Its job it to figure out if the user clicks
+	 * outside of the table or search box and hide the table if the user does
+	 */
 	useEffect(() => {
 		const searchBox = document.querySelector('.search-bar-container > form');
 
