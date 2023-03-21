@@ -129,11 +129,42 @@ h2 {
 }
 
 .results-list {
-	padding: 0;
-	padding-top: 10px;
 	box-shadow: 5px 10px 10px -2px rgba(0, 0, 0, 0.8);
-	padding: 10px;
+
 	background-color: white;
+}
+
+.results-data {
+	/* padding: 5px 10px 5px 0px; */
+	display: flex;
+	margin: 5px;
+	max-height: 45px;
+}
+
+.search-results-avatar {
+	margin: 10px;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.search-results-name {
+	margin: auto auto auto 0;
+}
+
+.search-results-add-container {
+	display: flex;
+	align-items: center;
+}
+
+.search-results-add-container > button {
+	max-width: 30px;
+	max-height: 30px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background-color: inherit;
+	border: none;
 }
 
 input:-internal-autofill-selected {

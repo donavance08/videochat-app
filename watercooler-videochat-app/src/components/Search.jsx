@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { ReactSVG } from 'react-svg';
 import UserContext from '../UserContext';
 import Loader from '../utils/Loader';
-import { v4 as uuid } from 'uuid';
+import SearchResultItem from './SearchResultItem';
 
 export default function Search() {
 	const { token } = useContext(UserContext);
@@ -26,33 +26,18 @@ export default function Search() {
 		)
 			.then((response) => response.json())
 			.then((result) => {
+				setIsLoading(false);
+
 				if (result.status === 'FAILED') {
 					console.error(result.message);
-					setIsLoading(false);
 					return;
 				}
 
-				setResultsTable(() => {
-					return (
-						<table
-							className='results-table'
-							ref={tableRef}
-						>
-							<tbody>
-								{result.data.map((user) => {
-									return (
-										<tr key={uuid()}>
-											<td> {user.nickname}</td>
-										</tr>
-									);
-								})}
-							</tbody>
-						</table>
-					);
-				});
+				setResultsTable(() =>
+					result.data.map((user) => <SearchResultItem user={user} />)
+				);
 
 				setShowTable(true);
-				setIsLoading(false);
 			})
 			.catch((err) => {
 				setIsLoading(false);
@@ -122,7 +107,14 @@ export default function Search() {
 					</button>
 				)}
 			</form>
-			{showTable && resultsTable}
+			{showTable && (
+				<table
+					className='results-table'
+					ref={tableRef}
+				>
+					<tbody className='results-list'>{resultsTable}</tbody>
+				</table>
+			)}
 		</div>
 	);
 }
