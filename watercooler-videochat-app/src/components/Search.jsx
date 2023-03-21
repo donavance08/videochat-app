@@ -46,7 +46,7 @@ export default function Search() {
 	};
 
 	/**
-	 * Tasked to attach a listener to the body element
+	 * @description: Tasked to attach a listener to the body element
 	 * when the results table is showing
 	 *
 	 * Its job it to figure out if the user clicks
@@ -70,6 +70,7 @@ export default function Search() {
 			}
 
 			tableRef.current = null;
+
 			setShowTable(false);
 			body.removeEventListener('click', listener);
 		};
@@ -96,9 +97,10 @@ export default function Search() {
 					placeholder='Search People or Friends'
 					aria-label='Search'
 					min-length='1'
-					maxlength='60'
+					maxLength='60'
 					required
 					ref={searchRef}
+					onClick={(e) => e.target.select()}
 				/>
 				{isLoading ? (
 					<Loader size='small' />
