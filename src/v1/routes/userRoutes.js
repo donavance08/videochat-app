@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
-const { body, header } = require('express-validator');
+const { body, header, param } = require('express-validator');
 const auth = require('../../../auth');
 
 module.exports = router;
@@ -28,12 +28,16 @@ const regValidations = [
 ];
 
 const searchValidations = [
-	header('name')
+	param('name')
 		.escape()
 		.trim()
 		.stripLow()
 		.isLength({ min: 1, max: 60 })
 		.withMessage('Name should not exceed 60 characters long'),
+];
+
+const validateMongoId = [
+	param('userId').trim().isMongoId().withMessage('Invalid Id'),
 ];
 
 router.post('/login', userController.loginUser);
@@ -47,4 +51,11 @@ router.get(
 	auth.verify,
 	searchValidations,
 	userController.findAllUsersByName
+);
+
+router.put(
+	'/contacts/:userId',
+	auth.verify,
+	validateMongoId,
+	userController.updateUser
 );

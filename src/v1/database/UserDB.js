@@ -80,19 +80,29 @@ const registerNewUser = (newUserData) => {
 		});
 };
 
+/**
+ * @param(id): UserId of the logged in user
+ * @description: Locate the user data and filter its contacts
+ * @returns: Array of objects{_id, nickname}
+ * */
 const getUserContacts = async (id) => {
-	const user = await findExistingUserById(id, {})
-		.then((result) => {
-			if (result) {
-				return result;
-			}
-			customError.throwCustomError(204, `cannot find user with Id: ${id}`);
-		})
-		.catch((err) => {
-			customError.throwCustomError(500, err.message);
-		});
+	return await User.findOne({ _id: id })
 
-	return user;
+		.populate('contactsList')
+
+		.then((result) =>
+			result.contactsList.map((contact) => {
+				return {
+					nickname: contact.nickname,
+					_id: contact._id,
+				};
+			})
+		)
+
+		.catch((err) => {
+			console.log(err.message);
+			throw err;
+		});
 };
 
 const findAllUsersByName = async (name) => {
@@ -109,6 +119,30 @@ const findAllUsersByName = async (name) => {
 		});
 };
 
+/**
+ * @param(newContact): userId of the contact to be added
+ * @param(userId): userId of the user logged in
+ * TASK: find the user with userId and make sure contact is not yet added then update
+ * @return: updated array of user contacts
+ * */
+const updateUser = async (newContact, userId) => {
+	return await User.findOneAndUpdate(
+		{ _id: userId, contactsList: { $ne: newContact } },
+		{ $push: { contactsList: newContact } },
+		{ new: true }
+	)
+		.then((result) => {
+			if (result) {
+				return result.contactsList;
+			}
+
+			customError.throwCustomError(404, 'Update failed');
+		})
+		.catch((err) => {
+			throw err;
+		});
+};
+
 module.exports = {
 	findExistingUserByName,
 	findExistingUserById,
@@ -117,4 +151,5 @@ module.exports = {
 	registerNewUser,
 	findAllUsersByName,
 	findExistingPhoneNumber,
+	updateUser,
 };

@@ -2,6 +2,13 @@ const userServices = require('../services/userServices');
 const { validationResult } = require('express-validator');
 const auth = require('../../../auth');
 
+const checkValidationResult = (req, res) => {
+	const errors = validationResult(req);
+
+	if (!errors.isEmpty()) {
+		res.status(400).send({ errors: errors.array() });
+	}
+};
 const loginUser = (req, res) => {
 	const { username, password } = req.body;
 
@@ -31,12 +38,9 @@ const loginUser = (req, res) => {
 };
 
 const registerNewUser = (req, res) => {
-	const { body } = req;
-	const errors = validationResult(req);
+	checkValidationResult(req, res);
 
-	if (!errors.isEmpty()) {
-		return res.status(400).send({ errors: errors.array() });
-	}
+	const { body } = req;
 
 	const data = {
 		nickname: body.nickname,
@@ -103,9 +107,31 @@ const findAllUsersByName = (req, res) => {
 		});
 };
 
+const updateUser = (req, res) => {
+	checkValidationResult(req, res);
+
+	const id = auth.decode(req.headers.authorization).id;
+
+	userServices
+		.updateUser(req.params.userId, id)
+		.then((result) => {
+			res
+				.status(200)
+				.send({ status: 'OK', message: 'Contacts Updated', data: result });
+		})
+		.catch((err) => {
+			res.status(err?.status || 500).send({
+				status: 'FAILED',
+				message: err?.message || 'Internal Server Error',
+				data: [],
+			});
+		});
+};
+
 module.exports = {
 	loginUser,
 	registerNewUser,
 	getUserContacts,
 	findAllUsersByName,
+	updateUser,
 };

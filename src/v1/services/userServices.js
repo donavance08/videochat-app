@@ -3,6 +3,7 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const auth = require('../../../auth.js');
 const customError = require('../utils/customError');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 const loginUser = (username, password) => {
 	return UserDB.loginUser(username)
@@ -74,9 +75,7 @@ const registerNewUser = async (data) => {
 const getUserContacts = (userId) => {
 	return UserDB.getUserContacts(userId)
 		.then((result) => {
-			if (result) {
-				return result.contactsList;
-			}
+			return result;
 		})
 		.catch((err) => {
 			throw err;
@@ -93,9 +92,22 @@ const findAllUsersByName = (name) => {
 		});
 };
 
+const updateUser = async (contactId, userId) => {
+	// const contactDetails = await UserDB.findExistingUserById(newContactId);
+
+	newContactId = new ObjectId(contactId);
+
+	return UserDB.updateUser(newContactId, userId)
+		.then((result) => result)
+		.catch((err) => {
+			throw err;
+		});
+};
+
 module.exports = {
 	loginUser,
 	registerNewUser,
 	getUserContacts,
 	findAllUsersByName,
+	updateUser,
 };

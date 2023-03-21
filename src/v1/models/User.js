@@ -8,7 +8,6 @@ const userSchema = new mongoose.Schema({
 		index: true,
 		min: 3,
 		max: 60,
-		lowercase: true,
 	},
 	username: {
 		type: String,
@@ -26,16 +25,8 @@ const userSchema = new mongoose.Schema({
 	contactsList: {
 		type: [
 			{
-				nickname: {
-					type: String,
-				},
-				_id: {
-					type: mongoose.ObjectId,
-				},
-				conversationHistory: {
-					type: [mongoose.Schema.Types.ObjectId],
-					ref: 'Message',
-				},
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'User',
 			},
 		],
 		default: [],
