@@ -9,6 +9,7 @@ import VideoChat from '../components/VideoChat';
 import PendingCallDialog from '../components/PendingCallDialog';
 import CancelCallDialog from '../components/CancelCallDialog';
 import { setActiveContactId, setActiveContactName } from '../redux/chat';
+import PhoneCall from '../components/PhoneCall';
 const SimplePeer = require('simple-peer');
 
 export default function Home({ component }) {
@@ -232,6 +233,7 @@ export default function Home({ component }) {
 					column='6'
 				/>
 			)}
+			{component === 'phone' && <PhoneCall activeComponent='sms' />}
 		</div>
 	);
 }

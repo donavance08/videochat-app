@@ -6,6 +6,7 @@ import LandingPage from './pages/LandingPage';
 import AppNavBar from './components/AppNavBar';
 import Home from './pages/Home';
 import ErrorPage from './pages/ErrorPage';
+import PhoneCall from './components/PhoneCall';
 import useLocalStorage from './customHooks.js/useLocalStorage';
 import './App.css';
 
@@ -105,6 +106,10 @@ function App() {
 						<Route
 							path='*'
 							element={<ErrorPage />}
+						/>
+						<Route
+							path='/home/phone'
+							element={<Home component='phone' />}
 						/>
 					</Routes>
 				</BrowserRouter>

@@ -108,6 +108,16 @@ export default function ContactItem({ data }) {
 							onClick={() => handleOptionsClick({ route: 'sms' })}
 						/>
 					</button>
+					<button
+						className='contact-options-button'
+						title='SMS'
+					>
+						<ReactSVG
+							className='input-button-svg'
+							src='/icons/phone.svg'
+							onClick={() => handleOptionsClick({ route: 'phone' })}
+						/>
+					</button>
 				</div>
 			) : (
 				<>
