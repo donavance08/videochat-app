@@ -732,7 +732,7 @@ em-emoji-picker {
 	color: inherit;
 }
 
-/* ErrorPage component */
+/* ERROR PAGE component */
 .error-page-container {
 	width: 100%;
 	height: 100%;
@@ -795,4 +795,61 @@ em-emoji-picker {
 .keypad-call-button-container {
 	display: flex;
 	justify-content: end;
+}
+
+.incoming-call-dialog-container {
+	width: 200px;
+	height: 100px;
+	background-color: #222247;
+	color: white;
+	text-align: center;
+	flex-direction: column;
+	position: absolute;
+	top: calc(100% - 120px);
+	left: 2%;
+	border-radius: 10px;
+}
+
+.incoming-call-dialog-container * p,
+.incoming-call-dialog-container > p {
+	margin: 0px;
+}
+
+.incoming-call-dialog-container > p {
+	margin-top: 5px;
+}
+
+.incoming-call-dialog-container > div {
+	display: flex;
+	justify-content: space-around;
+	padding-top: 10px;
+}
+
+.incoming-call-dialog-container * button {
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	border: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.incoming-call-dialog-container * button:hover {
+	box-shadow: 5px 5px 10px 2px rgba(0, 0, 0, 0.8);
+}
+
+.incoming-call-dialog-container * .answer-btn {
+	background-color: #0cdf1a;
+}
+
+.incoming-call-dialog-container * .decline-btn {
+	background-color: #dc1818;
+}
+
+.incoming-call-dialog-container * svg,
+.incoming-call-dialog-container * button * div,
+.incoming-call-dialog-container * button > div {
+	width: 30px;
+	height: 30px;
 }

@@ -6,7 +6,6 @@ import LandingPage from './pages/LandingPage';
 import AppNavBar from './components/AppNavBar';
 import Home from './pages/Home';
 import ErrorPage from './pages/ErrorPage';
-import PhoneCall from './components/PhoneCall';
 import useLocalStorage from './customHooks.js/useLocalStorage';
 import './App.css';
 
@@ -20,6 +19,8 @@ function App() {
 	const [callOngoing, setCallOngoing] = useState();
 	const [callInitiator, setCallInitiator] = useState();
 	const [showCancelCallDialog, setShowCancelCallDialog] = useState();
+	const [calls, setCalls] = useState([]);
+	const [callToken, setCallToken] = useState();
 	const connectionRef = useRef();
 
 	const socket = useRef();
@@ -67,6 +68,9 @@ function App() {
 					setShowCancelCallDialog,
 					connectionRef,
 					resetContextValues,
+					setCalls,
+					calls,
+					setCallToken,
 				}}
 			>
 				<BrowserRouter>

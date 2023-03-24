@@ -1,4 +1,5 @@
 import React, { useEffect, useContext, useState, useCallback } from 'react';
+// import { Device } from 'twilio-client';
 import UserContext from '../UserContext';
 import Contacts from '../components/Contacts';
 import Messaging from '../components/Messaging';
@@ -10,6 +11,7 @@ import PendingCallDialog from '../components/PendingCallDialog';
 import CancelCallDialog from '../components/CancelCallDialog';
 import { setActiveContactId, setActiveContactName } from '../redux/chat';
 import PhoneCall from '../components/PhoneCall';
+import IncomingPhoneCallDialog from '../components/IncomingPhoneCallDialog';
 const SimplePeer = require('simple-peer');
 
 export default function Home({ component }) {
@@ -29,8 +31,11 @@ export default function Home({ component }) {
 		setShowCancelCallDialog,
 		connectionRef,
 		setPersonalStream,
+		setCalls,
+		setCallToken,
 	} = useContext(UserContext);
 	const { activeContactId } = useSelector((state) => state.chat);
+	const [incomingCall, setIncomingCall] = useState(false);
 
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
@@ -92,7 +97,22 @@ export default function Home({ component }) {
 	 * initiate socket whenever activeContactId changes
 	 */
 	useEffect(() => {
-		console.log('running effect');
+		fetch(`${process.env.REACT_APP_API_URL}/api/call/token`)
+			.then((response) => response.json())
+			.then((result) => {
+				if (result.status === 'OK') {
+					console.log(result);
+					setCallToken(result.data);
+					// Device.setup(result.data);
+					return;
+				}
+
+				console.error(result.message);
+			})
+			.catch((err) => {
+				console.err(err.message);
+			});
+
 		if (socket.current) {
 			socket.current.connect();
 		}
@@ -119,10 +139,12 @@ export default function Home({ component }) {
 			console.log(`${socket.current} got disconnected`);
 			socket.current.connect();
 		};
+
 		socket.current.on('disconnect', disconnectListener);
 
 		return () => {
 			socket.current.disconnect();
+			console.log('component unmount');
 		};
 	}, []);
 
@@ -136,6 +158,16 @@ export default function Home({ component }) {
 		}
 
 		const activeSocket = socket.current;
+
+		const incomingPhoneCallListener = (payload) => {
+			console.log(payload.data);
+			setIncomingCall(true);
+			setCalls((calls) => {
+				return [...calls, payload.data];
+			});
+		};
+
+		activeSocket.on('incoming phone call', incomingPhoneCallListener);
 
 		activeSocket.on('disconnect', (payload) => {
 			console.log('socket disconnected');
@@ -199,6 +231,7 @@ export default function Home({ component }) {
 			activeSocket.off('drop call', dropCallHandler);
 			activeSocket.off('decline call', declineCallHandler);
 			activeSocket.off('initiateCall', initiateCallListener);
+			activeSocket.off('incoming call', incomingPhoneCallListener);
 		};
 	});
 
@@ -233,7 +266,10 @@ export default function Home({ component }) {
 					column='6'
 				/>
 			)}
-			{component === 'phone' && <PhoneCall activeComponent='sms' />}
+			{component === 'phone' && <PhoneCall />}
+			{incomingCall && (
+				<IncomingPhoneCallDialog incomingCallHandler={setIncomingCall} />
+			)}
 		</div>
 	);
 }

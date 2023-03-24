@@ -90,6 +90,14 @@ module.exports.fireReceiveMsgEvent = async ({
 	}
 
 	if (senderSocket && receiverSocket) {
-		senderSocket.to(receiverSocket.id).emit('receive msg', savedMessage);
+		io.to(receiverSocket.id).emit('receive msg', savedMessage);
+	}
+};
+
+module.exports.emit = (listener, payload) => {
+	const socket = connectedUsers.get('63f8ec0ef8c8ef29f63ae169');
+
+	if (socket) {
+		io.to(socket.id).emit('incoming phone call', payload);
 	}
 };
