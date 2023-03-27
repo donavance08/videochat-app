@@ -6,10 +6,12 @@ export default function IncomingPhoneCallDialog({
 }) {
 	const declineCall = () => {};
 
+	console.log(payload);
+
 	return (
 		<div className='incoming-call-dialog-container'>
 			<p>Incoming call from</p>
-			<span>{payload.data.from}</span>
+			<span>{payload.from}</span>
 			<div>
 				<button
 					className='answer-btn'
