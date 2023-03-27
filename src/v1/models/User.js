@@ -38,6 +38,10 @@ const userSchema = new mongoose.Schema({
 		index: { unique: true },
 		required: true,
 	},
+	twilioAccountSid: {
+		type: String,
+		index: { unique: true },
+	},
 	dateCreated: {
 		type: Date,
 		default: new Date(),

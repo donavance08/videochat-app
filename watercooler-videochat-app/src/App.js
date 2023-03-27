@@ -20,7 +20,6 @@ function App() {
 	const [callInitiator, setCallInitiator] = useState();
 	const [showCancelCallDialog, setShowCancelCallDialog] = useState();
 	const [calls, setCalls] = useState([]);
-	const [callToken, setCallToken] = useState();
 	const connectionRef = useRef();
 
 	const socket = useRef();
@@ -70,7 +69,6 @@ function App() {
 					resetContextValues,
 					setCalls,
 					calls,
-					setCallToken,
 				}}
 			>
 				<BrowserRouter>

@@ -1,5 +1,11 @@
-import React, { useEffect, useContext, useState, useCallback } from 'react';
-// import { Device } from 'twilio-client';
+import React, {
+	useEffect,
+	useContext,
+	useState,
+	useCallback,
+	useRef,
+} from 'react';
+import { Device } from 'twilio-client';
 import UserContext from '../UserContext';
 import Contacts from '../components/Contacts';
 import Messaging from '../components/Messaging';
@@ -32,13 +38,14 @@ export default function Home({ component }) {
 		connectionRef,
 		setPersonalStream,
 		setCalls,
-		setCallToken,
 	} = useContext(UserContext);
 	const { activeContactId } = useSelector((state) => state.chat);
 	const [incomingCall, setIncomingCall] = useState(false);
+	const [callSid, setCallSid] = useState();
 
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+	const incomingDialogRef = useRef();
 
 	const [contactSignal, setContactSignal] = useState();
 	const [cancelReason, setCancelReason] = useState();
@@ -102,16 +109,21 @@ export default function Home({ component }) {
 			.then((result) => {
 				if (result.status === 'OK') {
 					console.log(result);
-					setCallToken(result.data);
-					// Device.setup(result.data);
+					Device.setup(result.token);
 					return;
 				}
 
 				console.error(result.message);
 			})
 			.catch((err) => {
-				console.err(err.message);
+				console.error(err.message);
 			});
+
+		Device.on('incoming', (conn) => {
+			console.log('incoming call ');
+			console.log(conn);
+			conn.accept();
+		});
 
 		if (socket.current) {
 			socket.current.connect();
@@ -160,8 +172,13 @@ export default function Home({ component }) {
 		const activeSocket = socket.current;
 
 		const incomingPhoneCallListener = (payload) => {
-			console.log(payload.data);
 			setIncomingCall(true);
+			incomingDialogRef.current = (
+				<IncomingPhoneCallDialog
+					payload={payload}
+					answerCallHandler={answerPhoneCall}
+				/>
+			);
 			setCalls((calls) => {
 				return [...calls, payload.data];
 			});
@@ -235,6 +252,20 @@ export default function Home({ component }) {
 		};
 	});
 
+	const answerPhoneCall = (id) => {
+		setCallOngoing(true);
+		console.log(id);
+		fetch(`${process.env.REACT_APP_API_URL}/api/call/answer`, {
+			method: 'POST',
+			headers: {
+				'Content-type': 'application/json',
+			},
+			body: JSON.stringify({
+				id: id,
+			}),
+		});
+	};
+
 	return (
 		<div className='chat-page-container d-flex flex-row '>
 			{showPendingCallDialog && (
@@ -267,9 +298,7 @@ export default function Home({ component }) {
 				/>
 			)}
 			{component === 'phone' && <PhoneCall />}
-			{incomingCall && (
-				<IncomingPhoneCallDialog incomingCallHandler={setIncomingCall} />
-			)}
+			{incomingCall && incomingDialogRef.current}
 		</div>
 	);
 }

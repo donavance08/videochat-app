@@ -52,6 +52,20 @@ const findExistingPhoneNumber = (phoneNumber) => {
 		});
 };
 
+const findUserByAccountSid = (accountSid) => {
+	return User.findOne({ twilioAccountSid: accountSid })
+		.then((result) => {
+			if (result) {
+				return result._id;
+			}
+
+			return null;
+		})
+		.catch((err) => {
+			return null;
+		});
+};
+
 const loginUser = async (username, password) => {
 	return await User.findOne({ username }, {})
 		.then((result) => {
@@ -146,10 +160,11 @@ const updateUser = async (newContact, userId) => {
 module.exports = {
 	findExistingUserByName,
 	findExistingUserById,
+	findUserByAccountSid,
+	findExistingPhoneNumber,
+	findAllUsersByName,
 	loginUser,
 	getUserContacts,
 	registerNewUser,
-	findAllUsersByName,
-	findExistingPhoneNumber,
 	updateUser,
 };

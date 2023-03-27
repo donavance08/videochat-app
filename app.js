@@ -16,6 +16,10 @@ const app = express();
 app.use(express.json());
 
 const home = path.join(__dirname, 'watercooler-videochat-app/build/index.html');
+const sound = path.join(
+	__dirname,
+	'watercooler-videochat-app/build/sound/phone.mp3'
+);
 app.use(
 	express.static(path.join(__dirname, 'watercooler-videochat-app', 'build'))
 );
@@ -44,6 +48,9 @@ app.use('/api/chat', messageRoutes);
 app.use('/api/sms', smsRoutes);
 app.use('/api/call', callRoutes);
 
+app.use('/sound', (req, res) => {
+	res.sendFile(sound);
+});
 app.use('*', (req, res) => {
 	res.sendFile(home);
 });

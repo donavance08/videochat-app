@@ -1,4 +1,4 @@
-const client = require('twilio')(process.env.ACCOUNTSID, process.env.AUTHTOKEN);
+let client = require('twilio')(process.env.ACCOUNTSID, process.env.AUTHTOKEN);
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 const ClientCapability = require('twilio').jwt.ClientCapability;
 const io = require('../../../io');
@@ -21,11 +21,25 @@ const sendSMS = async (senderPhoneNumber, receiverPhoneNumber, message) => {
 		});
 };
 
-const incomingCall = (req, res, userId) => {
+const response = (voiceResponse) => {
+	return {
+		type: 'text/xml',
+		data: voiceResponse.toString(),
+	};
+};
+
+const incomingCall = (data, from, userId) => {
 	const voiceResponse = new VoiceResponse();
-	io.emit('incoming call', { data: req.body, userId });
-	voiceResponse.say('Please wait');
-	res.set({ 'Content-type': 'text/xml' }).send(voiceResponse.toString());
+
+	const isOnline = io.emit('incoming phone call', { data, from, userId });
+
+	if (isOnline) {
+		voiceResponse.play({ loop: 100 }, `${process.env.REACT_APP_API_URL}/sound`);
+		return response(voiceResponse);
+	}
+
+	voiceResponse.reject();
+	return response(voiceResponse);
 };
 
 const getCallToken = (req, res) => {
@@ -39,9 +53,10 @@ const getCallToken = (req, res) => {
 		);
 		const token = clientCapability.toJwt();
 
-		res.set('Content-type', 'application/json');
-		res.status(200);
-		res.send({ status: 'OK', message: 'Token generated', token });
+		res
+			.type('appication/json')
+			.status(200)
+			.send({ status: 'OK', message: 'Token generated', token });
 	} catch (err) {
 		res.status(err?.status || 500).send({
 			status: 'FAILED',
@@ -51,10 +66,32 @@ const getCallToken = (req, res) => {
 	}
 };
 
-const answerCall = () => {};
+const routeCall = (req, res) => {
+	const voiceResponse = new VoiceResponse();
+	voiceResponse.dial().client('watercooler');
+	res.type('text/xml').send(voiceResponse.toString());
+};
+
+const answerCall = (req, res) => {
+	client
+		.calls(req.body.id)
+
+		.update({
+			url: `${process.env.REACT_APP_API_URL}/api/call/routeCall`,
+			method: 'POST',
+		})
+
+		.then((call) => console.log(call))
+
+		.catch((err) => {
+			console.log(err);
+		});
+};
 
 module.exports = {
 	sendSMS,
 	getCallToken,
 	incomingCall,
+	routeCall,
+	answerCall,
 };

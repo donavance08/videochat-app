@@ -1,17 +1,41 @@
 const callServices = require('../services/callServices');
 
 const incomingCall = (req, res) => {
-	//extract data and phone number then forward to services
-	console.log('hello', req.body);
-	callServices.incomingCall(req, res);
+	const {
+		body,
+		body: { From, AccountSid },
+	} = req;
+
+	const isPhoneNumber = /^\+[0-9]*$/.test(From);
+	const from = isPhoneNumber ? From.slice(1, From.length) : 'Anonymous';
+
+	callServices
+		.incomingCall(body, from, AccountSid)
+
+		.then((result) => {
+			res.type(result.type).send(result.data);
+		})
+
+		.catch((err) => {
+			res.type('text/xml').send();
+		});
 };
 
 const getCallToken = (req, res) => {
-	console.log('calltoken');
 	callServices.getCallToken(req, res);
+};
+
+const routeCall = (req, res) => {
+	callServices.routeCall(req, res);
+};
+
+const answerCall = (req, res) => {
+	callServices.answerCall(req, res);
 };
 
 module.exports = {
 	incomingCall,
 	getCallToken,
+	routeCall,
+	answerCall,
 };

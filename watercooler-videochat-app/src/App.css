@@ -7,6 +7,7 @@
 	--primaryColor: #0096ff;
 	--red: #dc1818;
 	--white: white;
+	--defaultBoxShadow: 5px 5px 10px 2px rgba(0, 0, 0, 0.8);
 }
 
 html {
@@ -808,14 +809,11 @@ em-emoji-picker {
 	top: calc(100% - 120px);
 	left: 2%;
 	border-radius: 10px;
+	box-shadow: var(--defaultBoxShadow);
 }
 
-.incoming-call-dialog-container * p,
 .incoming-call-dialog-container > p {
 	margin: 0px;
-}
-
-.incoming-call-dialog-container > p {
 	margin-top: 5px;
 }
 
@@ -836,7 +834,7 @@ em-emoji-picker {
 }
 
 .incoming-call-dialog-container * button:hover {
-	box-shadow: 5px 5px 10px 2px rgba(0, 0, 0, 0.8);
+	box-shadow: var(--defaultBoxShadow);
 }
 
 .incoming-call-dialog-container * .answer-btn {

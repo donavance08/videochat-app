@@ -1,24 +1,19 @@
-import { useContext } from 'react';
 import { ReactSVG } from 'react-svg';
-import UserContext from '../UserContext';
 
-export default function IncomingPhoneCallDialog() {
-	const { setCallOngoing } = useContext(UserContext);
-	const answerCall = () => {
-		setCallOngoing(true);
-	};
-
+export default function IncomingPhoneCallDialog({
+	payload,
+	answerCallHandler,
+}) {
 	const declineCall = () => {};
 
 	return (
 		<div className='incoming-call-dialog-container'>
-			<p>
-				Incoming call from <p>Nick</p>
-			</p>
+			<p>Incoming call from</p>
+			<span>{payload.data.from}</span>
 			<div>
 				<button
 					className='answer-btn'
-					onClick={answerCall}
+					onClick={() => answerCallHandler(payload.data.CallSid)}
 				>
 					<ReactSVG
 						className='call-control-large-svg'

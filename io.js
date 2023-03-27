@@ -78,6 +78,7 @@ module.exports.initialize = (server) => {
 };
 
 module.exports.fireReceiveMsgEvent = async ({
+	//Edit , can be combined with exports.emit and totaly remove this function
 	sender,
 	receiver,
 	savedMessage,
@@ -95,9 +96,12 @@ module.exports.fireReceiveMsgEvent = async ({
 };
 
 module.exports.emit = (listener, payload) => {
-	const socket = connectedUsers.get('63f8ec0ef8c8ef29f63ae169');
+	const socket = connectedUsers.get(payload.userId.toString());
 
 	if (socket) {
-		io.to(socket.id).emit('incoming phone call', payload);
+		io.to(socket.id).emit(listener, payload);
+		return true;
 	}
+
+	return false;
 };
