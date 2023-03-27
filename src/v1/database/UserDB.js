@@ -47,7 +47,6 @@ const findExistingPhoneNumber = (phoneNumber) => {
 			return null;
 		})
 		.catch((err) => {
-			console.log(err);
 			return null;
 		});
 };
@@ -104,14 +103,7 @@ const getUserContacts = async (id) => {
 
 		.populate('contactsList')
 
-		.then((result) =>
-			result.contactsList.map((contact) => {
-				return {
-					nickname: contact.nickname,
-					_id: contact._id,
-				};
-			})
-		)
+		.then((result) => result.contactsList)
 
 		.catch((err) => {
 			console.log(err.message);

@@ -25,10 +25,6 @@ const getCallToken = (req, res) => {
 	callServices.getCallToken(req, res);
 };
 
-const routeCall = (req, res) => {
-	callServices.routeCall(req, res);
-};
-
 const answerCall = (req, res) => {
 	callServices.answerCall(req, res);
 };
@@ -36,6 +32,5 @@ const answerCall = (req, res) => {
 module.exports = {
 	incomingCall,
 	getCallToken,
-	routeCall,
 	answerCall,
 };

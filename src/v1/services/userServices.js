@@ -75,9 +75,15 @@ const registerNewUser = async (data) => {
 const getUserContacts = (userId) => {
 	return UserDB.getUserContacts(userId)
 		.then((result) => {
-			return result;
+			return result.map((contact) => {
+				return {
+					nickname: contact.nickname,
+					_id: contact._id,
+				};
+			});
 		})
 		.catch((err) => {
+			console.log(err.message);
 			throw err;
 		});
 };

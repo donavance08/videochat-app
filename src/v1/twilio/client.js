@@ -66,19 +66,12 @@ const getCallToken = (req, res) => {
 	}
 };
 
-const routeCall = (req, res) => {
-	const voiceResponse = new VoiceResponse();
-	voiceResponse.dial().client('watercooler');
-	res.type('text/xml').send(voiceResponse.toString());
-};
-
 const answerCall = (req, res) => {
 	client
 		.calls(req.body.id)
 
 		.update({
-			url: `${process.env.REACT_APP_API_URL}/api/call/routeCall`,
-			method: 'POST',
+			twiml: '<Response><Dial><Client>watercooler</Client></Dial></Response>',
 		})
 
 		.then((call) => console.log(call))
@@ -88,10 +81,13 @@ const answerCall = (req, res) => {
 		});
 };
 
+const declineCall = (req, res) => {
+	client.calls(req.body.id).reject;
+};
+
 module.exports = {
 	sendSMS,
 	getCallToken,
 	incomingCall,
-	routeCall,
 	answerCall,
 };

@@ -30,8 +30,7 @@ const getConversationHistory = async (sender, receiver) => {
 	receiver = new ObjectId(receiver);
 
 	try {
-		const messages = await messageDB.getConversationHistory(sender, receiver);
-		return messages;
+		return await messageDB.getConversationHistory(sender, receiver);
 	} catch (err) {
 		console.log(err);
 		throw err;
