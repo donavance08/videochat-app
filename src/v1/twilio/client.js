@@ -2,6 +2,7 @@ let client = require('twilio')(process.env.ACCOUNTSID, process.env.AUTHTOKEN);
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 const ClientCapability = require('twilio').jwt.ClientCapability;
 const io = require('../../../io');
+const customError = require('../utils/customError');
 
 const sendSMS = async (senderPhoneNumber, receiverPhoneNumber, message) => {
 	return await client.messages
@@ -66,23 +67,26 @@ const getCallToken = (req, res) => {
 	}
 };
 
-const answerCall = (req, res) => {
+const answerCall = (callSid) => {
 	client
-		.calls(req.body.id)
+		.calls(callSid)
 
 		.update({
 			twiml: '<Response><Dial><Client>watercooler</Client></Dial></Response>',
 		})
 
-		.then((call) => console.log(call))
-
 		.catch((err) => {
-			console.log(err);
+			throw err;
 		});
 };
 
-const declineCall = (req, res) => {
-	client.calls(req.body.id).reject;
+const declineCall = (callSid) => {
+	client
+		.calls(callSid)
+
+		.update({ twiml: '<Response><Reject></Reject></Response>' })
+
+		.catch(console.log());
 };
 
 module.exports = {
@@ -90,4 +94,5 @@ module.exports = {
 	getCallToken,
 	incomingCall,
 	answerCall,
+	declineCall,
 };

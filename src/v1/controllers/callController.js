@@ -25,12 +25,12 @@ const getCallToken = (req, res) => {
 	callServices.getCallToken(req, res);
 };
 
-const answerCall = (req, res) => {
-	callServices.answerCall(req, res);
+const callResponse = (req, res) => {
+	callServices.callResponse(req.body.id, req.params.response);
 };
 
 module.exports = {
 	incomingCall,
 	getCallToken,
-	answerCall,
+	callResponse,
 };

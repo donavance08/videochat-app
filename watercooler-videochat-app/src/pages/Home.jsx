@@ -176,7 +176,7 @@ export default function Home({ component }) {
 			incomingDialogRef.current = (
 				<IncomingPhoneCallDialog
 					payload={payload}
-					answerCallHandler={answerPhoneCall}
+					callResponseHandler={respondToPhoneCall}
 				/>
 			);
 			setCalls((calls) => {
@@ -252,18 +252,24 @@ export default function Home({ component }) {
 		};
 	});
 
-	const answerPhoneCall = (id) => {
-		setCallOngoing(true);
+	const respondToPhoneCall = (id, response) => {
+		if (response) {
+			setCallOngoing(true);
+		}
+
 		console.log(id);
-		fetch(`${process.env.REACT_APP_API_URL}/api/call/answer`, {
-			method: 'POST',
-			headers: {
-				'Content-type': 'application/json',
-			},
-			body: JSON.stringify({
-				id: id,
-			}),
-		});
+		fetch(
+			`${process.env.REACT_APP_API_URL}/api/call/callResponse/${response}`,
+			{
+				method: 'POST',
+				headers: {
+					'Content-type': 'application/json',
+				},
+				body: JSON.stringify({
+					id: id,
+				}),
+			}
+		);
 	};
 
 	return (

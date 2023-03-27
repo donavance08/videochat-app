@@ -29,12 +29,20 @@ const getCallToken = (req, res) => {
 	client.getCallToken(req, res);
 };
 
-const answerCall = (req, res) => {
-	client.answerCall(req, res);
+const callResponse = (callSid, response) => {
+	try {
+		if (response === 'true') {
+			client.answerCall(callSid);
+		} else {
+			client.declineCall(callSid);
+		}
+	} catch (err) {
+		console.log(err.message);
+	}
 };
 
 module.exports = {
 	incomingCall,
 	getCallToken,
-	answerCall,
+	callResponse,
 };
