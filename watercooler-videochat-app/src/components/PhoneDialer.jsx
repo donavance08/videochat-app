@@ -44,8 +44,14 @@ export default function PhoneDialer({ callData, callResponseHandler }) {
 				Authorization: `Bearer ${token}`,
 			},
 		})
-			.then(() => callOngoing(true))
-
+			.then((response) => response.json())
+			.then((result) => {
+				if (result.status === 'FAILED') {
+					console.log(result);
+					return;
+				}
+				callOngoing(true);
+			})
 			.catch((err) => console.error(err.message));
 	};
 

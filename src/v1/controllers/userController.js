@@ -1,14 +1,7 @@
 const userServices = require('../services/userServices');
-const { validationResult } = require('express-validator');
 const auth = require('../../../auth');
+const { checkValidationResult } = require('../utils/utilFunctions');
 
-const checkValidationResult = (req, res) => {
-	const errors = validationResult(req);
-
-	if (!errors.isEmpty()) {
-		res.status(400).send({ errors: errors.array() });
-	}
-};
 const loginUser = (req, res) => {
 	const { username, password } = req.body;
 
@@ -38,7 +31,9 @@ const loginUser = (req, res) => {
 };
 
 const registerNewUser = (req, res) => {
-	checkValidationResult(req, res);
+	if (checkValidationResult(req, res)) {
+		return;
+	}
 
 	const { body } = req;
 

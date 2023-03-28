@@ -1,5 +1,7 @@
 const callServices = require('../services/callServices');
 const auth = require('../../../auth');
+const { validationResult } = require('express-validator');
+const { checkValidationResult } = require('../utils/utilFunctions');
 
 const incomingCall = (req, res) => {
 	const {
@@ -7,7 +9,7 @@ const incomingCall = (req, res) => {
 		body: { From, AccountSid },
 	} = req;
 
-	const isPhoneNumber = /^\+[0-9]*$/.test(From);
+	const isPhoneNumber = /^\+(?:[0-9] ?){6,14}[0-9]$/.test(From);
 	const from = isPhoneNumber ? From.slice(1, From.length) : 'Anonymous';
 
 	callServices
@@ -33,6 +35,10 @@ const callResponse = (req, res) => {
 };
 
 const outboundCall = (req, res) => {
+	if (checkValidationResult(req, res)) {
+		return;
+	}
+
 	const userId = auth.decode(req.headers.authorization).id;
 	callServices
 		.outboundCall(req.params.phoneNumber, userId)
