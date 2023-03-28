@@ -49,8 +49,22 @@ const callResponse = (callSid, response) => {
 	}
 };
 
+const outboundCall = async (phoneNumber, userId) => {
+	const user = await UserDB.findExistingUserById(userId);
+
+	if (!user) {
+		customError.throwCustomError(404, 'User not found');
+	}
+
+	const from = '+' + user.phoneNumber;
+	const to = '+' + phoneNumber;
+
+	client.outboundCall(to, from);
+};
+
 module.exports = {
 	incomingCall,
 	getCallToken,
 	callResponse,
+	outboundCall,
 };

@@ -70,6 +70,7 @@ const getCallToken = (req, res) => {
 // <Client statusCallback=\'${process.env.REACT_APP_API_URL}/api/call/callback'>
 
 const answerCall = (callSid) => {
+	console.log(callSid);
 	client
 		.calls(callSid)
 		.update({
@@ -82,6 +83,8 @@ const answerCall = (callSid) => {
 					</Dial>
 				</Response>`,
 		})
+
+		.then((call) => console.log(call))
 
 		.catch((err) => {
 			console.log(err.message);
@@ -106,6 +109,18 @@ const endCall = async (callSid) => {
 
 		.catch((err) => console.log(err.message));
 };
+
+const outboundCall = (to, from) => {
+	client.calls
+		.create({
+			to,
+			from,
+			url: 'https://d58e-175-176-95-31.ap.ngrok.io/api/call/callResponse/accept',
+		})
+		.then((call) => console.log(call))
+		.catch((err) => console.log(err));
+};
+
 module.exports = {
 	sendSMS,
 	getCallToken,
@@ -113,4 +128,5 @@ module.exports = {
 	answerCall,
 	declineCall,
 	endCall,
+	outboundCall,
 };

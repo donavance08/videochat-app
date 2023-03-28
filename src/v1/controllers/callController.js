@@ -1,4 +1,5 @@
 const callServices = require('../services/callServices');
+const auth = require('../../../auth');
 
 const incomingCall = (req, res) => {
 	const {
@@ -26,13 +27,35 @@ const getCallToken = (req, res) => {
 };
 
 const callResponse = (req, res) => {
-	callServices.callResponse(req.body.id, req.params.response);
+	callServices.callResponse(
+		req.body.id || req.body.CallSid,
+		req.params.response
+	);
 
 	res.send(true);
+};
+
+const outboundCall = (req, res) => {
+	const userId = auth.decode(req.headers.authorization).id;
+	callServices
+		.outboundCall(req.params.phoneNumber, userId)
+
+		.then((result) => {
+			res.send();
+		})
+
+		.catch((err) => {
+			res.status(err?.status || 500).send({
+				status: 'FAILED',
+				message: err?.message || 'Internal Server Error',
+				data: null,
+			});
+		});
 };
 
 module.exports = {
 	incomingCall,
 	getCallToken,
 	callResponse,
+	outboundCall,
 };
