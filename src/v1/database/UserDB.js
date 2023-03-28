@@ -131,7 +131,7 @@ const findAllUsersByName = async (name) => {
  * TASK: find the user with userId and make sure contact is not yet added then update
  * @return: updated array of user contacts
  * */
-const updateUser = async (newContact, userId) => {
+const addContact = async (newContact, userId) => {
 	return await User.findOneAndUpdate(
 		{ _id: userId, contactsList: { $ne: newContact } },
 		{ $push: { contactsList: newContact } },
@@ -158,5 +158,5 @@ module.exports = {
 	loginUser,
 	getUserContacts,
 	registerNewUser,
-	updateUser,
+	addContact,
 };

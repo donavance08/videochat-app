@@ -37,7 +37,7 @@ const searchValidations = [
 ];
 
 const validateMongoId = [
-	param('userId').trim().isMongoId().withMessage('Invalid Id'),
+	param('contactId').trim().isMongoId().withMessage('Invalid Id'),
 ];
 
 router.post('/login', userController.loginUser);
@@ -54,8 +54,8 @@ router.get(
 );
 
 router.put(
-	'/contacts/:userId',
+	'/contacts/:contactId',
 	auth.verify,
 	validateMongoId,
-	userController.updateUser
+	userController.addContact
 );

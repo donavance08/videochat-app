@@ -102,13 +102,13 @@ const findAllUsersByName = (req, res) => {
 		});
 };
 
-const updateUser = (req, res) => {
+const addContact = (req, res) => {
 	checkValidationResult(req, res);
 
-	const id = auth.decode(req.headers.authorization).id;
+	const userId = auth.decode(req.headers.authorization).id;
 
 	userServices
-		.updateUser(req.params.userId, id)
+		.addContact(req.params.contactId, userId)
 		.then((result) => {
 			res
 				.status(200)
@@ -128,5 +128,5 @@ module.exports = {
 	registerNewUser,
 	getUserContacts,
 	findAllUsersByName,
-	updateUser,
+	addContact,
 };

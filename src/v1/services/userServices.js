@@ -98,13 +98,15 @@ const findAllUsersByName = (name) => {
 		});
 };
 
-const updateUser = async (contactId, userId) => {
+const addContact = async (contactId, userId) => {
 	// const contactDetails = await UserDB.findExistingUserById(newContactId);
 
 	newContactId = new ObjectId(contactId);
 
-	return UserDB.updateUser(newContactId, userId)
+	return UserDB.addContact(newContactId, userId)
+
 		.then((result) => result)
+
 		.catch((err) => {
 			throw err;
 		});
@@ -115,5 +117,5 @@ module.exports = {
 	registerNewUser,
 	getUserContacts,
 	findAllUsersByName,
-	updateUser,
+	addContact,
 };
