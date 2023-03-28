@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 import Loader from '../utils/Loader';
 
 export default function Contact() {
-	const { token } = useContext(UserContext);
+	const { token, isContactUpdated } = useContext(UserContext);
 	const [contacts, setContacts] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -33,7 +33,7 @@ export default function Contact() {
 				}
 			})
 			.catch((err) => console.log(err.message));
-	}, [token]);
+	}, [token, isContactUpdated]);
 
 	return (
 		<div className='contacts-container col-3 border border-dark'>

@@ -19,6 +19,7 @@ function App() {
 	const [callOngoing, setCallOngoing] = useState();
 	const [callInitiator, setCallInitiator] = useState();
 	const [showCancelCallDialog, setShowCancelCallDialog] = useState();
+	const [isContactUpdated, setIsContactUpdated] = useState();
 
 	const connectionRef = useRef();
 
@@ -67,6 +68,8 @@ function App() {
 					setShowCancelCallDialog,
 					connectionRef,
 					resetContextValues,
+					isContactUpdated,
+					setIsContactUpdated,
 				}}
 			>
 				<BrowserRouter>
