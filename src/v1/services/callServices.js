@@ -49,7 +49,7 @@ const callResponse = (callSid, response) => {
 	}
 };
 
-const outboundCall = async (phoneNumber, userId) => {
+const outboundCall = async (to, userId) => {
 	const user = await UserDB.findExistingUserById(userId);
 
 	if (!user) {
@@ -57,7 +57,6 @@ const outboundCall = async (phoneNumber, userId) => {
 	}
 
 	const from = '+' + user.phoneNumber;
-	const to = '+' + phoneNumber;
 
 	client.outboundCall(to, from);
 };
