@@ -2,7 +2,6 @@ import { ReactSVG } from 'react-svg';
 
 export default function IncomingPhoneCallDialog({
 	callData,
-	setIncomingCall,
 	callResponseHandler,
 }) {
 	return (
