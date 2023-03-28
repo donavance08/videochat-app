@@ -2,7 +2,7 @@ import { useRef, useState, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReactSVG } from 'react-svg';
 import { setMessage } from '../redux/chat';
-import UserContext from '../UserContext';
+import UserContext from '../contexts/UserContext';
 import Loader from '../utils/Loader';
 
 export default function UploadFile() {

@@ -1,9 +1,3 @@
-import PhoneDialer from './PhoneDialer';
-
-export default function PhoneCall({ phoneNumber }) {
-	return (
-		<div className='phone-call-container col-7'>
-			<PhoneDialer phoneNumber={phoneNumber} />
-		</div>
-	);
+export default function PhoneCall({ callResponseHandler, children }) {
+	return <div className='phone-call-container col-7'>{children}</div>;
 }

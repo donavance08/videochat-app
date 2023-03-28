@@ -6,7 +6,7 @@ import React, {
 	useRef,
 } from 'react';
 import { Device } from 'twilio-client';
-import UserContext from '../UserContext';
+import UserContext from '../contexts/UserContext';
 import Contacts from '../components/Contacts';
 import Messaging from '../components/Messaging';
 import { useNavigate } from 'react-router-dom';
@@ -18,6 +18,8 @@ import CancelCallDialog from '../components/CancelCallDialog';
 import { setActiveContactId, setActiveContactName } from '../redux/chat';
 import PhoneCall from '../components/PhoneCall';
 import IncomingPhoneCallDialog from '../components/IncomingPhoneCallDialog';
+import PhoneDialer from '../components/PhoneDialer';
+
 const SimplePeer = require('simple-peer');
 
 export default function Home({ component }) {
@@ -37,15 +39,13 @@ export default function Home({ component }) {
 		setShowCancelCallDialog,
 		connectionRef,
 		setPersonalStream,
-		setCalls,
 	} = useContext(UserContext);
 	const { activeContactId } = useSelector((state) => state.chat);
 	const [incomingCall, setIncomingCall] = useState(false);
-	const [callSid, setCallSid] = useState();
+	const [callData, setCallData] = useState(null);
 
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const incomingDialogRef = useRef();
 
 	const [contactSignal, setContactSignal] = useState();
 	const [cancelReason, setCancelReason] = useState();
@@ -104,27 +104,6 @@ export default function Home({ component }) {
 	 * initiate socket whenever activeContactId changes
 	 */
 	useEffect(() => {
-		fetch(`${process.env.REACT_APP_API_URL}/api/call/token`)
-			.then((response) => response.json())
-			.then((result) => {
-				if (result.status === 'OK') {
-					console.log(result);
-					Device.setup(result.token);
-					return;
-				}
-
-				console.error(result.message);
-			})
-			.catch((err) => {
-				console.error(err.message);
-			});
-
-		Device.on('incoming', (conn) => {
-			console.log('incoming call ');
-			console.log(conn);
-			conn.accept();
-		});
-
 		if (socket.current) {
 			socket.current.connect();
 		}
@@ -153,12 +132,58 @@ export default function Home({ component }) {
 		};
 
 		socket.current.on('disconnect', disconnectListener);
-
-		return () => {
-			socket.current.disconnect();
-			console.log('component unmount');
-		};
 	}, []);
+
+	useEffect(() => {
+		fetch(`${process.env.REACT_APP_API_URL}/api/call/token`)
+			.then((response) => response.json())
+			.then((result) => {
+				if (result.status === 'OK') {
+					Device.setup(result.token);
+					return;
+				}
+
+				console.error(result.message);
+			})
+			.catch((err) => {
+				console.error(err.message);
+			});
+
+		Device.on('incoming', (call) => {
+			call.accept();
+		});
+
+		Device.on('disconnect', (call) => {
+			setIncomingCall(false);
+			setCallOngoing(false);
+			setCallData(null);
+		});
+	}, []);
+
+	const respondToPhoneCall = useCallback(
+		async (callData, response) => {
+			await fetch(
+				`${process.env.REACT_APP_API_URL}/api/call/callResponse/${response}`,
+				{
+					method: 'POST',
+					headers: {
+						'Content-type': 'application/json',
+					},
+					body: JSON.stringify({
+						id: callData.data.CallSid,
+					}),
+				}
+			);
+
+			setIncomingCall(false);
+
+			if (response === 'accept') {
+				setCallOngoing(true);
+				navigate(`/home/phone/${callData.from}/`);
+			}
+		},
+		[setCallOngoing, navigate, setIncomingCall]
+	);
 
 	/**
 	 * socket will listen for incoming video chat
@@ -172,16 +197,13 @@ export default function Home({ component }) {
 		const activeSocket = socket.current;
 
 		const incomingPhoneCallListener = (payload) => {
+			if (incomingCall || callOngoing) {
+				respondToPhoneCall(payload.data.CallSid, false);
+				return;
+			}
+
 			setIncomingCall(true);
-			incomingDialogRef.current = (
-				<IncomingPhoneCallDialog
-					payload={payload}
-					callResponseHandler={respondToPhoneCall}
-				/>
-			);
-			setCalls((calls) => {
-				return [...calls, payload.data];
-			});
+			setCallData(payload);
 		};
 
 		activeSocket.on('incoming phone call', incomingPhoneCallListener);
@@ -249,28 +271,9 @@ export default function Home({ component }) {
 			activeSocket.off('decline call', declineCallHandler);
 			activeSocket.off('initiateCall', initiateCallListener);
 			activeSocket.off('incoming call', incomingPhoneCallListener);
+			activeSocket.off('incoming phone call', incomingPhoneCallListener);
 		};
 	});
-
-	const respondToPhoneCall = (id, response) => {
-		if (response) {
-			setCallOngoing(true);
-		}
-
-		console.log(id);
-		fetch(
-			`${process.env.REACT_APP_API_URL}/api/call/callResponse/${response}`,
-			{
-				method: 'POST',
-				headers: {
-					'Content-type': 'application/json',
-				},
-				body: JSON.stringify({
-					id: id,
-				}),
-			}
-		);
-	};
 
 	return (
 		<div className='chat-page-container d-flex flex-row '>
@@ -303,8 +306,20 @@ export default function Home({ component }) {
 					column='6'
 				/>
 			)}
-			{component === 'phone' && <PhoneCall />}
-			{incomingCall && incomingDialogRef.current}
+			{component === 'phone' && (
+				<PhoneCall>
+					<PhoneDialer
+						callData={callData}
+						callResponseHandler={respondToPhoneCall}
+					/>
+				</PhoneCall>
+			)}
+			{incomingCall && (
+				<IncomingPhoneCallDialog
+					callData={callData}
+					callResponseHandler={respondToPhoneCall}
+				/>
+			)}
 		</div>
 	);
 }

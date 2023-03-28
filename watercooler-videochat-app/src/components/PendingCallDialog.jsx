@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { ReactSVG } from 'react-svg';
-import UserContext from '../UserContext';
+import UserContext from '../contexts/UserContext';
 
 export default function PendingCallDialog(props) {
 	const {

@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { UserProvider } from './UserContext';
+import { UserProvider } from './contexts/UserContext';
 import { useRef, useState } from 'react';
 import LandingPage from './pages/LandingPage';
 import AppNavBar from './components/AppNavBar';
@@ -19,7 +19,7 @@ function App() {
 	const [callOngoing, setCallOngoing] = useState();
 	const [callInitiator, setCallInitiator] = useState();
 	const [showCancelCallDialog, setShowCancelCallDialog] = useState();
-	const [calls, setCalls] = useState([]);
+
 	const connectionRef = useRef();
 
 	const socket = useRef();
@@ -67,8 +67,6 @@ function App() {
 					setShowCancelCallDialog,
 					connectionRef,
 					resetContextValues,
-					setCalls,
-					calls,
 				}}
 			>
 				<BrowserRouter>
@@ -110,7 +108,11 @@ function App() {
 							element={<ErrorPage />}
 						/>
 						<Route
-							path='/home/phone'
+							path='/home/phone/:phoneNumber'
+							element={<Home component='phone' />}
+						/>
+						<Route
+							path='/home/phone/'
 							element={<Home component='phone' />}
 						/>
 					</Routes>

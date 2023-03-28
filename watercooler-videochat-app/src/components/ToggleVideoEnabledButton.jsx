@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import { ReactSVG } from 'react-svg';
-import UserContext from '../UserContext';
+import UserContext from '../contexts/UserContext';
 
 export default function ToggleVideoEnabledButton() {
 	const [videoDisabled, setVideoDisabled] = useState(false);

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import UserContext from '../UserContext';
+import UserContext from '../contexts/UserContext';
 import ContactItem from './ContactItem';
 import { v4 as uuid } from 'uuid';
 import Loader from '../utils/Loader';

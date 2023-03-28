@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useContext, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import UserContext from '../UserContext';
+import UserContext from '../contexts/UserContext';
 import useLocalStorage from '../customHooks.js/useLocalStorage';
 import Loader from '../utils/Loader';
 

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import UserContext from '../UserContext';
+import UserContext from '../contexts/UserContext';
 import Loader from '../utils/Loader';
 
 export default function Registration() {

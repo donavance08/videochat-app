@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 import VideoChatControl from './VideoChatControl';
 import ContactVideo from './ContactVideo';
-import UserContext from '../UserContext';
+import UserContext from '../contexts/UserContext';
 
 const SimplePeer = require('simple-peer');
 

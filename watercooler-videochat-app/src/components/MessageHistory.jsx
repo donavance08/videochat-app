@@ -1,6 +1,6 @@
 import { useState, useContext, useRef, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import UserContext from '../UserContext';
+import UserContext from '../contexts/UserContext';
 import MessageSnippet from './MessageSnippet';
 import { v4 as uuid } from 'uuid';
 import { clearMessages, setArrayOfMessages, setMessage } from '../redux/chat';

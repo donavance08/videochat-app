@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import UserContext from '../UserContext';
+import UserContext from '../contexts/UserContext';
 
 export default function CancelCallDialog({ cancelReason }) {
 	const { prevActiveContactName } = useSelector((state) => state.chat);

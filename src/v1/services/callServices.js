@@ -1,6 +1,7 @@
 const UserDB = require('../database/UserDB');
 const client = require('../twilio/client');
 const customError = require('../utils/customError');
+const io = require('../../../io');
 
 const incomingCall = async (data, numberFrom, accountSid) => {
 	try {
@@ -30,14 +31,21 @@ const getCallToken = (req, res) => {
 };
 
 const callResponse = (callSid, response) => {
-	try {
-		if (response === 'true') {
+	switch (response) {
+		case 'accept':
 			client.answerCall(callSid);
-		} else {
+			break;
+
+		case 'reject':
 			client.declineCall(callSid);
-		}
-	} catch (err) {
-		console.log(err.message);
+			break;
+
+		case 'drop':
+			client.endCall(callSid);
+			break;
+
+		default:
+			return;
 	}
 };
 

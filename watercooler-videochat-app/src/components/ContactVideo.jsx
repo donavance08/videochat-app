@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef } from 'react';
-import UserContext from '../UserContext';
+import UserContext from '../contexts/UserContext';
 import UserVideo from './UserVideo.jsx';
 
 export default function ContactVideo() {

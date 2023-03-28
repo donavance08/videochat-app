@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { ReactSVG } from 'react-svg';
-import UserContext from '../UserContext';
+import UserContext from '../contexts/UserContext';
 import RecordControl from './RecordControl';
 import ToggleVideoEnabledButton from './ToggleVideoEnabledButton';
 import ToggleMuteButton from './ToggleMuteButton';

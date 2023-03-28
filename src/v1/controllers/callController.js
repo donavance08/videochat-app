@@ -27,6 +27,8 @@ const getCallToken = (req, res) => {
 
 const callResponse = (req, res) => {
 	callServices.callResponse(req.body.id, req.params.response);
+
+	res.send(true);
 };
 
 module.exports = {

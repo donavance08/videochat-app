@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import UserContext from '../UserContext';
+import UserContext from '../contexts/UserContext';
 import Loader from '../utils/Loader';
 
 export default function MessageSnippet({ value, bottom }) {

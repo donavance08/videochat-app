@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef } from 'react';
-import UserContext from '../UserContext';
+import UserContext from '../contexts/UserContext';
 
 export default function UserVideo() {
 	const { personalStream } = useContext(UserContext);

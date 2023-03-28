@@ -5,7 +5,7 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
-import UserContext from '../UserContext';
+import UserContext from '../contexts/UserContext';
 import { resetChatState } from '../redux/chat';
 import Search from './Search';
 import Avatar from 'react-avatar';

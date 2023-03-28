@@ -4,7 +4,7 @@ import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setMessage, deleteLastMessage } from '../redux/chat';
-import UserContext from '../UserContext';
+import UserContext from '../contexts/UserContext';
 import UploadFile from '../components/UploadFile';
 
 export default function ChatInput({ activeComponent }) {

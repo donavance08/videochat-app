@@ -67,15 +67,24 @@ const getCallToken = (req, res) => {
 	}
 };
 
+// <Client statusCallback=\'${process.env.REACT_APP_API_URL}/api/call/callback'>
+
 const answerCall = (callSid) => {
 	client
 		.calls(callSid)
-
 		.update({
-			twiml: '<Response><Dial><Client>watercooler</Client></Dial></Response>',
+			twiml: `<Response>
+					<Dial>
+						<Client>
+
+						<Identity>watercooler</Identity>
+						</Client>
+					</Dial>
+				</Response>`,
 		})
 
 		.catch((err) => {
+			console.log(err.message);
 			throw err;
 		});
 };
@@ -86,13 +95,22 @@ const declineCall = (callSid) => {
 
 		.update({ twiml: '<Response><Reject></Reject></Response>' })
 
-		.catch(console.log());
+		.catch((err) => console.log(err.message));
 };
 
+const endCall = async (callSid) => {
+	client
+		.calls(callSid)
+
+		.update({ twiml: '<Response><Hangup/></Response>' })
+
+		.catch((err) => console.log(err.message));
+};
 module.exports = {
 	sendSMS,
 	getCallToken,
 	incomingCall,
 	answerCall,
 	declineCall,
+	endCall,
 };
