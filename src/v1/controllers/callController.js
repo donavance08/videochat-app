@@ -27,10 +27,7 @@ const getCallToken = (req, res) => {
 };
 
 const callResponse = (req, res) => {
-	callServices.callResponse(
-		req.body.id || req.body.CallSid,
-		req.params.response
-	);
+	callServices.callResponse(req.body.CallSid, req.params.response);
 
 	res.send(true);
 };

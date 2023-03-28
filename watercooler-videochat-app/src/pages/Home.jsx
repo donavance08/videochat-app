@@ -170,7 +170,7 @@ export default function Home({ component }) {
 						'Content-type': 'application/json',
 					},
 					body: JSON.stringify({
-						id: callData.data.CallSid,
+						CallSid: callData.data.CallSid,
 					}),
 				}
 			);
