@@ -91,7 +91,12 @@ const getUserContacts = (userId) => {
 const findAllUsersByName = (name) => {
 	return UserDB.findAllUsersByName(name)
 		.then((result) => {
-			return result;
+			return result.map((user) => {
+				return {
+					nickname: user.nickname,
+					_id: user._id,
+				};
+			});
 		})
 		.catch((err) => {
 			throw err;
