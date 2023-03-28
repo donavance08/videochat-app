@@ -6,7 +6,8 @@ import UserContext from '../contexts/UserContext';
 
 export default function PhoneDialer({ callData, callResponseHandler }) {
 	const { phoneNumber = '' } = useParams();
-	const { callOngoing } = useContext(UserContext);
+	const { callOngoing, token } = useContext(UserContext);
+
 	const [keypad, setKeypad] = useState();
 	const inputRef = useRef();
 	const navigate = useNavigate();
@@ -31,11 +32,21 @@ export default function PhoneDialer({ callData, callResponseHandler }) {
 			navigate('/home/phone/');
 		}
 
-		if (!inputRef.current.value) {
+		const phoneNumber = inputRef.current.value;
+
+		if (!phoneNumber) {
 			return;
 		}
 
-		//make outgoing call
+		fetch(`${process.env.REACT_APP_API_URL}/api/call/${phoneNumber}`, {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		})
+			.then(() => callOngoing(true))
+
+			.catch((err) => console.error(err.message));
 	};
 
 	useEffect(() => {
