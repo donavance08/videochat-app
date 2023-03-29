@@ -105,17 +105,14 @@ export default function Home({ component }) {
 	 */
 	useEffect(() => {
 		console.count('useEffect');
-		// if (socket.current) {
-		// 	socket.current.connect();
-		// 	return;
-		// }
+
 		socket.current = io(`${process.env.REACT_APP_API_URL}`, {
 			extraHeaders: {
 				id,
 			},
 			reconnection: true,
 			reconnectionAttempts: Infinity,
-			reconnectionDelay: 1000,
+			reconnectionDelay: 10000,
 		});
 
 		navigator.mediaDevices
@@ -127,17 +124,6 @@ export default function Home({ component }) {
 		socket.current.on('connection', (payload) => {
 			console.log(payload);
 		});
-
-		// const disconnectListener = (payload) => {
-		// 	console.log(`${socket.current} got disconnected`);
-		// 	socket.current.connect();
-		// };
-
-		// socket.current.on('disconnect', disconnectListener);
-
-		// return () => {
-		// 	socket.current.off('disconnect', disconnectListener);
-		// };
 	}, []);
 
 	useEffect(() => {
