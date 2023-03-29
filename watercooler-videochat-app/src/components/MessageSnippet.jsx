@@ -6,7 +6,7 @@ import Loader from '../utils/Loader';
 export default function MessageSnippet({ value, bottom }) {
 	const { isOwner, message, image } = value;
 	const { activeContactName } = useSelector((state) => state.chat);
-	const { token, name } = useContext(UserContext);
+	const { token } = useContext(UserContext);
 	const [imageObjectURL, setImageObjectURL] = useState();
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -24,7 +24,7 @@ export default function MessageSnippet({ value, bottom }) {
 				bottom.current?.scrollIntoView();
 			});
 		}
-	}, [message]);
+	}, [message, token]);
 
 	return (
 		<div
