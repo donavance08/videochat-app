@@ -19,8 +19,6 @@ html {
 html,
 body {
 	height: 100%;
-	/* max-height: calc(100% - 100px); */
-	/* min-height: 650px; */
 	font-family: 'Poppins', sans-serif;
 }
 
@@ -70,9 +68,6 @@ h2 {
 
 .search-bar-container {
 	width: 100%;
-	/* display: flex;
-	justify-content: right;
-	align-items: center; */
 	flex-direction: column;
 	margin: auto;
 	margin-top: 8.5px;
@@ -298,6 +293,10 @@ input:-internal-autofill-selected {
 /* CONTACTS component section 
 ========================= */
 
+.contacts-container {
+	box-shadow: 5px -5px 10px rgba(0, 0, 0, 0.8);
+}
+
 .contacts-header-container {
 	margin: 10px 0px;
 }
@@ -366,6 +365,7 @@ input:-internal-autofill-selected {
 
 .chat-page-container {
 	height: calc(100% - 4.5em);
+	/* height: 100%; */
 }
 
 .chat-body-container {

@@ -37,7 +37,7 @@ export default function Contact() {
 	}, [token, isContactUpdated]);
 
 	return (
-		<div className='contacts-container col-3 border border-dark'>
+		<div className='contacts-container col-3 '>
 			<div className='contacts-header-container'>
 				<h2>Contacts</h2>
 				<hr />
