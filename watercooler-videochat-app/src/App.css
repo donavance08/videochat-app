@@ -46,6 +46,10 @@ h2 {
 	color: var(--primaryColor);
 }
 
+h5 {
+	font-size: 12px;
+}
+
 /* NAVBAR 
 =============================*/
 .navbar {
@@ -529,13 +533,24 @@ em-emoji-picker {
 	align-items: center;
 }
 
+.msg-snippet-container {
+	display: flex;
+	max-width: 80%;
+	align-items: start;
+	flex-direction: column;
+	justify-content: baseline;
+}
+
+.msg-snippet-container > h5 {
+	padding-left: 10px;
+	margin: 0px;
+}
 .text-container {
 	background-color: var(--primaryColor);
 	border-radius: 5px;
-	max-width: 80%;
 	display: flex;
 	padding: 10px 15px;
-	text-align: inherit;
+	text-align: start;
 }
 
 .message-item-paragraph {

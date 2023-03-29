@@ -55,14 +55,13 @@ export default function MessageHistory({ activeComponent }) {
 		};
 
 		activeSocket.on('receive msg', listener);
-		console.log('activeSocket', activeSocket);
+
 		return () => {
 			activeSocket.off('receive msg', listener);
 		};
 	}, [activeContactId, dispatch, activeComponent, socket]);
 
 	const fetchData = useCallback(() => {
-		console.time('fetch');
 		setIsError(false);
 		fetch(
 			`${process.env.REACT_APP_API_URL}/api/${activeComponent}/${activeContactId}`,
@@ -80,7 +79,6 @@ export default function MessageHistory({ activeComponent }) {
 				} else {
 					setIsError(true);
 				}
-				console.timeEnd('fetch');
 				setIsLoading(false);
 			})
 			.catch((err) => {
