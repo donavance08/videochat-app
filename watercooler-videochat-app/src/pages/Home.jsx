@@ -104,6 +104,8 @@ export default function Home({ component }) {
 	 */
 	useEffect(() => {
 		if (socket.current) {
+			console.log('new token detected, reconnecting socket');
+			socket.current.connect();
 			return;
 		}
 		socket.current = io(`${process.env.REACT_APP_API_URL}`, {
@@ -112,11 +114,7 @@ export default function Home({ component }) {
 			},
 			reconnection: true,
 			reconnectionAttempts: Infinity,
-			reconnectionDelay: 10000,
-		});
-
-		socket.current.on('error', (err) => {
-			console.log(`socket connection error ${err.message}`);
+			reconnectionDelay: 5000,
 		});
 
 		navigator.mediaDevices
@@ -128,7 +126,7 @@ export default function Home({ component }) {
 		socket.current.on('connection', (payload) => {
 			console.log(payload);
 		});
-	}, []);
+	}, [token]);
 
 	useEffect(() => {
 		fetch(`${process.env.REACT_APP_API_URL}/api/call/token`)
@@ -204,11 +202,14 @@ export default function Home({ component }) {
 
 		activeSocket.on('incoming phone call', incomingPhoneCallListener);
 
-		const socketDisconnectedListener = (payload) => {
-			console.timeStamp(payload);
+		const socketDisconnectedListener = (disconnectReason) => {
+			console.timeStamp(disconnectReason);
 			console.timeStamp('socket disconnected');
 			console.timeStamp('attempting forced reconnect in 10sec');
 
+			if ((disconnectReason = 'io client disconnect')) {
+				return;
+			}
 			setTimeout(() => {
 				console.timeStamp('socket reconnecting');
 				activeSocket.connect();
