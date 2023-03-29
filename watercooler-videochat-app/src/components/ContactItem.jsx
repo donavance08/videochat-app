@@ -110,7 +110,7 @@ export default function ContactItem({ data }) {
 					</button>
 					<button
 						className='contact-options-button'
-						title='SMS'
+						title='Phone'
 					>
 						<ReactSVG
 							className='input-button-svg'

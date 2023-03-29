@@ -4,6 +4,9 @@ import MessageHistory from './MessageHistory';
 
 export default function Messaging({ activeComponent, column }) {
 	const { activeContactName } = useSelector((state) => state.chat);
+	const col = parseInt(column);
+
+	console.log(col <= 3);
 
 	return (
 		<div className={`chat-body-container col-${column}`}>
@@ -15,7 +18,9 @@ export default function Messaging({ activeComponent, column }) {
 				</>
 			) : (
 				<>
-					<div className='chat-header'>{activeContactName}</div>
+					{!(col <= 3) && (
+						<div className='chat-header'>{activeContactName}</div>
+					)}
 					<MessageHistory activeComponent={activeComponent} />
 					<ChatInput activeComponent={activeComponent} />
 				</>
