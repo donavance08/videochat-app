@@ -49,8 +49,11 @@ export default function SearchResultItem({ user }) {
 				</div>
 				<div className='search-results-name'>{user.nickname}</div>
 				<div className='search-results-add-container'>
-					<button onClick={handleClick}>
-						<ReactSVG src='./icons/add.svg' />
+					<button
+						title='Add as contact'
+						onClick={handleClick}
+					>
+						<ReactSVG src='/icons/add.svg' />
 					</button>
 				</div>
 			</td>

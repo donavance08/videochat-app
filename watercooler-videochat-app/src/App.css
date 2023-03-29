@@ -609,6 +609,7 @@ em-emoji-picker {
 
 .contact-video-container > div {
 	box-shadow: var(--defaultBoxShadow);
+	display: flex;
 }
 
 .contact-video {
