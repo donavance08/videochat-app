@@ -37,6 +37,8 @@ export default function ContactItem({ data }) {
 
 	// function to handle user click on a contact
 	const handleContactClick = (event) => {
+		dispatch(setActiveContactId(data._id));
+		dispatch(setActiveContactName(data.nickname));
 		document.body.addEventListener('click', onClickOutside);
 		setIsContactSelected((state) => !state);
 	};

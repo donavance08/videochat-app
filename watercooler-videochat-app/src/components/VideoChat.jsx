@@ -21,6 +21,10 @@ export default function VideoChat({ declineCallHandler, dropCallHandler }) {
 	const { socket, name, id } = useContext(UserContext);
 
 	const initiateCall = () => {
+		if (!activeContactId) {
+			alert('Please select a contact to call first');
+			return;
+		}
 		const peer = new SimplePeer({
 			initiator: true,
 			trickle: false,
