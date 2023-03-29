@@ -1,7 +1,7 @@
 const smsServices = require('../services/smsServices');
 const auth = require('../../../auth');
 
-const addSMS = async (req, res) => {
+const sendSMS = async (req, res) => {
 	//extract the data
 	const {
 		params: { receiverId },
@@ -11,7 +11,7 @@ const addSMS = async (req, res) => {
 
 	// verify length of sms,
 	try {
-		const result = await smsServices.addSMS({
+		const result = await smsServices.sendSMS({
 			senderPhoneNumber: sender.phoneNumber,
 			senderId: sender.id,
 			receiverId,
@@ -55,6 +55,6 @@ const getSMSHistory = (req, res) => {
 };
 
 module.exports = {
-	addSMS,
+	sendSMS,
 	getSMSHistory,
 };

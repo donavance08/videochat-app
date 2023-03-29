@@ -15,7 +15,12 @@ const getReceiverData = async (receiverId) => {
 	}
 };
 
-const addSMS = async ({ senderPhoneNumber, senderId, receiverId, message }) => {
+const sendSMS = async ({
+	senderPhoneNumber,
+	senderId,
+	receiverId,
+	message,
+}) => {
 	try {
 		const receiverData = await getReceiverData(receiverId);
 
@@ -43,7 +48,7 @@ const addSMS = async ({ senderPhoneNumber, senderId, receiverId, message }) => {
 			header: 'sms',
 		});
 
-		const savedMessage = await smsDB.addSMS(newSMSDocument);
+		const savedMessage = await smsDB.sendSMS(newSMSDocument);
 
 		io.fireReceiveMsgEvent({
 			sender: senderId,
@@ -78,6 +83,6 @@ const getSMSHistory = async (senderPhoneNumber, receiverId) => {
 };
 
 module.exports = {
-	addSMS,
+	sendSMS,
 	getSMSHistory,
 };

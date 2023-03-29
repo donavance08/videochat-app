@@ -1,6 +1,6 @@
 const SMS = require('../models/SMS');
 
-const addSMS = async (newSMS) => {
+const sendSMS = async (newSMS) => {
 	try {
 		const savedMessage = await newSMS.save();
 
@@ -29,6 +29,6 @@ const getSMSHistory = async (senderPhoneNumber, receiverPhoneNumber) => {
 };
 
 module.exports = {
-	addSMS,
+	sendSMS,
 	getSMSHistory,
 };
