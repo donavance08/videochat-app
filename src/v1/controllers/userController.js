@@ -86,8 +86,14 @@ const getUserContacts = (req, res) => {
 };
 
 const findAllUsersByName = (req, res) => {
+	const userId = auth.decode(req.headers.authorization).id;
+
+	if (!userId) {
+		return;
+	}
+
 	userServices
-		.findAllUsersByName(req.params.name)
+		.findAllUsersByName(req.params.name, userId)
 		.then((result) => {
 			res
 				.status(200)

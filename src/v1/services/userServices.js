@@ -88,19 +88,42 @@ const getUserContacts = (userId) => {
 		});
 };
 
-const findAllUsersByName = (name) => {
-	return UserDB.findAllUsersByName(name)
-		.then((result) => {
-			return result.map((user) => {
+const removeContactsFromResult = (result, contacts, userId) => {
+	return result.filter((item) => {
+		if (
+			item._id.toString() !== userId &&
+			contacts.indexOf(item._id.toString()) < 0
+		) {
+			return item;
+		}
+	});
+};
+
+const findAllUsersByName = async (name, userId) => {
+	try {
+		const searchResult = await UserDB.findAllUsersByName(name).then((result) =>
+			result.map((user) => {
 				return {
 					nickname: user.nickname,
 					_id: user._id,
 				};
-			});
-		})
-		.catch((err) => {
-			throw err;
-		});
+			})
+		);
+
+		console.log(searchResult);
+
+		if (!searchResult) {
+			return [];
+		}
+
+		const userContacts = await UserDB.getUserContacts(userId).then((result) =>
+			result.map((contact) => contact._id.toString())
+		);
+
+		console.log(userContacts);
+
+		return removeContactsFromResult(searchResult, userContacts, userId);
+	} catch (err) {}
 };
 
 const addContact = async (contactId, userId) => {

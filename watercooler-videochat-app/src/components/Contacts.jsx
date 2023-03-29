@@ -20,6 +20,7 @@ export default function Contact() {
 			.then((response) => response.json())
 			.then((result) => {
 				if (result.status === 'OK') {
+					console.log(result);
 					setContacts(
 						result.data.map((contact) => (
 							<ContactItem
