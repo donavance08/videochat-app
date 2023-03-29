@@ -104,9 +104,11 @@ export default function Home({ component }) {
 	 * initiate socket whenever activeContactId changes
 	 */
 	useEffect(() => {
-		if (socket.current) {
-			socket.current.connect();
-		}
+		console.count('useEffect');
+		// if (socket.current) {
+		// 	socket.current.connect();
+		// 	return;
+		// }
 		socket.current = io(`${process.env.REACT_APP_API_URL}`, {
 			extraHeaders: {
 				id,
@@ -126,12 +128,16 @@ export default function Home({ component }) {
 			console.log(payload);
 		});
 
-		const disconnectListener = (payload) => {
-			console.log(`${socket.current} got disconnected`);
-			socket.current.connect();
-		};
+		// const disconnectListener = (payload) => {
+		// 	console.log(`${socket.current} got disconnected`);
+		// 	socket.current.connect();
+		// };
 
-		socket.current.on('disconnect', disconnectListener);
+		// socket.current.on('disconnect', disconnectListener);
+
+		// return () => {
+		// 	socket.current.off('disconnect', disconnectListener);
+		// };
 	}, []);
 
 	useEffect(() => {
@@ -208,10 +214,11 @@ export default function Home({ component }) {
 
 		activeSocket.on('incoming phone call', incomingPhoneCallListener);
 
-		activeSocket.on('disconnect', (payload) => {
-			console.log('socket disconnected');
-			console.log('socket current', socket.current);
-		});
+		const socketDisconnectedListener = (payload) => {
+			activeSocket.connect();
+		};
+
+		activeSocket.on('disconnect', socketDisconnectedListener);
 
 		const initiateCallListener = (payload) => {
 			if (callOngoing) {
@@ -272,6 +279,7 @@ export default function Home({ component }) {
 			activeSocket.off('initiateCall', initiateCallListener);
 			activeSocket.off('incoming call', incomingPhoneCallListener);
 			activeSocket.off('incoming phone call', incomingPhoneCallListener);
+			activeSocket.off('disconnect', socketDisconnectedListener);
 		};
 	});
 
