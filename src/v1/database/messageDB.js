@@ -18,10 +18,21 @@ const getConversationHistory = async (sender, receiver) => {
 	try {
 		const messages = await Message.find({
 			$or: [
-				{ sender, receiver },
 				{
-					sender: receiver,
-					reciever: sender,
+					$and: [
+						{ sender: sender },
+						{
+							receiver: receiver,
+						},
+					],
+				},
+				{
+					$and: [
+						{ sender: receiver },
+						{
+							receiver: sender,
+						},
+					],
 				},
 			],
 		}).sort({ dateCreated: 1 });
