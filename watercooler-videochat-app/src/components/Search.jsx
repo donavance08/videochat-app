@@ -3,6 +3,7 @@ import { ReactSVG } from 'react-svg';
 import UserContext from '../contexts/UserContext';
 import Loader from '../utils/Loader';
 import SearchResultItem from './SearchResultItem';
+import { v4 as uuid } from 'uuid';
 
 export default function Search() {
 	const { token } = useContext(UserContext);
@@ -34,7 +35,12 @@ export default function Search() {
 				}
 
 				setResultsTable(() =>
-					result.data.map((user) => <SearchResultItem user={user} />)
+					result.data.map((user) => (
+						<SearchResultItem
+							key={uuid()}
+							user={user}
+						/>
+					))
 				);
 
 				setShowTable(true);
