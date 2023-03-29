@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useContext, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ReactSVG } from 'react-svg';
+import { toast } from 'react-toastify';
 import { v4 as uuid } from 'uuid';
 import UserContext from '../contexts/UserContext';
 
@@ -46,10 +47,16 @@ export default function PhoneDialer({ callData, callResponseHandler }) {
 		})
 			.then((response) => response.json())
 			.then((result) => {
-				if (result.status === 'FAILED') {
-					console.log(result);
+				if (result.errors) {
+					result.errors.forEach((error) => {
+						toast.error(error.msg, {});
+					});
+					return;
+				} else if (result.status === 'FAILED') {
+					console.error(result.message);
 					return;
 				}
+
 				callOngoing(true);
 			})
 			.catch((err) => console.error(err.message));

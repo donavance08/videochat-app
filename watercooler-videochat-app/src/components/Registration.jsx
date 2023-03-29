@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import UserContext from '../contexts/UserContext';
 import Loader from '../utils/Loader';
+import { toast } from 'react-toastify';
 
 export default function Registration() {
 	const nicknameRef = useRef();
@@ -47,12 +48,22 @@ export default function Registration() {
 		})
 			.then((response) => response.json())
 			.then((result) => {
+				console.log(result);
 				if (result.status === 'OK') {
 					setToken(() => result.data.token);
 					setName(() => result.data.nickname);
-					setIsLoading(false);
+
 					navigate('/');
+				} else {
+					result.errors.forEach((error) => {
+						toast.error(error.msg, {
+							progress: undefined,
+							theme: 'colored',
+						});
+					});
 				}
+
+				setIsLoading(false);
 			})
 			.catch((err) => {
 				setIsLoading(false);

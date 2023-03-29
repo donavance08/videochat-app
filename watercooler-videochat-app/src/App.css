@@ -8,6 +8,7 @@
 	--red: #dc1818;
 	--white: white;
 	--defaultBoxShadow: 5px 5px 10px 2px rgba(0, 0, 0, 0.8);
+	--toastify-color-error: #ff0000;
 }
 
 html {
@@ -48,6 +49,10 @@ h2 {
 
 h5 {
 	font-size: 12px;
+}
+
+.Toastify__toast-theme--colored.Toastify__toast--error {
+	background: var(--toastify-color-error);
 }
 
 /* NAVBAR 

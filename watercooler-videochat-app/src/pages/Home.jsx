@@ -207,7 +207,7 @@ export default function Home({ component }) {
 			console.timeStamp('socket disconnected');
 			console.timeStamp('attempting forced reconnect in 10sec');
 
-			if ((disconnectReason = 'io client disconnect')) {
+			if (disconnectReason === 'io client disconnect') {
 				return;
 			}
 			setTimeout(() => {

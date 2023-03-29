@@ -11,7 +11,7 @@ const regValidations = [
 		.trim()
 		.isLength({ min: 3, max: 15 })
 		.escape()
-		.withMessage('Please check nickname'),
+		.withMessage('Nickname should be 3-15 characters long'),
 	body('username')
 		.trim()
 		.isEmail()
@@ -20,11 +20,11 @@ const regValidations = [
 	body('password')
 		.trim()
 		.isLength({ min: 8, max: 50 })
-		.withMessage('Password should be a minumum of 8 characters and max of 50'),
+		.withMessage('Password should be 2-50 characters long'),
 	body('phoneNumber')
 		.trim()
 		.isLength({ min: 7, max: 15 })
-		.withMessage('Phone number should be min of 7 and max of 15'),
+		.withMessage('Phone number is invalid'),
 ];
 
 const searchValidations = [
