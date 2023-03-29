@@ -6,8 +6,6 @@ export default function Messaging({ activeComponent, column }) {
 	const { activeContactName } = useSelector((state) => state.chat);
 	const col = parseInt(column);
 
-	console.log(col <= 3);
-
 	return (
 		<div className={`chat-body-container col-${column}`}>
 			{!activeContactName ? (

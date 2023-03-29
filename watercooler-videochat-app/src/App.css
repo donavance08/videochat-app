@@ -607,6 +607,10 @@ em-emoji-picker {
 	align-items: flex-end;
 }
 
+.contact-video-container > div {
+	box-shadow: var(--defaultBoxShadow);
+}
+
 .contact-video {
 	width: 100%;
 	min-width: 500px;
@@ -627,6 +631,10 @@ em-emoji-picker {
 	border-radius: 50%;
 }
 
+.call-control:hover {
+	box-shadow: var(--defaultBoxShadow);
+}
+
 .call-buttons-container {
 	display: flex;
 	width: 100%;
@@ -643,6 +651,14 @@ em-emoji-picker {
 
 .call-control-svg > div > svg {
 	max-width: 100%;
+}
+
+.large-calling-button {
+	background-color: #0cdf1a;
+}
+
+.large-end-button {
+	background-color: #dc1818;
 }
 
 /* INCOMING CALL DIALOG component 
@@ -731,6 +747,10 @@ em-emoji-picker {
 	border-radius: 50%;
 	background-color: inherit;
 	color: inherit;
+}
+
+.recording-control-box:hover {
+	box-shadow: var(--defaultBoxShadow);
 }
 
 /* ERROR PAGE component */
