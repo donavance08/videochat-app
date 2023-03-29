@@ -13,7 +13,7 @@ import Avatar from 'react-avatar';
 /* Incomplete*/
 
 export default function AppNavBar() {
-	const { name, resetContextValues } = useContext(UserContext);
+	const { name, resetContextValues, token } = useContext(UserContext);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
@@ -34,7 +34,7 @@ export default function AppNavBar() {
 					WaterCooler
 				</Navbar.Brand>
 
-				<Search />
+				{token && <Search />}
 				<Navbar.Toggle />
 
 				{name && (
