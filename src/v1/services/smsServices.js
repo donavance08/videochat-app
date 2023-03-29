@@ -111,16 +111,17 @@ const receiveSMS = async (from, to, body) => {
 		});
 
 		const savedMessage = await smsDB.sendSMS(newSMSDocument);
+		console.log(savedMessage);
+
+		io.emit('receive msg', {
+			data: savedMessage,
+			from: savedMessage.sender,
+			userId: savedMessage.receiver,
+		});
 	} catch (err) {
 		console.log(err.message);
 		throw err;
 	}
-
-	io.fireReceiveMsgEvent({
-		sender: sender._id,
-		receiver: receiver._id,
-		savedMessage,
-	});
 };
 
 module.exports = {

@@ -59,8 +59,7 @@ const receiveSMS = (req, res) => {
 	const to = req.body.To.slice(1, req.body.To.length);
 
 	smsServices.receiveSMS(from, to, req.body).then((result) => {
-		console.log(result);
-		res.type('text/xml').send(result.twiml);
+		res.type('text/xml').send(result?.twiml || '');
 	});
 };
 
