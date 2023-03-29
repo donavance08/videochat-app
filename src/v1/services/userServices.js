@@ -110,8 +110,6 @@ const findAllUsersByName = async (name, userId) => {
 			})
 		);
 
-		console.log(searchResult);
-
 		if (!searchResult) {
 			return [];
 		}
@@ -119,8 +117,6 @@ const findAllUsersByName = async (name, userId) => {
 		const userContacts = await UserDB.getUserContacts(userId).then((result) =>
 			result.map((contact) => contact._id.toString())
 		);
-
-		console.log(userContacts);
 
 		return removeContactsFromResult(searchResult, userContacts, userId);
 	} catch (err) {}
