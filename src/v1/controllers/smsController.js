@@ -54,7 +54,18 @@ const getSMSHistory = (req, res) => {
 		});
 };
 
+const receiveSMS = (req, res) => {
+	const from = req.body.From.slice(1, req.body.From.length);
+	const to = req.body.To.slice(1, req.body.To.length);
+
+	smsServices.receiveSMS(from, to, req.body).then((result) => {
+		console.log(result);
+		res.type('text/xml').send(result.twiml);
+	});
+};
+
 module.exports = {
 	sendSMS,
 	getSMSHistory,
+	receiveSMS,
 };
