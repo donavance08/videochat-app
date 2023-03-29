@@ -46,7 +46,7 @@ export default function MessageSnippet({ value, bottom }) {
 				)
 			) : (
 				<div className='msg-snippet-container'>
-					<h5>{isOwner ? name : activeContactName}</h5>
+					<h5>{isOwner ? 'You' : activeContactName}</h5>
 					<div className='text-container'>
 						<p className='message-item-paragraph'>{message}</p>
 					</div>
