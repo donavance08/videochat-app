@@ -67,4 +67,5 @@ module.exports = {
 	sendSMS,
 	getSMSHistory,
 	receiveSMS,
+	receiveSMS,
 };
