@@ -1,10 +1,12 @@
 import { useContext, useEffect, useState } from 'react';
 import UserContext from '../contexts/UserContext';
+import { useSelector } from 'react-redux';
 import Loader from '../utils/Loader';
 
 export default function MessageSnippet({ value, bottom }) {
 	const { isOwner, message, image } = value;
-	const { token } = useContext(UserContext);
+	const { activeContactName } = useSelector((state) => state.chat);
+	const { token, name } = useContext(UserContext);
 	const [imageObjectURL, setImageObjectURL] = useState();
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -43,8 +45,11 @@ export default function MessageSnippet({ value, bottom }) {
 					</div>
 				)
 			) : (
-				<div className='text-container'>
-					<p className='message-item-paragraph'>{message}</p>
+				<div className='msg-snippet-container'>
+					<h5>{isOwner ? name : activeContactName}</h5>
+					<div className='text-container'>
+						<p className='message-item-paragraph'>{message}</p>
+					</div>
 				</div>
 			)}
 		</div>
