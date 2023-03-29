@@ -4,6 +4,9 @@ const SMS = require('../models/SMS');
 const io = require('../../../io');
 const customError = require('../utils/customError');
 const twilioClient = require('../twilio/client');
+const ObjectId = require('mongoose').Types.ObjectId;
+
+const genericObjectId = new ObjectId('64245815a08a6a4680183e44');
 
 const getReceiverData = async (receiverId) => {
 	try {
@@ -57,7 +60,6 @@ const sendSMS = async ({
 		});
 
 		return savedMessage;
-		return;
 	} catch (err) {
 		throw err;
 	}
@@ -82,7 +84,48 @@ const getSMSHistory = async (senderPhoneNumber, receiverId) => {
 		});
 };
 
+const receiveSMS = async (from, to, body) => {
+	try {
+		const sender = await UserDB.findExistingPhoneNumber(from);
+		const receiver = await UserDB.findExistingPhoneNumber(to);
+
+		if (!sender || !receiver) {
+			console.log('here');
+			return {
+				twiml: `<Response>
+				<Message>
+					<Body>We're sorry, the recipient does not accept messages if you are not a Contact. Please register and add recipient as Contact.</Body>
+					<Redirect>${process.env.REACT_APP_API_URL}</Redirect>
+					</Message>
+			</Response>`,
+			};
+		}
+
+		const newSMSDocument = new SMS({
+			sender: sender?._id || genericObjectId,
+			senderPhone: from,
+			receiver: receiver?._id || genericObjectId,
+			receiverPhone: to,
+			message: body.Body,
+			dateCreated: new Date(),
+			header: 'sms',
+		});
+
+		const savedMessage = await smsDB.sendSMS(newSMSDocument);
+	} catch (err) {
+		console.log(err.message);
+		throw err;
+	}
+
+	io.fireReceiveMsgEvent({
+		sender: sender._id,
+		receiver: receiver._id,
+		savedMessage,
+	});
+};
+
 module.exports = {
 	sendSMS,
 	getSMSHistory,
+	receiveSMS,
 };
