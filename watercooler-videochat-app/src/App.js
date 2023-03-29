@@ -7,6 +7,8 @@ import AppNavBar from './components/AppNavBar';
 import Home from './pages/Home';
 import ErrorPage from './pages/ErrorPage';
 import useLocalStorage from './customHooks.js/useLocalStorage';
+import { ToastContainer, Zoom } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 
 function App() {
@@ -72,6 +74,20 @@ function App() {
 					setIsContactUpdated,
 				}}
 			>
+				<ToastContainer
+					position='bottom-right'
+					autoClose={5000}
+					hideProgressBar={false}
+					newestOnTop={false}
+					limit={10}
+					closeOnClick={false}
+					rtl={false}
+					pauseOnFocusLoss
+					draggable={false}
+					transition={Zoom}
+					pauseOnHover
+					theme='colored'
+				/>
 				<BrowserRouter>
 					<AppNavBar />
 					<Routes>

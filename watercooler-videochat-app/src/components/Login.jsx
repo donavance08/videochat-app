@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import UserContext from '../contexts/UserContext';
 import useLocalStorage from '../customHooks.js/useLocalStorage';
 import Loader from '../utils/Loader';
+import { toast } from 'react-toastify';
 
 // adding localstorage hook and persist with redux
 
@@ -35,6 +36,11 @@ export default function Login() {
 					setToken(() => result.data.token);
 					setName(() => result.data.nickname);
 					setId(() => result.data.id);
+				} else {
+					toast.error(result.message, {
+						progress: undefined,
+						theme: 'colored',
+					});
 				}
 				setIsLoading(() => false);
 			})
