@@ -23,7 +23,6 @@ import PhoneDialer from '../components/PhoneDialer';
 const SimplePeer = require('simple-peer');
 
 export default function Home({ component }) {
-	console.log('render home');
 	const {
 		socket,
 		token,
@@ -104,8 +103,9 @@ export default function Home({ component }) {
 	 * initiate socket whenever activeContactId changes
 	 */
 	useEffect(() => {
-		console.count('useEffect');
-
+		if (socket.current) {
+			return;
+		}
 		socket.current = io(`${process.env.REACT_APP_API_URL}`, {
 			extraHeaders: {
 				id,
@@ -113,6 +113,10 @@ export default function Home({ component }) {
 			reconnection: true,
 			reconnectionAttempts: Infinity,
 			reconnectionDelay: 10000,
+		});
+
+		socket.current.on('error', (err) => {
+			console.log(`socket connection error ${err.message}`);
 		});
 
 		navigator.mediaDevices
@@ -201,7 +205,14 @@ export default function Home({ component }) {
 		activeSocket.on('incoming phone call', incomingPhoneCallListener);
 
 		const socketDisconnectedListener = (payload) => {
-			activeSocket.connect();
+			console.timeStamp(payload);
+			console.timeStamp('socket disconnected');
+			console.timeStamp('attempting forced reconnect in 10sec');
+
+			setTimeout(() => {
+				console.timeStamp('socket reconnecting');
+				activeSocket.connect();
+			}, 10000);
 		};
 
 		activeSocket.on('disconnect', socketDisconnectedListener);
@@ -258,6 +269,7 @@ export default function Home({ component }) {
 		};
 
 		activeSocket.on('user disconnect', userDisconnectHandler);
+
 		return () => {
 			activeSocket.off('user disconnect', userDisconnectHandler);
 			activeSocket.off('drop call', dropCallHandler);
