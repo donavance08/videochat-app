@@ -1,7 +1,11 @@
 const callServices = require('../services/callServices');
 const auth = require('../../../auth');
 const { validationResult } = require('express-validator');
-const { checkValidationResult } = require('../utils/utilFunctions');
+const {
+	checkValidationResult,
+	validatePhoneNumber,
+	extractPhoneNumber,
+} = require('../utils/utilFunctions');
 
 const incomingCall = (req, res) => {
 	const {
@@ -35,13 +39,15 @@ const callResponse = (req, res) => {
 };
 
 const outboundCall = (req, res) => {
-	if (checkValidationResult(req, res)) {
+	if (validatePhoneNumber(req, res)) {
 		return;
 	}
 
+	const phoneNumber = extractPhoneNumber(req);
+
 	const userId = auth.decode(req.headers.authorization).id;
 	callServices
-		.outboundCall(req.params.phoneNumber, userId)
+		.outboundCall(phoneNumber, userId)
 
 		.then((result) => {
 			res.send();

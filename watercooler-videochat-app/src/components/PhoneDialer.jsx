@@ -47,7 +47,7 @@ export default function PhoneDialer({ callData, callResponseHandler }) {
 		})
 			.then((response) => response.json())
 			.then((result) => {
-				if (result.errors) {
+				if (result.errors.length > 0) {
 					result.errors.forEach((error) => {
 						toast.error(error.msg, {});
 					});

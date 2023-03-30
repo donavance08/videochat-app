@@ -13,11 +13,6 @@ const phoneNumberValidator = [
 router.post('/', callController.incomingCall);
 router.get('/token', callController.getCallToken);
 router.post('/callResponse/:response', callController.callResponse);
-router.post(
-	'/:phoneNumber',
-	auth.verify,
-	phoneNumberValidator,
-	callController.outboundCall
-);
+router.post('/:phoneNumber', auth.verify, callController.outboundCall);
 
 module.exports = router;
