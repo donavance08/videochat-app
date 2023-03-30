@@ -42,6 +42,7 @@ export default function Home({ component }) {
 	const { activeContactId } = useSelector((state) => state.chat);
 	const [incomingCall, setIncomingCall] = useState(false);
 	const [callData, setCallData] = useState(null);
+	const [callStatus, setCallStatus] = useState('');
 
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
@@ -55,7 +56,6 @@ export default function Home({ component }) {
 	const answerCall = () => {
 		setCallOngoing(true);
 
-		console.log('personal Stream', personalStream);
 		const peer = new SimplePeer({
 			initiator: false,
 			trickle: false,
@@ -104,7 +104,6 @@ export default function Home({ component }) {
 	 */
 	useEffect(() => {
 		if (socket.current) {
-			console.log('new token detected, reconnecting socket');
 			socket.current.connect();
 			return;
 		}
@@ -145,12 +144,14 @@ export default function Home({ component }) {
 
 		Device.on('incoming', (call) => {
 			call.accept();
+			setCallStatus('Call in progress');
 		});
 
 		Device.on('disconnect', (call) => {
 			setIncomingCall(false);
 			setCallOngoing(false);
 			setCallData(null);
+			setCallStatus('Call Completed');
 		});
 	}, []);
 
@@ -233,7 +234,6 @@ export default function Home({ component }) {
 		activeSocket.on('initiateCall', initiateCallListener);
 
 		const declineCallHandler = (payload) => {
-			console.log('trigger decline call handler');
 			if (showPendingCallDialog) {
 				setShowPendingCallDialog(false);
 				setShowCancelCallDialog(true);
@@ -248,8 +248,6 @@ export default function Home({ component }) {
 		 *
 		 *  */
 		const dropCallHandler = (payload) => {
-			console.log('call cancelled', payload);
-
 			if (callOngoing) {
 				setShowCancelCallDialog(true);
 				setCancelReason(payload.reason);
@@ -318,6 +316,8 @@ export default function Home({ component }) {
 					<PhoneDialer
 						callData={callData}
 						callResponseHandler={respondToPhoneCall}
+						callStatus={callStatus}
+						setCallStatus={setCallStatus}
 					/>
 				</PhoneCall>
 			)}

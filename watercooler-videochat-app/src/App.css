@@ -825,9 +825,13 @@ em-emoji-picker {
 	height: 100%;
 }
 
+.phone-keypad-container > label {
+	padding-left: 10px;
+}
+
 #phone-input {
 	width: 100%;
-	height: 60px;
+	height: 50px;
 	font-size: 20px;
 	border: none;
 	text-align: right;

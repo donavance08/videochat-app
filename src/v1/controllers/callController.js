@@ -50,10 +50,20 @@ const outboundCall = (req, res) => {
 		.outboundCall(phoneNumber, userId)
 
 		.then((result) => {
-			res.send();
+			if (result) {
+				res
+					.status(200)
+					.send({ status: 'OK', message: 'Calling', data: result });
+				return;
+			}
+
+			res
+				.status(400)
+				.send({ status: 'OK', message: 'Call Failed', data: result });
 		})
 
 		.catch((err) => {
+			console.log(err);
 			res.status(err?.status || 500).send({
 				status: 'FAILED',
 				message: err?.message || 'Internal Server Error',
@@ -62,9 +72,14 @@ const outboundCall = (req, res) => {
 		});
 };
 
+const callUpdate = (req, res) => {
+	callServices.callUpdate(req.body);
+};
+
 module.exports = {
 	incomingCall,
 	getCallToken,
 	callResponse,
 	outboundCall,
+	callUpdate,
 };

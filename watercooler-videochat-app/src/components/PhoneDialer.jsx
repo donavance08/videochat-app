@@ -5,39 +5,40 @@ import { toast } from 'react-toastify';
 import { v4 as uuid } from 'uuid';
 import UserContext from '../contexts/UserContext';
 
-export default function PhoneDialer({ callData, callResponseHandler }) {
-	const { phoneNumber = '' } = useParams();
-	const { callOngoing, token } = useContext(UserContext);
+export default function PhoneDialer({
+	callData,
+	callResponseHandler,
+	callStatus,
+	setCallStatus,
+}) {
+	const { callOngoing, setCallOngoing, token, socket } =
+		useContext(UserContext);
+
+	const [phoneNumber, setPhoneNumber] = useState('');
 
 	const [keypad, setKeypad] = useState();
+	const [endCallActive, setEndCallActive] = useState(true);
 	const inputRef = useRef();
+	const inputLabelRef = useRef();
 	const navigate = useNavigate();
 
-	const handleClick = (key) => {
-		if (inputRef && inputRef.current.value.length <= 12) {
-			inputRef.current.value = inputRef.current.value + key;
-		}
-	};
-
 	const handleDelete = () => {
-		let input = inputRef.current?.value;
+		if (callStatus === 'Calling') {
+			return;
+		}
 
-		if (input && input.length > 0) {
-			inputRef.current.value = input.slice(0, input.length - 1);
+		if (phoneNumber.length > 0) {
+			setPhoneNumber((state) => state.slice(0, state.length - 1));
 		}
 	};
 
 	const handleCallButton = (event) => {
-		if (callOngoing) {
-			callResponseHandler(callData, 'drop');
-			navigate('/home/phone/');
-		}
-
-		const phoneNumber = inputRef.current.value;
-
 		if (!phoneNumber) {
 			return;
 		}
+
+		setCallStatus('Dialing');
+		setCallOngoing(true);
 
 		fetch(`${process.env.REACT_APP_API_URL}/api/call/${phoneNumber}`, {
 			method: 'POST',
@@ -46,21 +47,46 @@ export default function PhoneDialer({ callData, callResponseHandler }) {
 			},
 		})
 			.then((response) => response.json())
+
 			.then((result) => {
-				if (result.errors.length > 0) {
+				if (result.errors?.length > 0) {
 					result.errors.forEach((error) => {
 						toast.error(error.msg, {});
 					});
-					return;
-				} else if (result.status === 'FAILED') {
+				} else if (result.status === 'OK') {
+					setCallStatus(result.message);
+				} else {
 					console.error(result.message);
-					return;
 				}
-
-				callOngoing(true);
 			})
-			.catch((err) => console.error(err.message));
+
+			.catch((err) => {
+				console.error(err.message);
+			});
 	};
+
+	const endCall = () => {
+		if (!endCallActive) {
+			return;
+		}
+
+		setEndCallActive(false);
+
+		if (callOngoing && callData) {
+			fetch(`${process.env.REACT_APP_API_URL}/api/call/`);
+			callResponseHandler(callData, 'drop');
+			navigate('/home/phone/');
+		}
+	};
+
+	const handleClick = useCallback(
+		(key) => {
+			if (phoneNumber.length <= 12) {
+				setPhoneNumber((state) => state + key);
+			}
+		},
+		[phoneNumber]
+	);
 
 	useEffect(() => {
 		const keys = [7, 8, 9, 4, 5, 6, 1, 2, 3, '*', 0, '+'];
@@ -78,13 +104,43 @@ export default function PhoneDialer({ callData, callResponseHandler }) {
 				);
 			})
 		);
-	}, []);
+	}, [handleClick]);
+
+	useEffect(() => {
+		inputLabelRef.current.value = callStatus;
+	}, [callStatus]);
+
+	useEffect(() => {
+		const activeSocket = socket?.current;
+
+		if (!activeSocket) {
+			return;
+		}
+
+		const callDeclinedListener = (payload) => {
+			setCallStatus(payload.status);
+			setEndCallActive(true);
+		};
+
+		activeSocket.on('call declined', callDeclinedListener);
+
+		return () => {
+			activeSocket.off('call declined', callDeclinedListener);
+		};
+	}, [socket, setCallStatus]);
 
 	return (
 		<div className='phone-keypad-container'>
+			<label
+				htmlFor='phone'
+				ref={inputLabelRef}
+			>
+				{callStatus}
+			</label>
 			<input
 				id='phone-input'
-				type='phone'
+				type='text'
+				name='phone'
 				contentEditable='false'
 				readOnly
 				ref={inputRef}
@@ -93,16 +149,21 @@ export default function PhoneDialer({ callData, callResponseHandler }) {
 			{keypad}
 
 			<div className='keypad-call-button-container'>
-				<button
-					className='keypad-btn'
-					onClick={handleCallButton}
-				>
-					{callOngoing ? (
+				{callOngoing ? (
+					<button
+						className='keypad-btn'
+						onClick={endCall}
+					>
 						<ReactSVG src='/icons/end-call-button.svg' />
-					) : (
+					</button>
+				) : (
+					<button
+						className='keypad-btn'
+						onClick={handleCallButton}
+					>
 						<ReactSVG src='/icons/calling-button.svg' />
-					)}
-				</button>
+					</button>
+				)}
 				<button
 					className='keypad-btn'
 					onClick={handleDelete}

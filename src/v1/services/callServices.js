@@ -58,7 +58,38 @@ const outboundCall = async (to, userId) => {
 
 	const from = '+' + user.phoneNumber;
 
-	client.outboundCall(to, from);
+	return client
+		.outboundCall(to, from)
+		.then((response) => response)
+		.catch((err) => {
+			console.log('error');
+			return null;
+		});
+};
+
+const callUpdate = async (callData) => {
+	const user = await UserDB.findUserByAccountSid(callData.AccountSid);
+
+	if (!user) {
+		return;
+	}
+
+	switch (callData.CallStatus) {
+		case 'busy':
+			io.emit('call declined', { status: 'Call Declined', userId: user._id });
+			break;
+		case 'no-answer':
+			io.emit('call declined', { status: 'No Answer', userId: user._id });
+			break;
+		case 'failed':
+			io.emit('call declined', { status: 'Call Failed', userId: user._id });
+			break;
+		case 'completed':
+			io.emit('call declined', { status: 'Call Completed', userId: user._id });
+			break;
+		default:
+			return;
+	}
 };
 
 module.exports = {
@@ -66,4 +97,5 @@ module.exports = {
 	getCallToken,
 	callResponse,
 	outboundCall,
+	callUpdate,
 };
