@@ -128,6 +128,8 @@ const addContact = async (contactId, userId) => {
 
 	newContactId = new ObjectId(contactId);
 
+	UserDB.addContact(userId, newContactId);
+
 	return UserDB.addContact(newContactId, userId)
 
 		.then((result) => result)
