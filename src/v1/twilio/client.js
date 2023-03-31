@@ -52,6 +52,13 @@ const getCallToken = (req, res) => {
 		clientCapability.addScope(
 			new ClientCapability.IncomingClientScope('watercooler')
 		);
+
+		const appSid = process.env.OUTBOUND_APPSID;
+
+		clientCapability.addScope(
+			new ClientCapability.OutgoingClientScope({ applicationSid: appSid })
+		);
+
 		const token = clientCapability.toJwt();
 
 		res
@@ -73,8 +80,12 @@ const answerCall = (callSid) => {
 		.update({
 			twiml: `<Response>
 					<Dial>
-						<Client>
-						<Identity>watercooler</Identity>
+						<Client 
+							statusCallbackEvent= 'ringing answered completed'
+							statusCallback= '${process.env.REACT_APP_API_URL}/api/call/callUpdate'
+							statusCallbackMethod= 'POST'
+							>
+							watercooler
 						</Client>
 					</Dial>
 				</Response>`,
@@ -107,22 +118,19 @@ const endCall = async (callSid) => {
 };
 
 const outboundCall = (to, from) => {
-	return client.calls
-		.create({
-			to,
-			from,
-			method: 'POST',
-			url: `${process.env.REACT_APP_API_URL}/api/call/callResponse/accept`,
+	const voiceResponse = new VoiceResponse();
+
+	const dial = voiceResponse.dial({ callerId: from, timeout: 60 }).number(
+		{
+			statusCallbackEvent: 'ringing answered completed',
 			statusCallback: `${process.env.REACT_APP_API_URL}/api/call/callUpdate`,
 			statusCallbackMethod: 'POST',
-		})
-		.then((call) => call)
-		.catch((err) => {
-			console.log(err);
-			return null;
-		});
-};
+		},
+		to
+	);
 
+	return response(voiceResponse);
+};
 module.exports = {
 	sendSMS,
 	getCallToken,

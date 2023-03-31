@@ -58,13 +58,7 @@ const outboundCall = async (to, userId) => {
 
 	const from = '+' + user.phoneNumber;
 
-	return client
-		.outboundCall(to, from)
-		.then((response) => response)
-		.catch((err) => {
-			console.log('error');
-			return null;
-		});
+	return await client.outboundCall(to, from);
 };
 
 const callUpdate = async (callData) => {
@@ -85,7 +79,16 @@ const callUpdate = async (callData) => {
 			io.emit('call declined', { status: 'Call Failed', userId: user._id });
 			break;
 		case 'completed':
-			io.emit('call declined', { status: 'Call Completed', userId: user._id });
+			io.emit('call status', { status: 'Call Completed', userId: user._id });
+			break;
+		case 'ringing':
+			io.emit('call status', { status: 'Ringing', userId: user._id });
+			break;
+		case 'answered':
+			io.emit('call status', { status: 'Call in progress', userId: user._id });
+			break;
+		case 'in-progress':
+			io.emit('call status', { status: 'Call in progress', userId: user._id });
 			break;
 		default:
 			return;

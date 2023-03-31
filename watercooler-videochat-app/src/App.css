@@ -827,6 +827,8 @@ em-emoji-picker {
 
 .phone-keypad-container > label {
 	padding-left: 10px;
+	display: flex;
+	justify-content: center;
 }
 
 #phone-input {

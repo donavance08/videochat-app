@@ -79,6 +79,7 @@ const getUserContacts = (userId) => {
 				return {
 					nickname: contact.nickname,
 					_id: contact._id,
+					phoneNumber: contact.phoneNumber,
 				};
 			});
 		})

@@ -1,26 +1,25 @@
 import { useState, useEffect, useRef, useContext, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { setActiveContactPhoneNumber } from '../redux/chat';
+import { useDispatch, useSelector } from 'react-redux';
 import { ReactSVG } from 'react-svg';
 import { toast } from 'react-toastify';
 import { v4 as uuid } from 'uuid';
 import UserContext from '../contexts/UserContext';
 
 export default function PhoneDialer({
-	callData,
-	callResponseHandler,
 	callStatus,
 	setCallStatus,
+	device,
+	callData,
 }) {
 	const { callOngoing, setCallOngoing, token, socket } =
 		useContext(UserContext);
-
+	const { activeContactPhoneNumber } = useSelector((state) => state.chat);
 	const [phoneNumber, setPhoneNumber] = useState('');
-
 	const [keypad, setKeypad] = useState();
-	const [endCallActive, setEndCallActive] = useState(true);
+	const dispatch = useDispatch();
 	const inputRef = useRef();
 	const inputLabelRef = useRef();
-	const navigate = useNavigate();
 
 	const handleDelete = () => {
 		if (callStatus === 'Calling') {
@@ -32,60 +31,38 @@ export default function PhoneDialer({
 		}
 	};
 
-	const handleCallButton = (event) => {
+	const handleCallButton = async (event) => {
 		if (!phoneNumber) {
 			return;
 		}
 
 		setCallStatus('Dialing');
 		setCallOngoing(true);
+		dispatch(setActiveContactPhoneNumber(''));
 
-		fetch(`${process.env.REACT_APP_API_URL}/api/call/${phoneNumber}`, {
-			method: 'POST',
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		})
-			.then((response) => response.json())
-
-			.then((result) => {
-				if (result.errors?.length > 0) {
-					result.errors.forEach((error) => {
-						toast.error(error.msg, {});
-					});
-				} else if (result.status === 'OK') {
-					setCallStatus(result.message);
-				} else {
-					console.error(result.message);
-				}
-			})
-
-			.catch((err) => {
-				console.error(err.message);
-			});
+		device.connect({
+			To: phoneNumber,
+			token: `Bearer ${token}`,
+		});
 	};
 
 	const endCall = () => {
-		if (!endCallActive) {
-			return;
-		}
-
-		setEndCallActive(false);
-
-		if (callOngoing && callData) {
-			fetch(`${process.env.REACT_APP_API_URL}/api/call/`);
-			callResponseHandler(callData, 'drop');
-			navigate('/home/phone/');
+		if (callOngoing) {
+			device.disconnectAll();
+			setCallOngoing(false);
 		}
 	};
 
 	const handleClick = useCallback(
 		(key) => {
+			if (callOngoing) {
+				return;
+			}
 			if (phoneNumber.length <= 12) {
 				setPhoneNumber((state) => state + key);
 			}
 		},
-		[phoneNumber]
+		[phoneNumber, callOngoing]
 	);
 
 	useEffect(() => {
@@ -107,10 +84,6 @@ export default function PhoneDialer({
 	}, [handleClick]);
 
 	useEffect(() => {
-		inputLabelRef.current.value = callStatus;
-	}, [callStatus]);
-
-	useEffect(() => {
 		const activeSocket = socket?.current;
 
 		if (!activeSocket) {
@@ -119,21 +92,43 @@ export default function PhoneDialer({
 
 		const callDeclinedListener = (payload) => {
 			setCallStatus(payload.status);
-			setEndCallActive(true);
 		};
 
 		activeSocket.on('call declined', callDeclinedListener);
 
-		return () => {
-			activeSocket.off('call declined', callDeclinedListener);
+		const callCompleteListener = (payload) => {
+			setCallStatus(payload.status);
+
+			if (payload.status === 'Call Completed') {
+				setPhoneNumber('');
+			}
 		};
+
+		activeSocket.on('call status', callCompleteListener);
+
+		const invalidNumberListener = (payload) => {
+			toast.error('Invalid Phone number');
+		};
+
+		activeSocket.on('invalid phoneNumber', invalidNumberListener);
 	}, [socket, setCallStatus]);
+
+	useEffect(() => {
+		if (callData) {
+			setPhoneNumber(callData.from);
+		}
+
+		if (activeContactPhoneNumber) {
+			setPhoneNumber(activeContactPhoneNumber);
+		}
+	});
 
 	return (
 		<div className='phone-keypad-container'>
 			<label
 				htmlFor='phone'
 				ref={inputLabelRef}
+				value={callStatus}
 			>
 				{callStatus}
 			</label>

@@ -15,11 +15,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import VideoChat from '../components/VideoChat';
 import PendingCallDialog from '../components/PendingCallDialog';
 import CancelCallDialog from '../components/CancelCallDialog';
-import { setActiveContactId, setActiveContactName } from '../redux/chat';
+import {
+	setActiveContactId,
+	setActiveContactName,
+	setActiveContactPhoneNumber,
+} from '../redux/chat';
 import PhoneCall from '../components/PhoneCall';
 import IncomingPhoneCallDialog from '../components/IncomingPhoneCallDialog';
 import PhoneDialer from '../components/PhoneDialer';
-
 const SimplePeer = require('simple-peer');
 
 export default function Home({ component }) {
@@ -127,13 +130,12 @@ export default function Home({ component }) {
 		});
 	}, [token]);
 
-	useEffect(() => {
-		fetch(`${process.env.REACT_APP_API_URL}/api/call/token`)
+	const fetchToken = useCallback(async () => {
+		return await fetch(`${process.env.REACT_APP_API_URL}/api/call/token`)
 			.then((response) => response.json())
 			.then((result) => {
 				if (result.status === 'OK') {
-					Device.setup(result.token);
-					return;
+					return result;
 				}
 
 				console.error(result.message);
@@ -141,6 +143,12 @@ export default function Home({ component }) {
 			.catch((err) => {
 				console.error(err.message);
 			});
+	}, []);
+
+	useEffect(() => {
+		fetchToken().then((data) => {
+			Device.setup(data.token, { tokenRefreshMs: 30000 });
+		});
 
 		Device.on('incoming', (call) => {
 			call.accept();
@@ -153,11 +161,15 @@ export default function Home({ component }) {
 			setCallData(null);
 			setCallStatus('Call Completed');
 		});
-	}, []);
+
+		Device.on('tokenWillExpire', () => {
+			fetchToken().then((data) => Device.updateToken(data.token));
+		});
+	}, [fetchToken, setCallOngoing]);
 
 	const respondToPhoneCall = useCallback(
 		async (callData, response) => {
-			await fetch(
+			fetch(
 				`${process.env.REACT_APP_API_URL}/api/call/callResponse/${response}`,
 				{
 					method: 'POST',
@@ -175,6 +187,9 @@ export default function Home({ component }) {
 			if (response === 'accept') {
 				setCallOngoing(true);
 				navigate(`/home/phone/${callData.from}/`);
+			} else {
+				setCallOngoing(false);
+				setCallData(null);
 			}
 		},
 		[setCallOngoing, navigate, setIncomingCall]
@@ -194,25 +209,25 @@ export default function Home({ component }) {
 		const incomingPhoneCallListener = (payload) => {
 			if (incomingCall || callOngoing) {
 				respondToPhoneCall(payload.data.CallSid, false);
+				setCallOngoing(false);
+				setIncomingCall(false);
 				return;
 			}
 
+			dispatch(setActiveContactPhoneNumber(''));
+			setCallStatus('Call incoming');
 			setIncomingCall(true);
+			setCallOngoing(true);
 			setCallData(payload);
 		};
 
 		activeSocket.on('incoming phone call', incomingPhoneCallListener);
 
 		const socketDisconnectedListener = (disconnectReason) => {
-			console.timeStamp(disconnectReason);
-			console.timeStamp('socket disconnected');
-			console.timeStamp('attempting forced reconnect in 10sec');
-
 			if (disconnectReason === 'io client disconnect') {
 				return;
 			}
 			setTimeout(() => {
-				console.timeStamp('socket reconnecting');
 				activeSocket.connect();
 			}, 10000);
 		};
@@ -315,9 +330,9 @@ export default function Home({ component }) {
 				<PhoneCall>
 					<PhoneDialer
 						callData={callData}
-						callResponseHandler={respondToPhoneCall}
 						callStatus={callStatus}
 						setCallStatus={setCallStatus}
+						device={Device}
 					/>
 				</PhoneCall>
 			)}

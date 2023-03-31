@@ -1,6 +1,6 @@
 const callServices = require('../services/callServices');
 const auth = require('../../../auth');
-const { validationResult } = require('express-validator');
+const io = require('../../../io');
 const {
 	checkValidationResult,
 	validatePhoneNumber,
@@ -38,38 +38,19 @@ const callResponse = (req, res) => {
 	res.send(true);
 };
 
-const outboundCall = (req, res) => {
-	if (validatePhoneNumber(req, res)) {
+const outboundCall = async (req, res) => {
+	const userId = auth.decode(req.body.token).id;
+
+	if (validatePhoneNumber(req.body.To, res)) {
+		io.emit('invalid phoneNumber', { userId });
 		return;
 	}
 
 	const phoneNumber = extractPhoneNumber(req);
 
-	const userId = auth.decode(req.headers.authorization).id;
-	callServices
-		.outboundCall(phoneNumber, userId)
-
-		.then((result) => {
-			if (result) {
-				res
-					.status(200)
-					.send({ status: 'OK', message: 'Calling', data: result });
-				return;
-			}
-
-			res
-				.status(400)
-				.send({ status: 'OK', message: 'Call Failed', data: result });
-		})
-
-		.catch((err) => {
-			console.log(err);
-			res.status(err?.status || 500).send({
-				status: 'FAILED',
-				message: err?.message || 'Internal Server Error',
-				data: null,
-			});
-		});
+	callServices.outboundCall(phoneNumber, userId).then((result) => {
+		res.type(result.type).send(result.data);
+	});
 };
 
 const callUpdate = (req, res) => {

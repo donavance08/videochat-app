@@ -1,5 +1,9 @@
 import { useRef, useState } from 'react';
-import { setActiveContactId, setActiveContactName } from '../redux/chat';
+import {
+	setActiveContactId,
+	setActiveContactName,
+	setActiveContactPhoneNumber,
+} from '../redux/chat';
 import { useDispatch } from 'react-redux';
 import { customAlphabet } from 'nanoid';
 import { ReactSVG } from 'react-svg';
@@ -39,6 +43,7 @@ export default function ContactItem({ data }) {
 	const handleContactClick = (event) => {
 		dispatch(setActiveContactId(data._id));
 		dispatch(setActiveContactName(data.nickname));
+		dispatch(setActiveContactPhoneNumber(data.phoneNumber));
 		document.body.addEventListener('click', onClickOutside);
 		setIsContactSelected((state) => !state);
 	};
