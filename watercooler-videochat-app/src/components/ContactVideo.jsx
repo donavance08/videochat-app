@@ -3,7 +3,7 @@ import UserContext from '../contexts/UserContext';
 import UserVideo from './UserVideo.jsx';
 
 export default function ContactVideo() {
-	const { contactStream, callOngoing } = useContext(UserContext);
+	const { contactStream, hasActiveCall } = useContext(UserContext);
 	const contactVideoRef = useRef();
 
 	useEffect(() => {
@@ -14,7 +14,7 @@ export default function ContactVideo() {
 
 	return (
 		<div className='contact-video-container'>
-			{callOngoing && (
+			{hasActiveCall && (
 				<div>
 					<div className='user-video-container'>
 						<UserVideo />

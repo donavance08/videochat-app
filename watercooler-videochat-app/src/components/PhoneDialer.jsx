@@ -1,4 +1,10 @@
-import { useState, useEffect, useRef, useContext, useCallback } from 'react';
+import React, {
+	useState,
+	useEffect,
+	useRef,
+	useContext,
+	useCallback,
+} from 'react';
 import { setActiveContactPhoneNumber } from '../redux/chat';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReactSVG } from 'react-svg';
@@ -11,8 +17,11 @@ export default function PhoneDialer({
 	setCallStatus,
 	device,
 	callData,
+	callResponseHandler,
+	hasIncomingCall,
+	isSelfMountedRef,
 }) {
-	const { callOngoing, setCallOngoing, token, socket } =
+	const { hasActiveCall, setHasActiveCall, token, socket } =
 		useContext(UserContext);
 	const { activeContactPhoneNumber } = useSelector((state) => state.chat);
 	const [phoneNumber, setPhoneNumber] = useState('');
@@ -21,8 +30,8 @@ export default function PhoneDialer({
 	const inputRef = useRef();
 	const inputLabelRef = useRef();
 
-	const handleDelete = () => {
-		if (callStatus === 'Calling') {
+	const handleClickDeleteButton = () => {
+		if (hasActiveCall || hasIncomingCall) {
 			return;
 		}
 
@@ -31,58 +40,71 @@ export default function PhoneDialer({
 		}
 	};
 
-	const handleCallButton = async (event) => {
+	const handleClickCallButton = async (event) => {
 		if (!phoneNumber) {
 			return;
 		}
 
-		setCallStatus('Dialing');
-		setCallOngoing(true);
-		dispatch(setActiveContactPhoneNumber(''));
+		/**
+		 *  @param {boolean} hasIncomingCall will determine if clicking
+		 * the button will initiate a call or answer an incoming call
+		 */
+		if (hasIncomingCall) {
+			callResponseHandler(callData, 'accept');
+		} else {
+			setCallStatus('Dialing');
 
-		device.connect({
-			To: phoneNumber,
-			token: `Bearer ${token}`,
-		});
+			device.connect({
+				To: phoneNumber,
+				token: `Bearer ${token}`,
+			});
+		}
+
+		setHasActiveCall(true);
+		dispatch(setActiveContactPhoneNumber(''));
 	};
 
-	const endCall = () => {
-		if (callOngoing) {
+	const handleClickEndButton = () => {
+		if (hasActiveCall) {
 			device.disconnectAll();
-			setCallOngoing(false);
+			setHasActiveCall(false);
 		}
 	};
 
-	const handleClick = useCallback(
+	/**
+	 * Append key to the current phoneNumber value
+	 * @param {String} key
+	 */
+	const handleClickKeypad = useCallback(
 		(key) => {
-			if (callOngoing) {
+			if (hasActiveCall || hasIncomingCall) {
 				return;
 			}
 			if (phoneNumber.length <= 12) {
 				setPhoneNumber((state) => state + key);
 			}
 		},
-		[phoneNumber, callOngoing]
+		[phoneNumber, hasActiveCall, hasIncomingCall]
 	);
 
+	/** Populate the keypad buttons with corresponding key strings */
 	useEffect(() => {
-		const keys = [7, 8, 9, 4, 5, 6, 1, 2, 3, '*', 0, '+'];
+		const keypadKeys = [7, 8, 9, 4, 5, 6, 1, 2, 3, '*', 0, '+'];
 
 		setKeypad(
-			keys.map((key) => {
-				return (
-					<button
-						key={uuid()}
-						className='keypad-btn'
-						onClick={() => handleClick(key)}
-					>
-						{key}
-					</button>
-				);
-			})
+			keypadKeys.map((keypadKey) => (
+				<button
+					key={uuid()}
+					className='keypad-btn'
+					onClick={() => handleClickKeypad(keypadKey)}
+				>
+					{keypadKey}
+				</button>
+			))
 		);
-	}, [handleClick]);
+	}, [handleClickKeypad]);
 
+	/** Initiate socket listeners */
 	useEffect(() => {
 		const activeSocket = socket?.current;
 
@@ -111,8 +133,15 @@ export default function PhoneDialer({
 		};
 
 		activeSocket.on('invalid phoneNumber', invalidNumberListener);
+
+		return () => {
+			activeSocket.off('call declined', callDeclinedListener);
+			activeSocket.off('call status', callCompleteListener);
+			activeSocket.off('invalid phoneNumber', invalidNumberListener);
+		};
 	}, [socket, setCallStatus]);
 
+	/** Set the @var phoneNumber with a supplied value from parent*/
 	useEffect(() => {
 		if (callData) {
 			setPhoneNumber(callData.from);
@@ -121,7 +150,86 @@ export default function PhoneDialer({
 		if (activeContactPhoneNumber) {
 			setPhoneNumber(activeContactPhoneNumber);
 		}
-	});
+	}, [callData, activeContactPhoneNumber]);
+
+	/**
+	 * Update @var isSelfMountedRef which lets the parent know if this
+	 * component isMounted
+	 */
+	useEffect(() => {
+		isSelfMountedRef.current = true;
+
+		return () => {
+			isSelfMountedRef.current = false;
+		};
+	}, [isSelfMountedRef]);
+
+	const LeftButton = () => {
+		if (hasIncomingCall) {
+			return (
+				<button
+					className='keypad-btn'
+					onClick={() => callResponseHandler(callData, 'accept')}
+				>
+					<ReactSVG src='/icons/calling-button.svg' />
+				</button>
+			);
+		}
+
+		return <button className='keypad-btn'></button>;
+	};
+
+	const MiddleButton = () => {
+		if (hasActiveCall) {
+			return (
+				<button
+					className='keypad-btn'
+					onClick={handleClickEndButton}
+				>
+					<ReactSVG src='/icons/end-call-button.svg' />
+				</button>
+			);
+		}
+
+		if (hasIncomingCall) {
+			return <button className='keypad-btn'></button>;
+		}
+
+		return (
+			<button
+				className='keypad-btn'
+				onClick={handleClickCallButton}
+			>
+				<ReactSVG src='/icons/calling-button.svg' />
+			</button>
+		);
+	};
+
+	const RightButton = () => {
+		if (hasIncomingCall) {
+			return (
+				<button
+					className='keypad-btn'
+					onClick={() => callResponseHandler(callData, 'reject')}
+				>
+					<ReactSVG src='/icons/end-call-button.svg' />
+				</button>
+			);
+		}
+
+		if (phoneNumber) {
+			return (
+				<button
+					className='keypad-btn'
+					onClick={handleClickDeleteButton}
+				>
+					<ReactSVG src='/icons/delete.svg' />
+				</button>
+			);
+		}
+
+		return <button className='keypad-btn'></button>;
+	};
 
 	return (
 		<div className='phone-keypad-container'>
@@ -144,27 +252,9 @@ export default function PhoneDialer({
 			{keypad}
 
 			<div className='keypad-call-button-container'>
-				{callOngoing ? (
-					<button
-						className='keypad-btn'
-						onClick={endCall}
-					>
-						<ReactSVG src='/icons/end-call-button.svg' />
-					</button>
-				) : (
-					<button
-						className='keypad-btn'
-						onClick={handleCallButton}
-					>
-						<ReactSVG src='/icons/calling-button.svg' />
-					</button>
-				)}
-				<button
-					className='keypad-btn'
-					onClick={handleDelete}
-				>
-					<ReactSVG src='/icons/delete.svg' />
-				</button>
+				<LeftButton />
+				<MiddleButton />
+				<RightButton />
 			</div>
 		</div>
 	);

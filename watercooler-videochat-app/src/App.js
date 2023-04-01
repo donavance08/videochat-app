@@ -18,7 +18,7 @@ function App() {
 	const [personalStream, setPersonalStream] = useState();
 	const [contactStream, setContactStream] = useState();
 	const [showPendingCallDialog, setShowPendingCallDialog] = useState();
-	const [callOngoing, setCallOngoing] = useState();
+	const [hasActiveCall, setHasActiveCall] = useState();
 	const [callInitiator, setCallInitiator] = useState();
 	const [showCancelCallDialog, setShowCancelCallDialog] = useState();
 	const [isContactUpdated, setIsContactUpdated] = useState();
@@ -37,7 +37,7 @@ function App() {
 		setPersonalStream(null);
 		setContactStream(null);
 		setShowPendingCallDialog(false);
-		setCallOngoing(false);
+		setHasActiveCall(false);
 		setShowCancelCallDialog(false);
 		clearLocalStorage();
 		socket?.current.disconnect();
@@ -62,8 +62,8 @@ function App() {
 					setContactStream,
 					showPendingCallDialog,
 					setShowPendingCallDialog,
-					callOngoing,
-					setCallOngoing,
+					hasActiveCall,
+					setHasActiveCall,
 					callInitiator,
 					setCallInitiator,
 					showCancelCallDialog,

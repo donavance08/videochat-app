@@ -34,8 +34,8 @@ export default function Home({ component }) {
 		setContactStream,
 		showPendingCallDialog,
 		setShowPendingCallDialog,
-		callOngoing,
-		setCallOngoing,
+		hasActiveCall,
+		setHasActiveCall,
 		setCallInitiator,
 		showCancelCallDialog,
 		setShowCancelCallDialog,
@@ -43,13 +43,13 @@ export default function Home({ component }) {
 		setPersonalStream,
 	} = useContext(UserContext);
 	const { activeContactId } = useSelector((state) => state.chat);
-	const [incomingCall, setIncomingCall] = useState(false);
+	const [hasIncomingCall, setHasIncomingCall] = useState(false);
 	const [callData, setCallData] = useState(null);
 	const [callStatus, setCallStatus] = useState('');
 
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-
+	const isPhoneMountedRef = useRef(false);
 	const [contactSignal, setContactSignal] = useState();
 	const [cancelReason, setCancelReason] = useState();
 
@@ -57,7 +57,7 @@ export default function Home({ component }) {
 	 * handler for the answercall button of the incoming call dialog
 	 */
 	const answerCall = () => {
-		setCallOngoing(true);
+		setHasActiveCall(true);
 
 		const peer = new SimplePeer({
 			initiator: false,
@@ -92,12 +92,12 @@ export default function Home({ component }) {
 	};
 
 	const dropCall = () => {
-		if (callOngoing) {
+		if (hasActiveCall) {
 			socket.current.emit('drop call', {
 				to: activeContactId,
 				reason: 'cancelled',
 			});
-			setCallOngoing(false);
+			setHasActiveCall(false);
 			connectionRef.current.destroy();
 		}
 	};
@@ -152,12 +152,14 @@ export default function Home({ component }) {
 
 		Device.on('incoming', (call) => {
 			call.accept();
+
+			setHasActiveCall(true);
 			setCallStatus('Call in progress');
 		});
 
 		Device.on('disconnect', (call) => {
-			setIncomingCall(false);
-			setCallOngoing(false);
+			setHasIncomingCall(false);
+			setHasActiveCall(false);
 			setCallData(null);
 			setCallStatus('Call Completed');
 		});
@@ -165,7 +167,7 @@ export default function Home({ component }) {
 		Device.on('tokenWillExpire', () => {
 			fetchToken().then((data) => Device.updateToken(data.token));
 		});
-	}, [fetchToken, setCallOngoing]);
+	}, [fetchToken, setHasActiveCall]);
 
 	const respondToPhoneCall = useCallback(
 		async (callData, response) => {
@@ -182,17 +184,19 @@ export default function Home({ component }) {
 				}
 			);
 
-			setIncomingCall(false);
+			setHasIncomingCall(false);
 
 			if (response === 'accept') {
-				setCallOngoing(true);
+				setHasActiveCall(true);
 				navigate(`/home/phone/${callData.from}/`);
 			} else {
-				setCallOngoing(false);
+				setHasActiveCall(false);
 				setCallData(null);
 			}
+
+			setHasIncomingCall(false);
 		},
-		[setCallOngoing, navigate, setIncomingCall]
+		[setHasActiveCall, navigate, setHasIncomingCall]
 	);
 
 	/**
@@ -207,17 +211,16 @@ export default function Home({ component }) {
 		const activeSocket = socket.current;
 
 		const incomingPhoneCallListener = (payload) => {
-			if (incomingCall || callOngoing) {
+			if (hasIncomingCall || hasActiveCall) {
 				respondToPhoneCall(payload.data.CallSid, false);
-				setCallOngoing(false);
-				setIncomingCall(false);
+				setHasActiveCall(false);
+				setHasIncomingCall(false);
 				return;
 			}
 
 			dispatch(setActiveContactPhoneNumber(''));
 			setCallStatus('Call incoming');
-			setIncomingCall(true);
-			setCallOngoing(true);
+			setHasIncomingCall(true);
 			setCallData(payload);
 		};
 
@@ -235,7 +238,7 @@ export default function Home({ component }) {
 		activeSocket.on('disconnect', socketDisconnectedListener);
 
 		const initiateCallListener = (payload) => {
-			if (callOngoing) {
+			if (hasActiveCall) {
 				return;
 			}
 
@@ -263,10 +266,10 @@ export default function Home({ component }) {
 		 *
 		 *  */
 		const dropCallHandler = (payload) => {
-			if (callOngoing) {
+			if (hasActiveCall) {
 				setShowCancelCallDialog(true);
 				setCancelReason(payload.reason);
-				setCallOngoing(false);
+				setHasActiveCall(false);
 				connectionRef.current.destroy();
 			}
 		};
@@ -274,11 +277,11 @@ export default function Home({ component }) {
 		activeSocket.on('drop call', dropCallHandler);
 
 		const userDisconnectHandler = ({ id }) => {
-			if (callOngoing && activeContactId === id) {
+			if (hasActiveCall && activeContactId === id) {
 				setShowCancelCallDialog(true);
 				setCancelReason('cancelled');
 				connectionRef.current.destroy();
-				setCallOngoing(false);
+				setHasActiveCall(false);
 			}
 		};
 
@@ -329,14 +332,17 @@ export default function Home({ component }) {
 			{component === 'phone' && (
 				<PhoneCall>
 					<PhoneDialer
+						hasIncomingCall={hasIncomingCall}
 						callData={callData}
+						callResponseHandler={respondToPhoneCall}
 						callStatus={callStatus}
 						setCallStatus={setCallStatus}
 						device={Device}
+						isSelfMountedRef={isPhoneMountedRef}
 					/>
 				</PhoneCall>
 			)}
-			{incomingCall && (
+			{hasIncomingCall && !isPhoneMountedRef.current && (
 				<IncomingPhoneCallDialog
 					callData={callData}
 					callResponseHandler={respondToPhoneCall}

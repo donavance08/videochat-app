@@ -15,7 +15,7 @@ export default function VideoChat({ declineCallHandler, dropCallHandler }) {
 		setContactStream,
 		setShowPendingCallDialog,
 		setCallInitiator,
-		setCallOngoing,
+		setHasActiveCall,
 		connectionRef,
 	} = useContext(UserContext);
 	const { socket, name, id } = useContext(UserContext);
@@ -52,7 +52,7 @@ export default function VideoChat({ declineCallHandler, dropCallHandler }) {
 		socket.current.on('acceptCall', (signal) => {
 			console.log('recieved an accept call response');
 			try {
-				setCallOngoing(true);
+				setHasActiveCall(true);
 				setShowPendingCallDialog(false);
 				peer.signal(signal);
 			} catch (err) {
@@ -76,7 +76,7 @@ export default function VideoChat({ declineCallHandler, dropCallHandler }) {
 	return (
 		<div className='video-chat-container col-6'>
 			<div className='chat-header'>{activeContactName}</div>
-			{/* {callOngoing && <ContactVideo />} */}
+			{/* {hasActiveCall && <ContactVideo />} */}
 			<ContactVideo />
 			<VideoChatControl
 				initiateCall={initiateCall}

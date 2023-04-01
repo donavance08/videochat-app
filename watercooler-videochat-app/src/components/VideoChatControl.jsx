@@ -11,7 +11,7 @@ export default function VideoChatControl({
 	dropCallHandler,
 }) {
 	const [recording, setRecording] = useState(false);
-	const { callOngoing, contactStream } = useContext(UserContext);
+	const { hasActiveCall, contactStream } = useContext(UserContext);
 	let recordedChunks = useRef([]);
 	const mediaRecorder = useRef();
 
@@ -70,7 +70,7 @@ export default function VideoChatControl({
 	/* Ensure that RecordControl hides if a user drops the call while recording */
 	useEffect(() => {
 		setRecording(false);
-	}, [callOngoing]);
+	}, [hasActiveCall]);
 
 	return (
 		<div className='video-chat-control-container'>
@@ -91,7 +91,7 @@ export default function VideoChatControl({
 					/>
 				)}
 				<ToggleMuteButton />
-				{callOngoing ? (
+				{hasActiveCall ? (
 					<button
 						className='call-control large-end-button'
 						onClick={dropCallHandler}
