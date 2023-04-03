@@ -2,13 +2,7 @@ const router = require('express').Router();
 const callController = require('../controllers/callController');
 const auth = require('../../../auth');
 const { header } = require('express-validator');
-
-const phoneNumberValidator = [
-	header('phoneNumber')
-		.trim()
-		.isMobilePhone()
-		.withMessage('Invalid Phone Number! Number must start with a "+" sign '),
-];
+const { phoneNumberValidator } = require('../utils/validations');
 
 router.post('/', callController.incomingCall);
 router.get('/token', callController.getCallToken);
