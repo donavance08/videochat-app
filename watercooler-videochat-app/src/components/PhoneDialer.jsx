@@ -97,6 +97,7 @@ export default function PhoneDialer({
 					key={uuid()}
 					className='keypad-btn'
 					onClick={() => handleClickKeypad(keypadKey)}
+					title={keypadKey}
 				>
 					{keypadKey}
 				</button>
@@ -170,13 +171,19 @@ export default function PhoneDialer({
 				<button
 					className='keypad-btn'
 					onClick={() => callResponseHandler(callData, 'accept')}
+					title='Accept Call'
 				>
 					<ReactSVG src='/icons/calling-button.svg' />
 				</button>
 			);
 		}
 
-		return <button className='keypad-btn'></button>;
+		return (
+			<button
+				className='keypad-btn'
+				disabled
+			></button>
+		);
 	};
 
 	const MiddleButton = () => {
@@ -184,10 +191,16 @@ export default function PhoneDialer({
 			<button
 				className='keypad-btn'
 				{...(hasActiveCall
-					? { onClick: () => callResponseHandler(callData, 'drop') }
+					? {
+							onClick: () => callResponseHandler(callData, 'drop'),
+							title: 'Drop Call',
+					  }
 					: {})}
 				{...(!hasActiveCall &&
-					!hasIncomingCall && { onClick: handleClickCallButton })}
+					!hasIncomingCall && {
+						onClick: handleClickCallButton,
+						title: `Call ${phoneNumber}`,
+					})}
 			>
 				{hasActiveCall && <ReactSVG src='/icons/end-call-button.svg' />}
 				{!hasIncomingCall && !hasActiveCall && (
@@ -203,9 +216,13 @@ export default function PhoneDialer({
 				className='keypad-btn call-interaction-btn'
 				{...(hasIncomingCall && {
 					onClick: () => callResponseHandler(callData, 'reject'),
+					title: 'Reject Call',
 				})}
 				{...(!hasIncomingCall &&
-					!hasActiveCall && { onClick: handleClickDeleteButton })}
+					!hasActiveCall && {
+						onClick: handleClickDeleteButton,
+						title: 'Backspace',
+					})}
 			>
 				{hasIncomingCall ? (
 					<ReactSVG src='/icons/end-call-button.svg' />
@@ -233,6 +250,7 @@ export default function PhoneDialer({
 				readOnly
 				ref={inputRef}
 				value={phoneNumber}
+				disabled
 			/>
 			{keypad}
 

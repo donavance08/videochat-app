@@ -219,7 +219,7 @@ export default function Home({ component }) {
 			}
 
 			dispatch(setActiveContactPhoneNumber(''));
-			setCallStatus('Call incoming');
+			setCallStatus('Incoming Call from:');
 			setHasIncomingCall(true);
 			setCallData(payload);
 		};
