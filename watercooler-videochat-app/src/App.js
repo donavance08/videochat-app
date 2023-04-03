@@ -41,6 +41,7 @@ function App() {
 		setShowCancelCallDialog(false);
 		clearLocalStorage();
 		socket?.current.disconnect();
+		socket.current = null;
 		connectionRef.current = null;
 	};
 
