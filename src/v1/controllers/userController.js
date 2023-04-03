@@ -58,7 +58,7 @@ const registerNewUser = (req, res) => {
 		.catch((err) => {
 			res.status(err?.status || 500).send({
 				status: 'FAILED',
-				message: err?.message || 'Internal Server Error',
+				errors: [{ msg: err?.message }] || [{ msg: 'Internal Server Error' }],
 			});
 		});
 };
