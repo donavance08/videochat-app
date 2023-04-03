@@ -20,7 +20,7 @@ const regValidations = [
 	body('password')
 		.trim()
 		.isLength({ min: 8, max: 50 })
-		.withMessage('Password should be 2-50 characters long'),
+		.withMessage('Password should be 8-50 characters long'),
 	body('phoneNumber')
 		.trim()
 		.isLength({ min: 7, max: 15 })

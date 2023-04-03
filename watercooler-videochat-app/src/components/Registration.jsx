@@ -80,6 +80,24 @@ export default function Registration() {
 		}
 	};
 
+	const handleConfirmPasswordChange = (e) => {
+		handleChange(e);
+		if (!matchPassword()) {
+			document
+				.querySelector('#password-do-not-match-label')
+				.setAttribute('reveal', '');
+
+			confirmPasswordRef.current.setAttribute('notMatchingPassword', '');
+			return;
+		}
+
+		document
+			.querySelector('#password-do-not-match-label')
+			.removeAttribute('reveal');
+
+		confirmPasswordRef.current.removeAttribute('notMatchingPassword');
+	};
+
 	return (
 		<div className='login-form-container'>
 			<form
@@ -134,7 +152,7 @@ export default function Registration() {
 						placeholder='Password'
 						ref={passwordRef}
 						onChange={(e) => {
-							handleChange(e);
+							handleConfirmPasswordChange(e);
 						}}
 						required
 					/>
@@ -147,13 +165,14 @@ export default function Registration() {
 				</div>
 				<div className='input-container'>
 					<input
+						id='confirmPasswordInput'
 						className='form-input'
 						type='password'
 						name='confirm-password'
 						placeholder='Confirm Password'
 						ref={confirmPasswordRef}
 						onChange={(e) => {
-							handleChange(e);
+							handleConfirmPasswordChange(e);
 						}}
 						required
 					/>
@@ -162,6 +181,9 @@ export default function Registration() {
 						className='label'
 					>
 						Confirm Password
+					</label>
+					<label id='password-do-not-match-label'>
+						Passwords do not match!
 					</label>
 				</div>
 				<div className='input-container'>
