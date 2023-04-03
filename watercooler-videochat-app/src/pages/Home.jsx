@@ -110,6 +110,7 @@ export default function Home({ component }) {
 			socket.current.connect();
 			return;
 		}
+
 		socket.current = io(`${process.env.REACT_APP_API_URL}`, {
 			extraHeaders: {
 				id,
@@ -128,7 +129,7 @@ export default function Home({ component }) {
 		socket.current.on('connection', (payload) => {
 			console.log(payload);
 		});
-	}, [token]);
+	}, [token, id, setPersonalStream, socket]);
 
 	const fetchToken = useCallback(async () => {
 		return await fetch(`${process.env.REACT_APP_API_URL}/api/call/token`)

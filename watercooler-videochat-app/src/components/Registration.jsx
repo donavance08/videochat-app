@@ -13,7 +13,7 @@ export default function Registration() {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const navigate = useNavigate(Navigate);
-	const { token, setToken, setName } = useContext(UserContext);
+	const { token, setToken, setName, setId } = useContext(UserContext);
 
 	useEffect(() => {
 		if (token) {
@@ -52,7 +52,7 @@ export default function Registration() {
 				if (result.status === 'OK') {
 					setToken(() => result.data.token);
 					setName(() => result.data.nickname);
-
+					setId(() => result.data.id);
 					navigate('/');
 				} else {
 					result.errors.forEach((error) => {

@@ -33,26 +33,26 @@ const loginUser = (username, password) => {
 const registerNewUser = async (data) => {
 	const { password, username, phoneNumber } = data;
 
-	const existingUser = await UserDB.findExistingUserByName(username);
+	const isTakenUsername = await UserDB.findExistingUserByName(username);
 
-	if (existingUser) {
+	if (isTakenUsername) {
 		customError.throwCustomError(403, 'Username already exists');
 	}
 
-	const existingPhoneNumber = await UserDB.findExistingPhoneNumber(phoneNumber);
+	const isTakenPhoneNumber = await UserDB.findExistingPhoneNumber(phoneNumber);
 
-	if (existingPhoneNumber) {
+	if (isTakenPhoneNumber) {
 		customError.throwCustomError(403, 'phoneNumber already registered');
 	}
 
-	const userDataFromClient = new User({
+	const newUserDetails = new User({
 		...data,
 		password: bcrypt.hashSync(password, 10),
 		contacts: [],
 		dateCreated: new Date(),
 	});
 
-	return UserDB.registerNewUser(userDataFromClient)
+	return UserDB.registerNewUser(newUserDetails)
 		.then((result) => {
 			const token = auth.createAccessToken({
 				nickname: result.nickname,
@@ -64,6 +64,7 @@ const registerNewUser = async (data) => {
 			return {
 				nickname: result.nickname,
 				token,
+				id: result._id,
 			};
 		})
 		.catch((err) => {
