@@ -11,25 +11,36 @@ export default function Registration() {
 	const confirmPasswordRef = useRef();
 	const phoneNumberRef = useRef();
 	const [isLoading, setIsLoading] = useState(false);
-
 	const navigate = useNavigate(Navigate);
 	const { token, setToken, setName, setId } = useContext(UserContext);
 
+	/** Verify if user is already logged in */
 	useEffect(() => {
 		if (token) {
 			navigate('/');
 		}
 	}, [token, navigate]);
 
-	const matchPassword = () => {
+	const verifyPasswordMatch = () => {
 		return passwordRef.current.value === confirmPasswordRef.current.value;
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
-		if (!matchPassword()) {
-			console.log('passwords do not match');
+		if (!verifyPasswordMatch()) {
+			toast.error('Passwords do not match', {
+				progress: undefined,
+				theme: 'colored',
+			});
+			return;
+		}
+
+		if (!verifyPasswordIsValid()) {
+			toast.error('Invalid Password, please try a different one', {
+				progress: undefined,
+				theme: 'colored',
+			});
 			return;
 		}
 
@@ -80,11 +91,11 @@ export default function Registration() {
 		}
 	};
 
-	const handleConfirmPasswordChange = (e) => {
+	const verifyPasswordsMatchAndShowTooltip = (e) => {
 		handleChange(e);
-		if (!matchPassword()) {
+		if (!verifyPasswordMatch()) {
 			document
-				.querySelector('#password-do-not-match-label')
+				.querySelector('#passwordDoNotMatchLabel')
 				.setAttribute('reveal', '');
 
 			confirmPasswordRef.current.setAttribute('notMatchingPassword', '');
@@ -92,10 +103,31 @@ export default function Registration() {
 		}
 
 		document
-			.querySelector('#password-do-not-match-label')
+			.querySelector('#passwordDoNotMatchLabel')
 			.removeAttribute('reveal');
 
 		confirmPasswordRef.current.removeAttribute('notMatchingPassword');
+	};
+
+	const verifyPasswordIsValid = () => {
+		return /^(?=\P{Ll}*\p{Ll})(?=\P{Lu}*\p{Lu})(?=\P{N}*\p{N})[\s\S]{8,}$/gu.test(
+			passwordRef.current.value
+		);
+	};
+
+	const verifyPasswordisValidAndShowTooltip = (e) => {
+		if (verifyPasswordIsValid()) {
+			document
+				.querySelector('#passwordCompositionLabel')
+				.removeAttribute('isValidPassword');
+			return;
+		}
+
+		document
+			.querySelector('#passwordCompositionLabel')
+			.setAttribute('isValidPassword', '');
+
+		verifyPasswordsMatchAndShowTooltip(e);
 	};
 
 	return (
@@ -152,7 +184,7 @@ export default function Registration() {
 						placeholder='Password'
 						ref={passwordRef}
 						onChange={(e) => {
-							handleConfirmPasswordChange(e);
+							verifyPasswordisValidAndShowTooltip(e);
 						}}
 						required
 					/>
@@ -161,6 +193,12 @@ export default function Registration() {
 						className='label'
 					>
 						Password
+					</label>
+					<label id='passwordCompositionLabel'>
+						<em>
+							Password must be min of 8 characters long, with at least 1
+							uppercase, 1 lowercase and 1 number
+						</em>
 					</label>
 				</div>
 				<div className='input-container'>
@@ -172,7 +210,7 @@ export default function Registration() {
 						placeholder='Confirm Password'
 						ref={confirmPasswordRef}
 						onChange={(e) => {
-							handleConfirmPasswordChange(e);
+							verifyPasswordsMatchAndShowTooltip(e);
 						}}
 						required
 					/>
@@ -182,9 +220,7 @@ export default function Registration() {
 					>
 						Confirm Password
 					</label>
-					<label id='password-do-not-match-label'>
-						Passwords do not match!
-					</label>
+					<label id='passwordDoNotMatchLabel'>Passwords do not match!</label>
 				</div>
 				<div className='input-container'>
 					<input

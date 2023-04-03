@@ -310,11 +310,37 @@ input:-internal-autofill-selected {
 	color: var(--primaryColor);
 }
 
+#passwordCompositionLabel {
+	position: absolute;
+	top: 170%;
+
+	background: antiquewhite;
+	z-index: 100;
+	padding: 10px 10px;
+	border-radius: 5px;
+	display: none;
+}
+
+#passwordCompositionLabel::after {
+	content: ' ';
+	position: absolute;
+	top: -20%;
+	left: 20px;
+	margin-left: -5px;
+	border-width: 10px;
+	border-style: solid;
+	border-color: transparent transparent antiquewhite transparent;
+}
+
+#passwordCompositionLabel[isValidPassword] {
+	display: unset;
+}
+
 #confirmPasswordInput[notMatchingPassword] {
 	border: 1px solid red;
 }
 
-#password-do-not-match-label {
+#passwordDoNotMatchLabel {
 	position: absolute;
 	top: 50px;
 	left: 10px;
@@ -323,12 +349,12 @@ input:-internal-autofill-selected {
 	border-radius: 5px;
 	padding: 5px 8px 5px 8px;
 	background: antiquewhite;
-	z-index: 100;
+	z-index: 99;
 	color: red;
 	display: none;
 }
 
-#password-do-not-match-label::after {
+#passwordDoNotMatchLabel::after {
 	content: ' ';
 	position: absolute;
 	top: -30%;
@@ -338,7 +364,7 @@ input:-internal-autofill-selected {
 	border-style: solid;
 	border-color: transparent transparent antiquewhite transparent;
 }
-#password-do-not-match-label[reveal] {
+#passwordDoNotMatchLabel[reveal] {
 	display: unset;
 }
 
