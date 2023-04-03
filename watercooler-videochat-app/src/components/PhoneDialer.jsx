@@ -180,55 +180,40 @@ export default function PhoneDialer({
 	};
 
 	const MiddleButton = () => {
-		if (hasActiveCall) {
-			return (
-				<button
-					className='keypad-btn'
-					onClick={handleClickEndButton}
-				>
-					<ReactSVG src='/icons/end-call-button.svg' />
-				</button>
-			);
-		}
-
-		if (hasIncomingCall) {
-			return <button className='keypad-btn'></button>;
-		}
-
 		return (
 			<button
 				className='keypad-btn'
-				onClick={handleClickCallButton}
+				{...(hasActiveCall
+					? { onClick: () => callResponseHandler(callData, 'drop') }
+					: {})}
+				{...(!hasActiveCall &&
+					!hasIncomingCall && { onClick: handleClickCallButton })}
 			>
-				<ReactSVG src='/icons/calling-button.svg' />
+				{hasActiveCall && <ReactSVG src='/icons/end-call-button.svg' />}
+				{!hasIncomingCall && !hasActiveCall && (
+					<ReactSVG src='/icons/calling-button.svg' />
+				)}
 			</button>
 		);
 	};
 
 	const RightButton = () => {
-		if (hasIncomingCall) {
-			return (
-				<button
-					className='keypad-btn'
-					onClick={() => callResponseHandler(callData, 'reject')}
-				>
+		return (
+			<button
+				className='keypad-btn call-interaction-btn'
+				{...(hasIncomingCall && {
+					onClick: () => callResponseHandler(callData, 'reject'),
+				})}
+				{...(!hasIncomingCall &&
+					!hasActiveCall && { onClick: handleClickDeleteButton })}
+			>
+				{hasIncomingCall ? (
 					<ReactSVG src='/icons/end-call-button.svg' />
-				</button>
-			);
-		}
-
-		if (phoneNumber) {
-			return (
-				<button
-					className='keypad-btn'
-					onClick={handleClickDeleteButton}
-				>
+				) : (
 					<ReactSVG src='/icons/delete.svg' />
-				</button>
-			);
-		}
-
-		return <button className='keypad-btn'></button>;
+				)}
+			</button>
+		);
 	};
 
 	return (
