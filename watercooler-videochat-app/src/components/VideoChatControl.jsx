@@ -78,6 +78,7 @@ export default function VideoChatControl({
 				{!recording ? (
 					<button
 						className='call-control small-button'
+						title='Record Call'
 						onClick={(e) => handleRecord()}
 					>
 						<ReactSVG
@@ -95,6 +96,7 @@ export default function VideoChatControl({
 					<button
 						className='call-control large-end-button'
 						onClick={dropCallHandler}
+						title='End call'
 					>
 						<ReactSVG
 							className='call-control-large-svg'
@@ -105,6 +107,7 @@ export default function VideoChatControl({
 					<button
 						className='call-control large-calling-button'
 						onClick={initiateCall}
+						title='Initiate Call'
 					>
 						<ReactSVG
 							className='call-control-large-svg'

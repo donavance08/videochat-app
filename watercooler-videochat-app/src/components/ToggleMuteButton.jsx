@@ -17,16 +17,19 @@ export default function ToggleMuteButton() {
 			{muted ? (
 				<button
 					className='call-control small-button'
+					title='Mute'
 					onClick={handleMuteClick}
 				>
 					<ReactSVG
 						className='call-control-svg'
+
 						src='/icons/unmuted-button.svg'
 					/>
 				</button>
 			) : (
 				<button
 					className='call-control small-button'
+					title='Unmute'
 					onClick={handleMuteClick}
 				>
 					<ReactSVG

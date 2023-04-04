@@ -22,6 +22,7 @@ export default function ToggleVideoEnabledButton() {
 				<button
 					className='call-control small-button'
 					onClick={handleVideoDisableClick}
+					title='Turn On Camera'
 				>
 					<ReactSVG
 						className='call-control-svg'
@@ -32,6 +33,7 @@ export default function ToggleVideoEnabledButton() {
 				<button
 					className='call-control small-button'
 					onClick={handleVideoDisableClick}
+					title='Turn Off Camera'
 				>
 					<ReactSVG
 						className='call-control-svg'

@@ -19,21 +19,30 @@ export default function RecordControls({ functions }) {
 		<div className='recording-control-container'>
 			<div className='recording-control-box'>
 				{recorderPause ? (
-					<button onClick={handleResumeClick}>
+					<button
+						onClick={handleResumeClick}
+						title='Resume Recording'
+					>
 						<ReactSVG
 							className='call-control-svg'
 							src='/icons/play.svg'
 						/>
 					</button>
 				) : (
-					<button onClick={handlePauseClick}>
+					<button
+						onClick={handlePauseClick}
+						title='Pause Recording'
+					>
 						<ReactSVG
 							className='call-control-svg'
 							src='/icons/pause.svg'
 						/>
 					</button>
 				)}
-				<button onClick={stopRecording}>
+				<button
+					onClick={stopRecording}
+					title='Stop Recording'
+				>
 					<ReactSVG
 						className='call-control-svg'
 						src='/icons/stop.svg'
