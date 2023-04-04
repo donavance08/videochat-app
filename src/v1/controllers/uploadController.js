@@ -9,15 +9,13 @@ const GridFSBucket = require('mongodb').GridFSBucket;
 
 const url = dbConfig.url;
 
-const baseUrl = 'http://localhost:5000/api/messages/files/';
+const baseUrl = `${process.env.REACT_APP_API_URL}/api/messages/files/`;
 
 const mongoClient = new MongoClient(url);
 
 const uploadFiles = async (req, res, next) => {
-	// console.log('upload files');
 	try {
 		await upload(req, res);
-		// console.log('req.file', req.file);
 
 		if (req.file == undefined) {
 			return res.send({
@@ -26,12 +24,6 @@ const uploadFiles = async (req, res, next) => {
 		}
 
 		next();
-
-		// return res.status(200).send({
-		// 	status: 'OK',
-		// 	message: 'File has been uploaded.',
-		// 	data: req.file,
-		// });
 	} catch (err) {
 		console.log('caught error ');
 		console.log(err);
