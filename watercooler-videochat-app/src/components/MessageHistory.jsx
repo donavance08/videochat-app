@@ -50,6 +50,7 @@ export default function MessageHistory({ activeComponent }) {
 
 			if (payload?.filename) {
 				dispatch(setMessage({ isOwner: false, image: payload.filename }));
+				return;
 			}
 			dispatch(setMessage({ isOwner: false, message: payload.message }));
 		};
