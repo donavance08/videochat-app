@@ -143,6 +143,7 @@ export default function Registration() {
 						type='text'
 						name='nickname'
 						placeholder='Nickname'
+						autoComplete='off'
 						ref={nicknameRef}
 						onChange={(e) => {
 							handleChange(e);
@@ -228,6 +229,7 @@ export default function Registration() {
 						type='phone'
 						name='phoneNumber'
 						placeholder='Phone Number'
+						autoComplete='off'
 						ref={phoneNumberRef}
 						onChange={(e) => {
 							handleChange(e);

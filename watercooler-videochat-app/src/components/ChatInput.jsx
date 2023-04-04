@@ -121,6 +121,7 @@ export default function ChatInput({ activeComponent }) {
 						id='new-msg-input'
 						type='text'
 						placeholder='Enter a message'
+						autoComplete='off'
 						ref={inputMessageRef}
 					/>
 					<button
