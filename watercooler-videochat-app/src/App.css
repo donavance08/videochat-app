@@ -350,7 +350,7 @@ input:-internal-autofill-selected {
 	padding: 5px 8px 5px 8px;
 	background: antiquewhite;
 	z-index: 99;
-	color: red;
+
 	display: none;
 }
 
