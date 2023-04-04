@@ -40,27 +40,31 @@ export default function MessageHistory({ activeComponent }) {
 			return;
 		}
 
-		const listener = (payload) => {
+		const incomingMessageListener = (payload) => {
+			const from = payload.data.sender;
 			if (
-				payload.header !== activeComponent ||
-				payload.sender !== activeContactId
+				payload.data.header !== activeComponent ||
+				!(from === id || from === activeContactId)
 			) {
 				return;
 			}
 
-			if (payload?.filename) {
-				dispatch(setMessage({ isOwner: false, image: payload.filename }));
+			const isOwner = from === id;
+
+			if (payload?.data.filename) {
+				dispatch(setMessage({ isOwner, image: payload.data.filename }));
 				return;
 			}
-			dispatch(setMessage({ isOwner: false, message: payload.message }));
+
+			dispatch(setMessage({ isOwner, message: payload.data.message }));
 		};
 
-		activeSocket.on('receive msg', listener);
+		activeSocket.on('receive msg', incomingMessageListener);
 
 		return () => {
-			activeSocket.off('receive msg', listener);
+			activeSocket.off('receive msg', incomingMessageListener);
 		};
-	}, [activeContactId, dispatch, activeComponent, socket]);
+	}, [activeContactId, dispatch, activeComponent, socket, id]);
 
 	const fetchData = useCallback(() => {
 		setIsError(false);

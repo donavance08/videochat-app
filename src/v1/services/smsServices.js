@@ -53,14 +53,15 @@ const sendSMS = async ({
 
 		const savedMessage = await smsDB.sendSMS(newSMSDocument);
 
-		io.fireReceiveMsgEvent({
-			sender: senderId,
-			receiver: receiverId,
-			savedMessage,
+		io.emit('receive msg', {
+			data: savedMessage,
+			from: senderId,
+			userId: receiverId,
 		});
 
 		return savedMessage;
 	} catch (err) {
+		console.log(err.message);
 		throw err;
 	}
 };
@@ -111,12 +112,17 @@ const receiveSMS = async (from, to, body) => {
 		});
 
 		const savedMessage = await smsDB.sendSMS(newSMSDocument);
-		console.log(savedMessage);
 
 		io.emit('receive msg', {
 			data: savedMessage,
 			from: savedMessage.sender,
 			userId: savedMessage.receiver,
+		});
+
+		io.emit('receive msg', {
+			data: savedMessage,
+			from: savedMessage.receiver,
+			userId: savedMessage.sender,
 		});
 	} catch (err) {
 		console.log(err.message);

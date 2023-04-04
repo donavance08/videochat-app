@@ -16,7 +16,11 @@ const addMessage = async ({ sender, receiver, message, filename }) => {
 	try {
 		const savedMessage = await messageDB.addMessage(newMessage);
 
-		io.fireReceiveMsgEvent({ sender, receiver, savedMessage });
+		io.emit('receive msg', {
+			data: savedMessage,
+			from: savedMessage.sender,
+			userId: savedMessage.receiver,
+		});
 
 		return savedMessage;
 	} catch (err) {
