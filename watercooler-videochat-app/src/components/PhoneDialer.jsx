@@ -192,7 +192,7 @@ export default function PhoneDialer({
 				className='keypad-btn'
 				{...(hasActiveCall
 					? {
-							onClick: () => callResponseHandler(callData, 'drop'),
+							onClick: handleClickEndButton,
 							title: 'Drop Call',
 					  }
 					: {})}
