@@ -26,7 +26,7 @@ export default function ToggleVideoEnabledButton() {
 				>
 					<ReactSVG
 						className='call-control-svg'
-						src='/icons/camera-on-button.svg'
+						src='/icons/camera-off-button.svg'
 					/>
 				</button>
 			) : (
@@ -37,7 +37,7 @@ export default function ToggleVideoEnabledButton() {
 				>
 					<ReactSVG
 						className='call-control-svg'
-						src='/icons/camera-off-button.svg'
+						src='/icons/camera-on-button.svg'
 					/>
 				</button>
 			)}

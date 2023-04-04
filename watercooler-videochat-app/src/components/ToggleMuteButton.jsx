@@ -22,8 +22,7 @@ export default function ToggleMuteButton() {
 				>
 					<ReactSVG
 						className='call-control-svg'
-
-						src='/icons/unmuted-button.svg'
+						src='/icons/muted-button.svg'
 					/>
 				</button>
 			) : (
@@ -34,7 +33,7 @@ export default function ToggleMuteButton() {
 				>
 					<ReactSVG
 						className='call-control-svg'
-						src='/icons/muted-button.svg'
+						src='/icons/unmuted-button.svg'
 					/>
 				</button>
 			)}
