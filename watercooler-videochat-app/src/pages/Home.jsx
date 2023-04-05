@@ -125,10 +125,6 @@ export default function Home({ component }) {
 			.then((stream) => {
 				setPersonalStream(stream);
 			});
-
-		socket.current.on('connection', (payload) => {
-			console.log(payload);
-		});
 	}, [token, id, setPersonalStream, socket]);
 
 	const fetchToken = useCallback(async () => {
