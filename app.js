@@ -1,6 +1,7 @@
 const express = require('express');
+const https = require('https');
+const fs = require('fs');
 const mongoose = require('mongoose');
-const socket = require('socket.io');
 const cors = require('cors');
 const userRoutes = require('./src/v1/routes/userRoutes');
 const messageRoutes = require('./src/v1/routes/messageRoutes');
@@ -55,9 +56,14 @@ app.use('*', (req, res) => {
 	res.sendFile(home);
 });
 
-const server = app.listen(port, () =>
-	console.log(`API running at localhost:${port}`)
-);
+const httpsOptions = {
+	key: fs.readFileSync('key.pem'),
+	cert: fs.readFileSync('cert.pem'),
+};
+
+const server = https
+	.createServer(httpsOptions, app)
+	.listen(port, () => console.log(`Server running at port:${port}`));
 
 const io = require('./io').initialize(server);
 
