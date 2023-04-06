@@ -57,8 +57,8 @@ app.use('*', (req, res) => {
 });
 
 const httpsOptions = {
-	key: fs.readFileSync('key.pem'),
-	cert: fs.readFileSync('cert.pem'),
+	key: fs.readFileSync(process.env.SSL_KEY),
+	cert: fs.readFileSync(process.env.SSL_CERT),
 };
 
 const server = https
