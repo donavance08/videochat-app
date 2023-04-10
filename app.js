@@ -1,6 +1,6 @@
 const express = require('express');
-const https = require('https');
-const fs = require('fs');
+// const https = require('https');
+// const fs = require('fs');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const userRoutes = require('./src/v1/routes/userRoutes');
@@ -56,14 +56,14 @@ app.use('*', (req, res) => {
 	res.sendFile(home);
 });
 
-const httpsOptions = {
-	key: fs.readFileSync(process.env.SSL_KEY),
-	cert: fs.readFileSync(process.env.SSL_CERT),
-};
+// const httpsOptions = {
+// 	key: fs.readFileSync(process.env.SSL_KEY),
+// 	cert: fs.readFileSync(process.env.SSL_CERT),
+// };
 
-const server = https
-	.createServer(httpsOptions, app)
-	.listen(port, () => console.log(`Server running at port:${port}`));
+const server = app.listen(port, () =>
+	console.log(`Server running at port:${port}`)
+);
 
 const io = require('./io').initialize(server);
 
