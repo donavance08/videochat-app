@@ -52,6 +52,7 @@ export default function Home({ component }) {
 	const isPhoneMountedRef = useRef(false);
 	const [contactSignal, setContactSignal] = useState();
 	const [cancelReason, setCancelReason] = useState();
+	const incomingCallCountRef = useRef(0);
 
 	/**
 	 * handler for the answercall button of the incoming call dialog
@@ -170,35 +171,36 @@ export default function Home({ component }) {
 		});
 	}, [fetchToken, setHasActiveCall]);
 
-	const respondToPhoneCall = useCallback(
-		async (callData, response) => {
-			fetch(
-				`${process.env.REACT_APP_API_URL}/api/call/callResponse/${response}`,
-				{
-					method: 'POST',
-					headers: {
-						'Content-type': 'application/json',
-					},
-					body: JSON.stringify({
-						CallSid: callData.data.CallSid,
-					}),
-				}
-			);
-
-			setHasIncomingCall(false);
-
-			if (response === 'accept') {
-				setHasActiveCall(true);
-				navigate(`/home/phone/${callData.from}/`);
-			} else {
-				setHasActiveCall(false);
-				setCallData(null);
+	const sendCallResponse = (callData, response) => {
+		fetch(
+			`${process.env.REACT_APP_API_URL}/api/call/callResponse/${response}`,
+			{
+				method: 'POST',
+				headers: {
+					'Content-type': 'application/json',
+				},
+				body: JSON.stringify({
+					CallSid: callData.data.CallSid,
+				}),
 			}
+		);
+	};
 
-			setHasIncomingCall(false);
-		},
-		[setHasActiveCall, navigate, setHasIncomingCall]
-	);
+	const acceptIncomingCall = (callData, response) => {
+		sendCallResponse(callData, response);
+
+		navigate(`/home/phone/${callData.from}/`);
+	};
+
+	const rejectIncomingCall = (callData, response) => {
+		sendCallResponse(callData, response);
+
+		if (incomingCallCountRef.current > 1) {
+			return;
+		}
+
+		setHasIncomingCall(false);
+	};
 
 	/**
 	 * socket will listen for incoming video chat
@@ -212,10 +214,10 @@ export default function Home({ component }) {
 		const activeSocket = socket.current;
 
 		const incomingPhoneCallListener = (payload) => {
+			incomingCallCountRef.current = incomingCallCountRef.current + 1;
+
 			if (hasIncomingCall || hasActiveCall) {
-				respondToPhoneCall(payload.data.CallSid, false);
-				setHasActiveCall(false);
-				setHasIncomingCall(false);
+				rejectIncomingCall(payload, 'reject');
 				return;
 			}
 
@@ -335,7 +337,8 @@ export default function Home({ component }) {
 					<PhoneDialer
 						hasIncomingCall={hasIncomingCall}
 						callData={callData}
-						callResponseHandler={respondToPhoneCall}
+						rejectIncomingCall={rejectIncomingCall}
+						acceptIncomingCall={acceptIncomingCall}
 						callStatus={callStatus}
 						setCallStatus={setCallStatus}
 						device={Device}
@@ -346,7 +349,8 @@ export default function Home({ component }) {
 			{hasIncomingCall && !isPhoneMountedRef.current && (
 				<IncomingPhoneCallDialog
 					callData={callData}
-					callResponseHandler={respondToPhoneCall}
+					rejectIncomingCall={rejectIncomingCall}
+					acceptIncomingCall={acceptIncomingCall}
 				/>
 			)}
 		</div>

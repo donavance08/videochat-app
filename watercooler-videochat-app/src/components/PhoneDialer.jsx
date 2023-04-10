@@ -17,7 +17,8 @@ export default function PhoneDialer({
 	setCallStatus,
 	device,
 	callData,
-	callResponseHandler,
+	acceptIncomingCall,
+	rejectIncomingCall,
 	hasIncomingCall,
 	isSelfMountedRef,
 }) {
@@ -50,7 +51,7 @@ export default function PhoneDialer({
 		 * the button will initiate a call or answer an incoming call
 		 */
 		if (hasIncomingCall) {
-			callResponseHandler(callData, 'accept');
+			acceptIncomingCall(callData, 'accept');
 		} else {
 			setCallStatus('Dialing');
 
@@ -170,7 +171,7 @@ export default function PhoneDialer({
 			return (
 				<button
 					className='keypad-btn'
-					onClick={() => callResponseHandler(callData, 'accept')}
+					onClick={() => acceptIncomingCall(callData, 'accept')}
 					title='Accept Call'
 				>
 					<ReactSVG src='/icons/calling-button.svg' />
@@ -215,7 +216,7 @@ export default function PhoneDialer({
 			<button
 				className='keypad-btn call-interaction-btn'
 				{...(hasIncomingCall && {
-					onClick: () => callResponseHandler(callData, 'reject'),
+					onClick: () => rejectIncomingCall(callData, 'reject'),
 					title: 'Reject Call',
 				})}
 				{...(!hasIncomingCall &&
