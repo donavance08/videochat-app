@@ -6,7 +6,7 @@ import UserContext from '../contexts/UserContext';
 
 const SimplePeer = require('simple-peer');
 
-export default function VideoChat({ declineCallHandler, dropCallHandler }) {
+export default function VideoChat({ declineCallHandler, endVideoCallHandler }) {
 	const { activeContactName, activeContactId } = useSelector(
 		(state) => state.chat
 	);
@@ -20,7 +20,7 @@ export default function VideoChat({ declineCallHandler, dropCallHandler }) {
 	} = useContext(UserContext);
 	const { socket, name, id } = useContext(UserContext);
 
-	const initiateCall = () => {
+	const initiateVideoCall = () => {
 		if (!activeContactId) {
 			alert('Please select a contact to call first');
 			return;
@@ -71,9 +71,8 @@ export default function VideoChat({ declineCallHandler, dropCallHandler }) {
 			<div className='chat-header'>{activeContactName}</div>
 			<ContactVideo />
 			<VideoChatControl
-				initiateCall={initiateCall}
-				declineCallHandler={declineCallHandler}
-				dropCallHandler={dropCallHandler}
+				initiateVideoCall={initiateVideoCall}
+				endVideoCallHandler={endVideoCallHandler}
 			/>
 		</div>
 	);

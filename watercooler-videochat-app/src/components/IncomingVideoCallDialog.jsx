@@ -5,7 +5,7 @@ import UserContext from '../contexts/UserContext';
 
 export default function IncomingVideoCallDialog(props) {
 	const {
-		callHandlers: { answerCall, declineCall },
+		callHandlers: { answerVideoCallHandler, declineVideoCallHandler },
 	} = props;
 
 	const { activeContactName } = useSelector((state) => state.chat);
@@ -15,7 +15,7 @@ export default function IncomingVideoCallDialog(props) {
 	const acceptCall = () => {
 		setShowPendingCallDialog(false);
 
-		answerCall();
+		answerVideoCallHandler();
 		setHasActiveCall(true);
 	};
 
@@ -29,7 +29,7 @@ export default function IncomingVideoCallDialog(props) {
 				<div className='hstack incoming-call-controls'>
 					<button
 						className='accept-button incoming-call-btn'
-						onClick={declineCall}
+						onClick={declineVideoCallHandler}
 					>
 						<ReactSVG
 							className='call-control-large-svg'

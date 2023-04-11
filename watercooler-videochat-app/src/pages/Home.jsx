@@ -54,10 +54,7 @@ export default function Home({ component }) {
 	const [cancelReason, setCancelReason] = useState();
 	const incomingCallCountRef = useRef(0);
 
-	/**
-	 * handler for the answercall button of the incoming call dialog
-	 */
-	const answerCall = () => {
+	const answerVideoCallHandler = () => {
 		setHasActiveCall(true);
 
 		const peer = new SimplePeer({
@@ -82,7 +79,7 @@ export default function Home({ component }) {
 		navigate('/home/video-chat');
 	};
 
-	const declineCall = () => {
+	const declineVideoCallHandler = () => {
 		socket.current.emit('decline video call', {
 			to: activeContactId,
 			reason: 'declined',
@@ -92,7 +89,7 @@ export default function Home({ component }) {
 		setContactSignal(null);
 	};
 
-	const dropCall = () => {
+	const endVideoCallHandler = () => {
 		if (hasActiveCall) {
 			socket.current.emit('end video call', {
 				to: activeContactId,
@@ -103,9 +100,7 @@ export default function Home({ component }) {
 		}
 	};
 
-	/**
-	 * initiate socket whenever activeContactId changes
-	 */
+	/** initiate socket.io and mediaDevices */
 	useEffect(() => {
 		if (socket.current) {
 			socket.current.connect();
@@ -128,6 +123,7 @@ export default function Home({ component }) {
 			});
 	}, [token, id, setPersonalStream, socket]);
 
+	/** Fetch Twilio token */
 	const fetchToken = useCallback(async () => {
 		return await fetch(`${process.env.REACT_APP_API_URL}/api/call/token`)
 			.then((response) => response.json())
@@ -143,6 +139,7 @@ export default function Home({ component }) {
 			});
 	}, []);
 
+	/** Setting Twilio Device listener */
 	useEffect(() => {
 		fetchToken().then((data) => {
 			Device.setup(data.token, { tokenRefreshMs: 30000 });
@@ -182,13 +179,13 @@ export default function Home({ component }) {
 		);
 	};
 
-	const acceptIncomingCall = (callData, response) => {
+	const acceptIncomingPhoneCall = (callData, response) => {
 		sendCallResponse(callData, response);
 
 		navigate(`/home/phone/${callData.from}/`);
 	};
 
-	const rejectIncomingCall = (callData, response) => {
+	const rejectIncomingPhoneCall = (callData, response) => {
 		sendCallResponse(callData, response);
 
 		if (incomingCallCountRef.current > 1) {
@@ -213,7 +210,7 @@ export default function Home({ component }) {
 			incomingCallCountRef.current = incomingCallCountRef.current + 1;
 
 			if (hasIncomingCall || hasActiveCall) {
-				rejectIncomingCall(payload, 'reject');
+				rejectIncomingPhoneCall(payload, 'reject');
 				return;
 			}
 
@@ -264,7 +261,7 @@ export default function Home({ component }) {
 		 * Handler for contact initiated end video call
 		 *
 		 *  */
-		const dropCallHandler = (payload) => {
+		const endVideoCallListener = (payload) => {
 			if (hasActiveCall) {
 				setShowCancelCallDialog(true);
 				setCancelReason(payload.reason);
@@ -273,7 +270,7 @@ export default function Home({ component }) {
 			}
 		};
 
-		activeSocket.on('end video call', dropCallHandler);
+		activeSocket.on('end video call', endVideoCallListener);
 
 		const userDisconnectHandler = ({ id }) => {
 			if (hasActiveCall && activeContactId === id) {
@@ -288,7 +285,7 @@ export default function Home({ component }) {
 
 		return () => {
 			activeSocket.off('user disconnect', userDisconnectHandler);
-			activeSocket.off('end video call', dropCallHandler);
+			activeSocket.off('end video call', endVideoCallListener);
 			activeSocket.off('decline video call', declineCallHandler);
 			activeSocket.off('initiate video call', initiateCallListener);
 			activeSocket.off('incoming call', incomingPhoneCallListener);
@@ -300,7 +297,9 @@ export default function Home({ component }) {
 	return (
 		<div className='chat-page-container d-flex flex-row '>
 			{showPendingCallDialog && (
-				<IncomingVideoCallDialog callHandlers={{ answerCall, declineCall }} />
+				<IncomingVideoCallDialog
+					callHandlers={{ answerVideoCallHandler, declineVideoCallHandler }}
+				/>
 			)}
 			{showCancelCallDialog && <CancelCallDialog cancelReason={cancelReason} />}
 			<Contacts />
@@ -312,10 +311,7 @@ export default function Home({ component }) {
 			)}
 			{component === 'videoChat' && (
 				<>
-					<VideoChat
-						declineCallHandler={declineCall}
-						dropCallHandler={dropCall}
-					/>
+					<VideoChat endVideoCallHandler={endVideoCallHandler} />
 					<Messaging
 						activeComponent='chat'
 						column='3'
@@ -333,8 +329,8 @@ export default function Home({ component }) {
 					<PhoneDialer
 						hasIncomingCall={hasIncomingCall}
 						callData={callData}
-						rejectIncomingCall={rejectIncomingCall}
-						acceptIncomingCall={acceptIncomingCall}
+						rejectIncomingPhoneCall={rejectIncomingPhoneCall}
+						acceptIncomingPhoneCall={acceptIncomingPhoneCall}
 						callStatus={callStatus}
 						setCallStatus={setCallStatus}
 						device={Device}
@@ -345,8 +341,8 @@ export default function Home({ component }) {
 			{hasIncomingCall && !isPhoneMountedRef.current && (
 				<IncomingPhoneCallDialog
 					callData={callData}
-					rejectIncomingCall={rejectIncomingCall}
-					acceptIncomingCall={acceptIncomingCall}
+					rejectIncomingPhoneCall={rejectIncomingPhoneCall}
+					acceptIncomingPhoneCall={acceptIncomingPhoneCall}
 				/>
 			)}
 		</div>

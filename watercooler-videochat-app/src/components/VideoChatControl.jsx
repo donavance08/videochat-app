@@ -6,9 +6,8 @@ import ToggleVideoEnabledButton from './ToggleVideoEnabledButton';
 import ToggleMuteButton from './ToggleMuteButton';
 
 export default function VideoChatControl({
-	initiateCall,
-	declineCallHandler: declineCall,
-	dropCallHandler,
+	initiateVideoCall,
+	endVideoCallHandler,
 }) {
 	const [recording, setRecording] = useState(false);
 	const { hasActiveCall, contactStream } = useContext(UserContext);
@@ -95,7 +94,7 @@ export default function VideoChatControl({
 				{hasActiveCall ? (
 					<button
 						className='call-control large-end-button'
-						onClick={dropCallHandler}
+						onClick={endVideoCallHandler}
 						title='End call'
 					>
 						<ReactSVG
@@ -106,7 +105,7 @@ export default function VideoChatControl({
 				) : (
 					<button
 						className='call-control large-calling-button'
-						onClick={initiateCall}
+						onClick={initiateVideoCall}
 						title='Initiate Call'
 					>
 						<ReactSVG
