@@ -2,7 +2,6 @@ const callServices = require('../services/callServices');
 const auth = require('../../../auth');
 const io = require('../../../io');
 const {
-	checkValidationResult,
 	validatePhoneNumber,
 	extractPhoneNumber,
 } = require('../utils/utilFunctions');

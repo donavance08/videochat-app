@@ -1,6 +1,4 @@
 const express = require('express');
-// const https = require('https');
-// const fs = require('fs');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const userRoutes = require('./src/v1/routes/userRoutes');
@@ -10,7 +8,7 @@ const callRoutes = require('./src/v1/routes/callRoutes');
 const path = require('path');
 require('dotenv').config();
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT;
 
 const app = express();
 
@@ -28,6 +26,7 @@ app.use(
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
+/** MONGODB */
 const mongo = mongoose
 	.connect(`${process.env.MONGO_SERVER}`, {
 		useNewUrlParser: true,
@@ -43,23 +42,21 @@ const mongo = mongoose
 
 const MongoClient = mongo.MongoClient;
 
-/* ROUTES */
+/** ROUTES */
 app.use('/api/users', userRoutes);
 app.use('/api/chat', messageRoutes);
 app.use('/api/sms', smsRoutes);
 app.use('/api/call', callRoutes);
 
+/** RINGTONE SOUND */
 app.use('/sound', (req, res) => {
 	res.sendFile(sound);
 });
+
+/** STATIC */
 app.use('*', (req, res) => {
 	res.sendFile(home);
 });
-
-// const httpsOptions = {
-// 	key: fs.readFileSync(process.env.SSL_KEY),
-// 	cert: fs.readFileSync(process.env.SSL_CERT),
-// };
 
 const server = app.listen(port, () =>
 	console.log(`Server running at port:${port}`)

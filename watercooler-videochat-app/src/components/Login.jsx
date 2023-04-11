@@ -1,11 +1,8 @@
 import React, { useRef, useEffect, useContext, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import UserContext from '../contexts/UserContext';
-import useLocalStorage from '../customHooks.js/useLocalStorage';
 import Loader from '../utils/Loader';
 import { toast } from 'react-toastify';
-
-// adding localstorage hook and persist with redux
 
 export default function Login() {
 	const { token, setToken, setName, setId } = useContext(UserContext);
@@ -19,7 +16,7 @@ export default function Login() {
 	const handleSubmit = (event) => {
 		event.preventDefault();
 
-		setIsLoading(() => true);
+		setIsLoading(true);
 		fetch(`${process.env.REACT_APP_API_URL}/api/users/login`, {
 			method: 'POST',
 			headers: {

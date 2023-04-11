@@ -3,7 +3,7 @@ import UserContext from '../contexts/UserContext';
 import { useSelector } from 'react-redux';
 import Loader from '../utils/Loader';
 
-export default function MessageSnippet({ value, bottom }) {
+export default function MessageSnippet({ value, bottomRef }) {
 	const { isOwner, message, image } = value;
 	const { activeContactName } = useSelector((state) => state.chat);
 	const { token } = useContext(UserContext);
@@ -21,7 +21,7 @@ export default function MessageSnippet({ value, bottom }) {
 				const imageBlob = await response.blob();
 				setImageObjectURL(URL.createObjectURL(imageBlob));
 				setIsLoading(false);
-				bottom.current?.scrollIntoView();
+				bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
 			});
 		}
 	}, [message, token]);

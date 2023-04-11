@@ -1,3 +1,4 @@
+const { response } = require('express');
 const { validationResult } = require('express-validator');
 
 const checkValidationResult = (req, res) => {
@@ -26,8 +27,30 @@ const extractPhoneNumber = (req) => {
 	return phoneNumber.at(0) === '+' ? phoneNumber : '+' + phoneNumber;
 };
 
+/**
+ * Will create and send response
+ * @param {Object} res - response object
+ * @param {Object} responseDetails
+ * @returns {undefined}
+ */
+const sendResponse = (res, status, responseDetails) => {
+	if (responseDetails.error) {
+		res.status(responseDetails.error.status || 500);
+		res.send({
+			status: 'FAILED',
+			...({ message, data } = responseDetails.error),
+		});
+
+		return;
+	}
+
+	res.status(status || 200);
+	res.send(responseDetails);
+	
+};
 module.exports = {
 	checkValidationResult,
 	validatePhoneNumber,
 	extractPhoneNumber,
+	sendResponse,
 };

@@ -1,48 +1,56 @@
 const jwt = require('jsonwebtoken');
 const secretPhrase = 'waterCoolerchatapp';
+const { sendResponse } = require('./src/v1/utils/utilFunctions');
 
-// Create access token for successful user login
-module.exports.createAccessToken = (user) => {
-	const data = {
-		id: user.id,
-		username: user.username,
-		nickname: user.nickname,
-		phoneNumber: user.phoneNumber,
-	};
-
-	return jwt.sign(data, secretPhrase, {});
+/**
+ * Create access token for successful user login
+ * @param {Object} userData
+ * @returns {String} token
+ * */
+module.exports.createAccessToken = (userData) => {
+	console.log(userData);
+	return jwt.sign(userData, secretPhrase, {});
 };
 
-module.exports.verify = (request, response, next) => {
-	let token = request.headers.authorization;
+/**
+ * verify if token provided came from this API
+ * @param {Object} req - requrest object
+ * @param {Object} res - response object
+ * @param {Function} next
+ */
+module.exports.verify = (req, res, next) => {
+	let token = req.headers.authorization;
 
-	// check if token is not empty
 	if (typeof token !== 'undefined') {
 		token = token.slice(7, token.length);
 
-		// verify if token came from this API
 		return jwt.verify(token, secretPhrase, (error, data) => {
 			if (error) {
-				return response.send({
-					auth: 'Failed.',
+				sendResponse(res, 400, {
+					status: 'FAILED',
+					message: 'Invalid Token',
+					data: req.headers.authorization,
 				});
-			} else {
-				next();
-			}
-		});
 
-		// If token does not exist
-	} else {
-		return response.send({
-			auth: 'Failed.',
+				return;
+			}
+
+			next();
 		});
 	}
+
+	sendResponse(res, 400, {
+		status: 'FAILED',
+		message: 'Invalid Token',
+		data: req.headers.authorization,
+	});
 };
 
-// Decoding a token to retrieve user information
+/** Decoding a token to retrieve user information
+ * @param {String} token - containing user information
+ * @returns {Object} decoded user information || null
+ */
 module.exports.decode = (token) => {
-	// MODIFY
-
 	if (typeof token !== 'undefined') {
 		// Retrieves only the token and removes the "Bearer " prefix
 		token = token.slice(7, token.length);
@@ -51,16 +59,10 @@ module.exports.decode = (token) => {
 			if (error) {
 				return null;
 			} else {
-				// The "decode" method is used to obtain the information from the JWT
-				// The "{complete:true}" option allows us to return additional information from the JWT token
-				// Returns an object with access to the "payload" property which contains user information stored when the token was generated
-				// The payload contains information provided in the "createAccessToken" method defined above (e.g. id, email, cartId and accessType )
 				return jwt.decode(token, { complete: true }).payload;
 			}
 		});
-
-		// Token does not exist
-	} else {
-		return null;
 	}
+
+	return null;
 };

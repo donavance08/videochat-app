@@ -20,13 +20,14 @@ export default function MessageHistory({ activeComponent }) {
 			messages.map((message) => {
 				return (
 					<MessageSnippet
-						bottom={bottomRef}
+						bottomRef={bottomRef}
 						key={uuid()}
 						value={message}
 					/>
 				);
 			})
 		);
+		bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
 	}, [messages]);
 
 	/**
@@ -41,10 +42,15 @@ export default function MessageHistory({ activeComponent }) {
 		}
 
 		const incomingMessageListener = (payload) => {
+			console.log(payload);
 			const from = payload.data.sender;
+			const to = payload.data.receiver;
 			if (
 				payload.data.header !== activeComponent ||
-				!(from === id || from === activeContactId)
+				!(
+					(from === id && to === activeContactId) ||
+					(from === activeContactId && to === id)
+				)
 			) {
 				return;
 			}
@@ -99,7 +105,6 @@ export default function MessageHistory({ activeComponent }) {
 
 	const retryFetchData = useCallback(() => {
 		setIsLoading(true);
-		setIsError(false);
 		fetchData();
 	}, [fetchData, setIsError]);
 

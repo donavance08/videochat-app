@@ -5,16 +5,26 @@ const auth = require('../../../auth.js');
 const customError = require('../utils/customError');
 const ObjectId = require('mongoose').Types.ObjectId;
 
+/**
+ * Function to handle extraction of info to be tokenized
+ * @param {Object} userInfo
+ * @returns {Object}
+ */
+const extractInfoToBeTokenized = (userInfo) => {
+	if (!userInfo) {
+		return;
+	}
+
+	const { nickname, username, phoneNumber } = userInfo;
+
+	return { nickname, username, phoneNumber, id: userInfo._id };
+};
+
 const loginUser = (username, password) => {
 	return UserDB.loginUser(username)
 		.then((result) => {
 			if (bcrypt.compareSync(password, result.password)) {
-				const token = auth.createAccessToken({
-					nickname: result.nickname,
-					username: result.username,
-					phoneNumber: result.phoneNumber,
-					id: result._id,
-				});
+				const token = auth.createAccessToken(extractInfoToBeTokenized(result));
 
 				return { id: result._id, nickname: result.nickname, token };
 			}
@@ -42,12 +52,7 @@ const registerNewUser = async (data) => {
 
 	return UserDB.registerNewUser(newUserDetails)
 		.then((result) => {
-			const token = auth.createAccessToken({
-				nickname: result.nickname,
-				username: result.username,
-				phoneNumber: result.phoneNumber,
-				id: result._id,
-			});
+			const token = auth.createAccessToken(extractInfoToBeTokenized(result));
 
 			return {
 				nickname: result.nickname,
