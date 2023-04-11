@@ -15,6 +15,7 @@ export default function MessageHistory({ activeComponent }) {
 	const [isLoading, setIsLoading] = useState();
 	const [isError, setIsError] = useState(false);
 
+	/** Load messages */
 	useEffect(() => {
 		setMessageWidget(
 			messages.map((message) => {
@@ -27,13 +28,9 @@ export default function MessageHistory({ activeComponent }) {
 				);
 			})
 		);
-		bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
 	}, [messages]);
 
-	/**
-	 * handles listener for incoming chat messages
-	 *
-	 */
+	/** Incoming Chat listener */
 	useEffect(() => {
 		const activeSocket = socket.current;
 
@@ -72,6 +69,7 @@ export default function MessageHistory({ activeComponent }) {
 		};
 	}, [activeContactId, dispatch, activeComponent, socket, id]);
 
+	/** Fetch messages */
 	const fetchData = useCallback(() => {
 		setIsError(false);
 		fetch(
@@ -97,16 +95,18 @@ export default function MessageHistory({ activeComponent }) {
 			});
 	}, [activeContactId, activeComponent, token, id, dispatch]);
 
+	/** Clear and fetch messages */
 	useEffect(() => {
 		setIsLoading(true);
 		dispatch(clearMessages());
 		fetchData();
 	}, [fetchData, dispatch]);
 
+	/** Retry fetch messages when error */
 	const retryFetchData = useCallback(() => {
 		setIsLoading(true);
 		fetchData();
-	}, [fetchData, setIsError]);
+	}, [fetchData]);
 
 	return (
 		<div className='chat-history-container'>
