@@ -21,7 +21,7 @@ export default function MessageSnippet({ value, bottomRef }) {
 				const imageBlob = await response.blob();
 				setImageObjectURL(URL.createObjectURL(imageBlob));
 				setIsLoading(false);
-				bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+				bottomRef.current?.scrollIntoView();
 			});
 		}
 	}, [message, token]);

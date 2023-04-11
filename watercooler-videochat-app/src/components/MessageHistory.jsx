@@ -108,6 +108,10 @@ export default function MessageHistory({ activeComponent }) {
 		fetchData();
 	}, [fetchData]);
 
+	useEffect(() => {
+		bottomRef.current?.scrollIntoView();
+	});
+
 	return (
 		<div className='chat-history-container'>
 			{isLoading ? (
