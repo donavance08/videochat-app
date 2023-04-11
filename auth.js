@@ -8,7 +8,6 @@ const { sendResponse } = require('./src/v1/utils/utilFunctions');
  * @returns {String} token
  * */
 module.exports.createAccessToken = (userData) => {
-	console.log(userData);
 	return jwt.sign(userData, secretPhrase, {});
 };
 
