@@ -25,7 +25,6 @@ const uploadFiles = async (req, res, next) => {
 
 		next();
 	} catch (err) {
-		console.log('caught error ');
 		console.log(err);
 
 		return res.send({

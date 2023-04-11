@@ -44,6 +44,7 @@ export default function Home({ component }) {
 	} = useContext(UserContext);
 	const { activeContactId } = useSelector((state) => state.chat);
 	const [hasIncomingCall, setHasIncomingCall] = useState(false);
+	const [isCallLoading, setIsCallLoading] = useState();
 	const [callData, setCallData] = useState(null);
 	const [callStatus, setCallStatus] = useState('');
 
@@ -85,7 +86,7 @@ export default function Home({ component }) {
 			reason: 'declined',
 		});
 
-		setShowPendingCallDialog((state) => false);
+		setShowPendingCallDialog(false);
 		setContactSignal(null);
 	};
 
@@ -149,6 +150,7 @@ export default function Home({ component }) {
 			call.accept();
 
 			setHasActiveCall(true);
+			setIsCallLoading(false);
 			setCallStatus('Call in progress');
 		});
 
@@ -157,6 +159,7 @@ export default function Home({ component }) {
 			setHasActiveCall(false);
 			setCallData(null);
 			setCallStatus('Call Completed');
+			incomingCallCountRef.current--;
 		});
 
 		Device.on('tokenWillExpire', () => {
@@ -181,7 +184,8 @@ export default function Home({ component }) {
 
 	const acceptIncomingPhoneCall = (callData, response) => {
 		sendCallResponse(callData, response);
-
+		setHasIncomingCall(false);
+		setIsCallLoading(true);
 		navigate(`/home/phone/${callData.from}/`);
 	};
 
@@ -189,10 +193,14 @@ export default function Home({ component }) {
 		sendCallResponse(callData, response);
 
 		if (incomingCallCountRef.current > 1) {
+			incomingCallCountRef.current--;
 			return;
 		}
-
+		console.log(incomingCallCountRef.current);
+		setHasActiveCall(false);
 		setHasIncomingCall(false);
+		setCallStatus('Call Completed');
+		incomingCallCountRef.current--;
 	};
 
 	/**
@@ -332,6 +340,7 @@ export default function Home({ component }) {
 						rejectIncomingPhoneCall={rejectIncomingPhoneCall}
 						acceptIncomingPhoneCall={acceptIncomingPhoneCall}
 						callStatus={callStatus}
+						isCallLoading={isCallLoading}
 						setCallStatus={setCallStatus}
 						device={Device}
 						isSelfMountedRef={isPhoneMountedRef}
@@ -341,6 +350,7 @@ export default function Home({ component }) {
 			{hasIncomingCall && !isPhoneMountedRef.current && (
 				<IncomingPhoneCallDialog
 					callData={callData}
+					isCallLoading={isCallLoading}
 					rejectIncomingPhoneCall={rejectIncomingPhoneCall}
 					acceptIncomingPhoneCall={acceptIncomingPhoneCall}
 				/>

@@ -2,7 +2,8 @@ import { ReactSVG } from 'react-svg';
 
 export default function IncomingPhoneCallDialog({
 	callData,
-	callResponseHandler,
+	rejectIncomingPhoneCall,
+	acceptIncomingPhoneCall,
 }) {
 	return (
 		<div className='incoming-call-dialog-container'>
@@ -11,7 +12,7 @@ export default function IncomingPhoneCallDialog({
 			<div>
 				<button
 					className='answer-btn'
-					onClick={() => callResponseHandler(callData, 'accept')}
+					onClick={() => acceptIncomingPhoneCall(callData, 'accept')}
 				>
 					<ReactSVG
 						className='call-control-large-svg'
@@ -20,7 +21,7 @@ export default function IncomingPhoneCallDialog({
 				</button>
 				<button
 					className='decline-btn'
-					onClick={() => callResponseHandler(callData, 'reject')}
+					onClick={() => rejectIncomingPhoneCall(callData, 'reject')}
 				>
 					<ReactSVG
 						className='call-control-large-svg'

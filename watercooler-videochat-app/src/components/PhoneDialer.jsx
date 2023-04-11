@@ -1,15 +1,10 @@
-import React, {
-	useState,
-	useEffect,
-	useRef,
-	useContext,
-	useCallback,
-} from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { setActiveContactPhoneNumber } from '../redux/chat';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReactSVG } from 'react-svg';
 import { toast } from 'react-toastify';
 import { v4 as uuid } from 'uuid';
+import Loader from '../utils/Loader';
 import UserContext from '../contexts/UserContext';
 
 export default function PhoneDialer({
@@ -21,15 +16,15 @@ export default function PhoneDialer({
 	rejectIncomingPhoneCall,
 	hasIncomingCall,
 	isSelfMountedRef,
+	isCallLoading,
 }) {
 	const { hasActiveCall, setHasActiveCall, token, socket } =
 		useContext(UserContext);
 	const { activeContactPhoneNumber } = useSelector((state) => state.chat);
 	const [phoneNumber, setPhoneNumber] = useState('');
 	const [keypad, setKeypad] = useState();
+
 	const dispatch = useDispatch();
-	const inputRef = useRef();
-	const inputLabelRef = useRef();
 
 	const handleClickDeleteButton = () => {
 		if (hasActiveCall || hasIncomingCall) {
@@ -106,7 +101,7 @@ export default function PhoneDialer({
 		);
 	}, [handleClickKeypad]);
 
-	/** Initiate socket listeners */
+	/** Initiate call listeners */
 	useEffect(() => {
 		const activeSocket = socket?.current;
 
@@ -120,7 +115,11 @@ export default function PhoneDialer({
 
 		activeSocket.on('call declined', callDeclinedListener);
 
-		const callCompleteListener = (payload) => {
+		const callStatusListener = (payload) => {
+			if (payload.status === 'Ringing' && hasActiveCall) {
+				return;
+			}
+
 			setCallStatus(payload.status);
 
 			if (payload.status === 'Call Completed') {
@@ -128,7 +127,7 @@ export default function PhoneDialer({
 			}
 		};
 
-		activeSocket.on('call status', callCompleteListener);
+		activeSocket.on('call status', callStatusListener);
 
 		const invalidNumberListener = (payload) => {
 			toast.error('Invalid Phone number');
@@ -138,10 +137,10 @@ export default function PhoneDialer({
 
 		return () => {
 			activeSocket.off('call declined', callDeclinedListener);
-			activeSocket.off('call status', callCompleteListener);
+			activeSocket.off('call status', callStatusListener);
 			activeSocket.off('invalid phoneNumber', invalidNumberListener);
 		};
-	}, [socket, setCallStatus]);
+	}, [socket, setCallStatus, hasActiveCall]);
 
 	/** Set the @var phoneNumber with a supplied value from parent*/
 	useEffect(() => {
@@ -191,20 +190,20 @@ export default function PhoneDialer({
 		return (
 			<button
 				className='keypad-btn'
-				{...(hasActiveCall
-					? {
-							onClick: handleClickEndButton,
-							title: 'Drop Call',
-					  }
-					: {})}
+				{...(hasActiveCall && {
+					onClick: handleClickEndButton,
+					title: 'Drop Call',
+				})}
 				{...(!hasActiveCall &&
-					!hasIncomingCall && {
+					!hasIncomingCall &&
+					!isCallLoading && {
 						onClick: handleClickCallButton,
 						title: `Call ${phoneNumber}`,
 					})}
 			>
+				{isCallLoading && <Loader size='small' />}
 				{hasActiveCall && <ReactSVG src='/icons/end-call-button.svg' />}
-				{!hasIncomingCall && !hasActiveCall && (
+				{!hasIncomingCall && !hasActiveCall && !isCallLoading && (
 					<ReactSVG src='/icons/calling-button.svg' />
 				)}
 			</button>
@@ -238,7 +237,6 @@ export default function PhoneDialer({
 		<div className='phone-keypad-container'>
 			<label
 				htmlFor='phone'
-				ref={inputLabelRef}
 				value={callStatus}
 			>
 				{callStatus}
@@ -249,7 +247,6 @@ export default function PhoneDialer({
 				name='phone'
 				contentEditable='false'
 				readOnly
-				ref={inputRef}
 				value={phoneNumber}
 				disabled
 			/>
