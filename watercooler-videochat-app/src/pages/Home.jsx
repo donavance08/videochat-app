@@ -67,7 +67,7 @@ export default function Home({ component }) {
 		});
 
 		peer.on('signal', (payload) => {
-			socket.current.emit('acceptCall', {
+			socket.current.emit('accept video call', {
 				signal: payload,
 				to: activeContactId,
 			});
@@ -83,7 +83,7 @@ export default function Home({ component }) {
 	};
 
 	const declineCall = () => {
-		socket.current.emit('decline call', {
+		socket.current.emit('decline video call', {
 			to: activeContactId,
 			reason: 'declined',
 		});
@@ -94,7 +94,7 @@ export default function Home({ component }) {
 
 	const dropCall = () => {
 		if (hasActiveCall) {
-			socket.current.emit('drop call', {
+			socket.current.emit('end video call', {
 				to: activeContactId,
 				reason: 'cancelled',
 			});
@@ -248,7 +248,7 @@ export default function Home({ component }) {
 			setContactSignal(payload.signal);
 		};
 
-		activeSocket.on('initiateCall', initiateCallListener);
+		activeSocket.on('initiate video call', initiateCallListener);
 
 		const declineCallHandler = (payload) => {
 			if (showPendingCallDialog) {
@@ -258,10 +258,10 @@ export default function Home({ component }) {
 				connectionRef.current.destroy();
 			}
 		};
-		activeSocket.on('decline call', declineCallHandler);
+		activeSocket.on('decline video call', declineCallHandler);
 
 		/**
-		 * Handler for contact initiated drop call
+		 * Handler for contact initiated end video call
 		 *
 		 *  */
 		const dropCallHandler = (payload) => {
@@ -273,7 +273,7 @@ export default function Home({ component }) {
 			}
 		};
 
-		activeSocket.on('drop call', dropCallHandler);
+		activeSocket.on('end video call', dropCallHandler);
 
 		const userDisconnectHandler = ({ id }) => {
 			if (hasActiveCall && activeContactId === id) {
@@ -288,9 +288,9 @@ export default function Home({ component }) {
 
 		return () => {
 			activeSocket.off('user disconnect', userDisconnectHandler);
-			activeSocket.off('drop call', dropCallHandler);
-			activeSocket.off('decline call', declineCallHandler);
-			activeSocket.off('initiateCall', initiateCallListener);
+			activeSocket.off('end video call', dropCallHandler);
+			activeSocket.off('decline video call', declineCallHandler);
+			activeSocket.off('initiate video call', initiateCallListener);
 			activeSocket.off('incoming call', incomingPhoneCallListener);
 			activeSocket.off('incoming phone call', incomingPhoneCallListener);
 			activeSocket.off('disconnect', socketDisconnectedListener);

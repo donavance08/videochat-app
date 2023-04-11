@@ -13,11 +13,6 @@ module.exports.initialize = (server) => {
 		socket.userId = socket.handshake.headers.id;
 		connectedUsers.set(socket.handshake.headers.id, socket);
 
-		console.log('Registered users');
-		connectedUsers.forEach((socket) => {
-			console.log(`${socket.userId} : ${socket.id}`);
-		});
-
 		socket.emit('connection', { message: 'Socket online', id: socket.id });
 
 		socket.on('send msg', (payload) => {
@@ -36,63 +31,43 @@ module.exports.initialize = (server) => {
 
 			socket.broadcast.emit('user disconnect', { id });
 
-			if (connectedUsers.delete(socket.userId)) {
-				console.log(`${id} disconnected from server`);
-			}
+			connectedUsers.delete(socket.userId);
 		});
 
-		socket.on('initiateCall', (payload) => {
+		socket.on('initiate video call', (payload) => {
 			const callee = connectedUsers.get(payload.to);
 
 			if (callee) {
-				io.to(callee.id).emit('initiateCall', payload);
+				io.to(callee.id).emit('initiate video call', payload);
 			} else {
-				io.to(socket.id).emit('decline call', { reason: 'offline' });
+				io.to(socket.id).emit('decline video call', { reason: 'offline' });
 			}
 		});
 
-		socket.on('acceptCall', (payload) => {
+		socket.on('accept video call', (payload) => {
 			const to = connectedUsers.get(payload.to);
 
 			if (to) {
-				io.to(to.id).emit('acceptCall', payload.signal);
+				io.to(to.id).emit('accept video call', payload.signal);
 			}
 		});
 
-		socket.on('drop call', (payload) => {
+		socket.on('end video call', (payload) => {
 			const to = connectedUsers.get(payload.to);
 			if (to) {
-				io.to(to.id).emit('drop call', payload);
+				io.to(to.id).emit('end video call', payload);
 			}
 		});
 
-		socket.on('decline call', (payload) => {
+		socket.on('decline video call', (payload) => {
 			const to = connectedUsers.get(payload.to);
 			if (to) {
-				io.to(to.id).emit('decline call', payload);
+				io.to(to.id).emit('decline video call', payload);
 			}
 		});
 	});
 
 	return io;
-};
-
-module.exports.fireReceiveMsgEvent = async ({
-	//Edit , can be combined with exports.emit and totaly remove this function
-	sender,
-	receiver,
-	savedMessage,
-}) => {
-	const senderSocket = connectedUsers.get(sender.toString());
-	const receiverSocket = connectedUsers.get(receiver.toString());
-
-	if (!(senderSocket && receiverSocket)) {
-		return;
-	}
-
-	if (senderSocket && receiverSocket) {
-		io.to(receiverSocket.id).emit('receive msg', savedMessage);
-	}
 };
 
 module.exports.emit = (listener, payload) => {
