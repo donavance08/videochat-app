@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { ReactSVG } from 'react-svg';
 import UserContext from '../contexts/UserContext';
 
-export default function PendingCallDialog(props) {
+export default function IncomingVideoCallDialog(props) {
 	const {
 		callHandlers: { answerCall, declineCall },
 	} = props;

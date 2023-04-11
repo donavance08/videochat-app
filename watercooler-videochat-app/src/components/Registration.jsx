@@ -59,7 +59,6 @@ export default function Registration() {
 		})
 			.then((response) => response.json())
 			.then((result) => {
-				console.log(result);
 				if (result.status === 'OK') {
 					setToken(() => result.data.token);
 					setName(() => result.data.nickname);

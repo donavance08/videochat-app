@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import io from 'socket.io-client';
 import { useDispatch, useSelector } from 'react-redux';
 import VideoChat from '../components/VideoChat';
-import PendingCallDialog from '../components/PendingCallDialog';
+import IncomingVideoCallDialog from '../components/IncomingVideoCallDialog';
 import CancelCallDialog from '../components/CancelCallDialog';
 import {
 	setActiveContactId,
@@ -300,7 +300,7 @@ export default function Home({ component }) {
 	return (
 		<div className='chat-page-container d-flex flex-row '>
 			{showPendingCallDialog && (
-				<PendingCallDialog callHandlers={{ answerCall, declineCall }} />
+				<IncomingVideoCallDialog callHandlers={{ answerCall, declineCall }} />
 			)}
 			{showCancelCallDialog && <CancelCallDialog cancelReason={cancelReason} />}
 			<Contacts />
