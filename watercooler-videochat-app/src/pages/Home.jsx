@@ -204,7 +204,7 @@ export default function Home({ component }) {
 			incomingCallCountRef.current--;
 			return;
 		}
-		console.log(incomingCallCountRef.current);
+
 		setHasActiveCall(false);
 		setHasIncomingCall(false);
 		setCallStatus('Call Completed');
