@@ -166,6 +166,7 @@ export default function Home({ component }) {
 			setHasActiveCall(false);
 			setCallData(null);
 			setCallStatus('Call Completed');
+			setIsCallLoading(false)
 			incomingCallCountRef.current--;
 		});
 
