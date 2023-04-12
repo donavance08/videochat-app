@@ -64,8 +64,8 @@ export default function PhoneDialer({
 	const handleClickEndButton = () => {
 		if (hasActiveCall) {
 			setIsCallLoading(true);
-			device.disconnectAll();
 			setHasActiveCall(false);
+			device.disconnectAll();
 		}
 	};
 
@@ -204,7 +204,9 @@ export default function PhoneDialer({
 					})}
 			>
 				{isCallLoading && <Loader size='small' />}
-				{hasActiveCall && <ReactSVG src='/icons/end-call-button.svg' />}
+				{hasActiveCall && !isCallLoading && (
+					<ReactSVG src='/icons/end-call-button.svg' />
+				)}
 				{!hasIncomingCall && !hasActiveCall && !isCallLoading && (
 					<ReactSVG src='/icons/calling-button.svg' />
 				)}
