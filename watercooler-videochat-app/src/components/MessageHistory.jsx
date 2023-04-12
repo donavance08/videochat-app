@@ -39,7 +39,6 @@ export default function MessageHistory({ activeComponent }) {
 		}
 
 		const incomingMessageListener = (payload) => {
-			console.log(payload);
 			const from = payload.data.sender;
 			const to = payload.data.receiver;
 			if (
