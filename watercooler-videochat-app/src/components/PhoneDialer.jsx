@@ -17,6 +17,7 @@ export default function PhoneDialer({
 	hasIncomingCall,
 	isSelfMountedRef,
 	isCallLoading,
+	setIsCallLoading,
 }) {
 	const { hasActiveCall, setHasActiveCall, token, socket } =
 		useContext(UserContext);
@@ -41,13 +42,10 @@ export default function PhoneDialer({
 			return;
 		}
 
-		/**
-		 *  @param {boolean} hasIncomingCall will determine if clicking
-		 * the button will initiate a call or answer an incoming call
-		 */
 		if (hasIncomingCall) {
 			acceptIncomingPhoneCall(callData, 'accept');
 		} else {
+			setIsCallLoading(true);
 			setCallStatus('Dialing');
 
 			device.connect({
@@ -62,7 +60,8 @@ export default function PhoneDialer({
 
 	const handleClickEndButton = () => {
 		if (hasActiveCall) {
-			device.disconnectAll();
+			setIsCallLoading(true);
+			device.disconnectAll().then(() => setIsCallLoading(false));
 			setHasActiveCall(false);
 		}
 	};

@@ -370,6 +370,7 @@ export default function Home({ component }) {
 						acceptIncomingPhoneCall={acceptIncomingPhoneCall}
 						callStatus={callStatus}
 						isCallLoading={isCallLoading}
+						setIsCallLoading={setIsCallLoading}
 						setCallStatus={setCallStatus}
 						device={Device}
 						isSelfMountedRef={isPhoneMountedRef}
