@@ -41,7 +41,10 @@ export default function Home({ component }) {
 		setShowCancelCallDialog,
 		connectionRef,
 		setPersonalStream,
+		turnCredential,
+		setTurnCredential,
 	} = useContext(UserContext);
+
 	const { activeContactId } = useSelector((state) => state.chat);
 	const [hasIncomingCall, setHasIncomingCall] = useState(false);
 	const [isCallLoading, setIsCallLoading] = useState();
@@ -301,6 +304,28 @@ export default function Home({ component }) {
 			activeSocket.off('disconnect', socketDisconnectedListener);
 		};
 	});
+
+	/** Get TURN credentials */
+	useEffect(() => {
+		if (!turnCredential === '') {
+			return;
+		}
+
+		fetch(`${process.env.REACT_APP_API_URL}/api/video/turnCredential`, {
+			method: 'POST',
+			headers: {
+				'content-type': 'application/json',
+				Authorization: `Bearer ${token}`,
+			},
+		})
+			.then((response) => response.json())
+			.then((result) => {
+				setTurnCredential(result.data.token.iceServers);
+			})
+			.catch((error) => {
+				console.error(error.message);
+			});
+	}, [token, setTurnCredential, turnCredential]);
 
 	return (
 		<div className='chat-page-container d-flex flex-row '>

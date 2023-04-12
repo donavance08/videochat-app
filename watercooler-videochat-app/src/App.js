@@ -12,6 +12,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 
 function App() {
+	const [turnCredential, setTurnCredential, clearTurnCredential] =
+		useLocalStorage('turnCredential', '');
 	const [token, setToken, clearToken] = useLocalStorage('token', '');
 	const [name, setName, clearName] = useLocalStorage('name', '');
 	const [id, setId, clearId] = useLocalStorage('id', '');
@@ -31,6 +33,7 @@ function App() {
 		clearToken();
 		clearName();
 		clearId();
+		clearTurnCredential();
 	};
 
 	const resetContextValues = () => {
@@ -73,6 +76,8 @@ function App() {
 					resetContextValues,
 					isContactUpdated,
 					setIsContactUpdated,
+					turnCredential,
+					setTurnCredential,
 				}}
 			>
 				<ToastContainer
@@ -124,16 +129,16 @@ function App() {
 							element={<Home component='sms' />}
 						/>
 						<Route
-							path='*'
-							element={<ErrorPage />}
-						/>
-						<Route
 							path='/home/phone/:phoneNumber'
 							element={<Home component='phone' />}
 						/>
 						<Route
 							path='/home/phone/'
 							element={<Home component='phone' />}
+						/>
+						<Route
+							path='*'
+							element={<ErrorPage />}
 						/>
 					</Routes>
 				</BrowserRouter>
