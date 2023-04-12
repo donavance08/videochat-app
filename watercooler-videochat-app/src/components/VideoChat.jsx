@@ -17,6 +17,7 @@ export default function VideoChat({ declineCallHandler, endVideoCallHandler }) {
 		setCallInitiator,
 		setHasActiveCall,
 		connectionRef,
+		turnCredential,
 	} = useContext(UserContext);
 	const { socket, name, id } = useContext(UserContext);
 
@@ -25,10 +26,14 @@ export default function VideoChat({ declineCallHandler, endVideoCallHandler }) {
 			alert('Please select a contact to call first');
 			return;
 		}
+
 		const peer = new SimplePeer({
 			initiator: true,
 			trickle: false,
 			stream: personalStream,
+			config: {
+				iceServers: turnCredential,
+			},
 		});
 
 		setShowPendingCallDialog(true);

@@ -65,6 +65,9 @@ export default function Home({ component }) {
 			initiator: false,
 			trickle: false,
 			stream: personalStream,
+			config: {
+				iceServers: turnCredential,
+			},
 		});
 
 		peer.on('signal', (payload) => {
@@ -124,7 +127,8 @@ export default function Home({ component }) {
 			.getUserMedia({ video: true, audio: true })
 			.then((stream) => {
 				setPersonalStream(stream);
-			});
+			})
+			.catch((error) => console.log(error));
 	}, [token, id, setPersonalStream, socket]);
 
 	/** Fetch Twilio token */
