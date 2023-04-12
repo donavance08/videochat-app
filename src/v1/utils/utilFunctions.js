@@ -31,14 +31,18 @@ const extractPhoneNumber = (req) => {
  * Will create and send response
  * @param {Object} res - response object
  * @param {Object} responseDetails
+ * @param {integer} status
  * @returns {undefined}
  */
 const sendResponse = (res, status, responseDetails) => {
-	if (responseDetails.error) {
-		res.status(responseDetails.error.status || 500);
+	const { error } = responseDetails;
+
+	if (error) {
+		res.status(error.status || 500);
 		res.send({
 			status: 'FAILED',
-			...({ message, data } = responseDetails.error),
+			message: error.message || '',
+			data: error.data || null,
 		});
 
 		return;
@@ -46,7 +50,6 @@ const sendResponse = (res, status, responseDetails) => {
 
 	res.status(status || 200);
 	res.send(responseDetails);
-	
 };
 module.exports = {
 	checkValidationResult,

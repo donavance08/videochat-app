@@ -5,6 +5,7 @@ const userRoutes = require('./src/v1/routes/userRoutes');
 const messageRoutes = require('./src/v1/routes/messageRoutes');
 const smsRoutes = require('./src/v1/routes/smsRoutes');
 const callRoutes = require('./src/v1/routes/callRoutes');
+const videoCallRoutes = require('./src/v1/routes/videoCallRoutes');
 const path = require('path');
 require('dotenv').config();
 
@@ -47,6 +48,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/chat', messageRoutes);
 app.use('/api/sms', smsRoutes);
 app.use('/api/call', callRoutes);
+app.use('/api/video', videoCallRoutes);
 
 /** RINGTONE SOUND */
 app.use('/sound', (req, res) => {

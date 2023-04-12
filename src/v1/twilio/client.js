@@ -131,6 +131,15 @@ const outboundCall = (to, from) => {
 
 	return response(voiceResponse);
 };
+
+const getTurnCredentials = () => {
+	return client.tokens
+		.create()
+		.then((token) => token)
+		.catch((error) =>
+			customError.throwCustomError(400, 'Failed to generate TURN credentials')
+		);
+};
 module.exports = {
 	sendSMS,
 	getCallToken,
@@ -139,4 +148,5 @@ module.exports = {
 	declineCall,
 	endCall,
 	outboundCall,
+	getTurnCredentials,
 };
